@@ -29,7 +29,7 @@ We will deal with the above by simulating ideal users: they respect the passenge
 
 ## Simple Controller
 
-We'll start with a very simple controller that has one call button on every floor and destination buttons for each floor in every lift. A lift can only be called if one is on standby, and the closest one will come. A lift can only be started if it is not currently moving. Otherwise, commands are ignored.
+We'll start with a very simple controller, like the ones found in old apartment buildings with few floors. There is one call button on every floor and destination buttons for each floor in every lift. A lift can only be called if one is on standby, and the closest one will come. A lift can only be started if it is not currently moving. Otherwise, commands are ignored.
 
 We add some synonyms to make type signatures clearer.
 
@@ -38,30 +38,37 @@ We add some synonyms to make type signatures clearer.
   type alias LiftId = Int
 ```
 
-The commands our controller accpets are `call` and `go` button presses.
+Our controller only cares wether a Lift is in use, and what its destination floor is. It doesn't need to know where the lift is exactly, or where it's coming from, so we won't model that. Oh yeah, we're doing multiple lifts.
 
 ```
-type alias Lift a = { a | dest : FloorId, moving : Bool }
+type alias Lift a = { a | busy : Bool, dest: FloorId }
 type alias Model a = Array (Lift a)
 ```
 
-We model events that passengers will want to react to: a lift making a stop at a floor, and a lift becoming available.
+Notice that we left the Lift and thus Model types polymorphic, using extensible records. This means we can later attach any other properties to each lift (like passengers carried, or animation data) without having to create new types and functions, and our controller will continue working and not touch anything it doesn't know about. Also, we want to fetch and update lift states by index (LiftId), so we use an immutable Array that conveniently provides such functions, instead of a List.
+
+We move on to modeling the events our controller cares about. This includes user input like `call` and `go` button presses, as well as notifications of when a lift arrives at a floor, and when it is no longer busy.
 
 ```
+type Action = Call FloorId
+            | Go LiftId FloorId
+            | Arrive LiftId FloorId
+            | Standby LiftId
 ```
 
-The state of our controller is just the state of each lift, which is a source and destination floor. The lift is stopped if these are equal. We want to fetch and update lift states by index, so we use an immutable Array instead of a List.
+To keep the types simple, we don't make a distinction between user generated events and events that "just happen". Our controller might be used incorrectly by passing Arrive and Standby events to it that weren't supposed to happen. It's the equivalent of the lift's sensors malfunctioning.
+
+Next is our actual controller. It is a function that interprets actions, returns the updated model, and maybe a delay and an `Action` that should happen thereafter.
 
 ```
+update : Action -> Model a -> (Model a, Maybe (Time.Time, Action))
 ```
 
-Next is our actual controller. It is a function that interprets actions and "moves" the cabins when needed by scheduling state updates and events.
+See [`OneController.elm`](src/Lifty/OneController.elm) for the function body.
 
-```
+In order to run our controller, "the world" we run it in should take care of providing user actions as well as feeding back the delayed events to the controller.
 
-```
-
-That's all we need for our simple controller. You can play around with it below: click the green circle to call an elevator. Click a floor number in an elevator shaft to send the elevator there.
+To test our controller, I've built such a UI for such a world, extended with animations, in [`OneUI.elm`](src/Lifty/OneUI.elm). You can play with it below. Click the green circle to call an elevator. Click a destination in an elevator shaft to send the elevator there. Floor numbers start from 0 and grow downwards, like most thinks in computer science. Just imagine an underground building.
 
 
 ```embed
@@ -81,24 +88,28 @@ In addition, it requires a "smart" user, ie. there is a lot of logic that users 
 * decide which floor to go to next, as a group, when more than one person is in the lift
 * remember which direction the lift came from, and if there are other users in it; only enter if it is going in the right direction
 
+The only smart thing the controller does is choose the nearest empty lift to service calls.
+
 
 ## Simulation
 
 Before improving our controller, let's simulate a a building with passengers queueing up to use the lifts.
 
 ```
-type Building
-
-type Simulation
 ```
 
-Unfortunately, we need to simulate the complex user behavior described above. We'll cut some corners and implement the whole getting in and out of the cabin and selecting the next stop in one function that works at the intersection of a floor (representing a queue of passengers) and a lift (). It is called when the `Arrive` event happens and results in either the next Go command for that lift, or a Standby event.
+Unfortunately, we need to simulate the complex user behavior described above.
+We'll make it a bit easier and implement group behaviors in one function.
+
+
+Getting in and out of the cabin
+ whole getting in and out of the cabin and selecting the next stop in one function that takes a floor (representing a queue of passengers) and a lift. It is called when the `Arrive` event happens and results in either the next Go command for that lift, or a Standby event.
 
 
 ..............code...............
 
 
-In addition, passengers will react to `Standby` events and call a lift. If there are passengers on multiple floors, each command is sent, here implicitly ordered starting with the lowest floor number.
+In addition, waiting passengers will react to `Standby` events and call a lift. If there are passengers on multiple floors, every command is sent, here implicitly ordered starting with the lowest floor number.
 
 ................code..............
 
@@ -108,7 +119,7 @@ Here's an upgraded UI featuring passengers as blue blobs. To add a passenger, cl
 
 ## Directional Controller
 
-We can now model a more advanced controller. Here's how it works:
+We will now model a more advanced controller:
 - two call buttons on each floor, one for going up and one for going down
 - the controller remembers call button presses until they are serviced
 - each lift remembers selected destinations
