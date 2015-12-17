@@ -15,7 +15,7 @@ type alias Model a = Array (Lift a)
 type Action = Call FloorId
             | Go LiftId FloorId
             | Arrive LiftId FloorId
-            | Standby LiftId
+            | Idle LiftId
 
 
 move_time = 1 * Time.second -- per floor
@@ -29,18 +29,18 @@ move_to model i l to =
 update : Action -> Model a -> (Model a, Maybe (Time.Time, Action))
 update action model =
   M.withDefault (model, Nothing) <| case action of
-    Call to -> -- find the nearest empty lift and send it there
+    Call to -> -- send the nearest idle lift
       A.toList model
       |> L.indexedMap (,)
-      |> L.filter (\(_, l) -> not l.busy && l.dest /= to)
+      |> L.filter (\(_, l) -> not l.busy )--&& l.dest /= to)
       |> LE.minimumBy (\(_, l) -> abs <| l.dest - to)
       |> M.map (\(i, l) -> move_to model i l to)
-    Go i to ->
-      A.get i model
+    Go lift_id floor_id ->
+      A.get lift_id model
       |> (flip M.andThen) (\l -> if not l.busy then Just l else Nothing)
-      |> M.map (\l -> move_to model i l to)
+      |> M.map (\l -> move_to model lift_id l floor_id)
     Arrive i to ->
-      Just (model, Just (stop_time, Standby i))
-    Standby i ->
+      Just (model, Just (stop_time, Idle i))
+    Idle i ->
       A.get i model
       |> M.map (\l -> (A.set i { l | busy = False } model, Nothing))

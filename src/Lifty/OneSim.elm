@@ -1,7 +1,7 @@
-module Lifty.OneUI where
+module Lifty.OneSim where
 
 import Debug
-import Array        as A
+import Array        as A  exposing (Array)
 import Array.Extra  as AE
 import Signal       as S
 import Signal.Extra as SE
@@ -10,19 +10,23 @@ import Task.Extra
 import Time
 import Effects      as E
 import Animation    as Ani exposing (Animation, animation, static,  animate)
+import Html
 import StartApp
 
 import Lifty.OneController as C
 import Lifty.OneView       as V
 
-type alias Model = { t : Time.Time, lifts : C.Model { ani : Ani.Animation }}
+type alias Model = { t : Time.Time
+                   , floors : Array ()
+                   , lifts : C.Model { ani : Animation } }
 
-type Action = Action C.Action | Tick Time.Time
+type Action = Action C.Action
+            | Tick Time.Time
 
-num_floors = 5
-num_lifts = 2
-
-init_model = { t = 0, lifts = A.repeat num_lifts { dest = 0, busy = False, ani = static 0}}
+init_model : Model
+init_model = { t = 0
+             , floors = A.repeat 5 ()
+             , lifts = A.repeat 2 { dest = 0, busy = False, ani = static 0 } }
 
 delay t act = E.task <| Task.Extra.delay t <| Task.succeed <| Action act
 
@@ -44,7 +48,7 @@ update action model = case action of
 
 app = StartApp.start
   { init = (init_model, E.none)
-  , view = V.view num_floors num_lifts Action
+  , view = V.view Action
   , update = update
   , inputs = [Time.fps 30 |> S.foldp (+) 0 |> S.map Tick] }
 
