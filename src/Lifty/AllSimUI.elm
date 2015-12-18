@@ -1,4 +1,4 @@
-module Lifty.OneSimUI where
+module Lifty.AllSimUI where
 
 import Maybe        as M
 import Maybe.Extra  as M   exposing ((?))
@@ -12,10 +12,18 @@ import Animation    as Ani exposing (Animation, static, retarget)
 import StartApp
 
 import Lifty.Util    exposing (delay)
-import Lifty.OneController as C
-import Lifty.OneSim        as Sim
-import Lifty.OneSimView    as V
-import Lifty.OneSimRender  as R
+import Lifty.OneController as C1
+import Lifty.OneSim        as Sim1
+import Lifty.OneSimView    as V1
+import Lifty.OneSimRender  as R1
+import Lifty.TwoController as C2
+import Lifty.TwoSim        as Sim2
+import Lifty.TwoSimView    as V2
+import Lifty.TwoSimRender  as R2
+--import Lifty.ManyController as C2
+--import Lifty.ManySim        as Sim2
+--import Lifty.ManySimView    as V2
+--import Lifty.ManySimRender  as R2
 
 
 type alias Action p = Either (V.Action p) (Sim.Action p)

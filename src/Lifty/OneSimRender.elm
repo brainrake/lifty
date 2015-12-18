@@ -66,9 +66,9 @@ view act go call startadd endadd address m =
     , vFloors a m
     , vCallBtns a m
     , vLifts a m
-    , vLeavingPax a m
     , vAddPax a m
     , vAddingPax a m
     , vFloorPax a m
     , vLiftPax a m
+    , vLeavingPax a m
     ] ]

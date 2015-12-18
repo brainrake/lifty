@@ -2,13 +2,13 @@ module Lifty.OneSim where
 
 import Debug
 import Maybe        as M
-import Maybe.Extra  as ME  exposing ((?))
+import Maybe.Extra  as M   exposing ((?))
 import List         as L
-import List.Extra   as LE
+import List.Extra   as L
 import Array        as A   exposing (Array)
-import Array.Extra  as AE
+import Array.Extra  as A
 import Signal       as S
-import Signal.Extra as SE
+import Signal.Extra as S
 import Task
 import Task.Extra
 import Time                exposing (Time)
@@ -41,15 +41,15 @@ schedule_ = schedule Action
 --        -> (State s l p, Maybe (Time, C.Action), Effects (Action p))
 update action s = case action of
   AddPassenger src dest p ->
-    let floor = AE.getUnsafe src s.floors
+    let floor = A.getUnsafe src s.floors
     in if L.length floor < max_queue
-       then ( { s | floors = AE.update src (\f -> p :: f) s.floors }
+       then ( { s | floors = A.update src (\f -> p :: f) s.floors }
             , Nothing, E.task <| Task.succeed <| Action <| C.Call src)
        else (s, Nothing, E.none)
   Action a -> case C.update (Debug.log "Action" a) s of (s', ma) -> case a of
     C.Arrive lift_id floor_id ->
-      let floor = AE.getUnsafe floor_id s'.floors
-          lift = AE.getUnsafe lift_id s'.lifts
+      let floor = A.getUnsafe floor_id s'.floors
+          lift = A.getUnsafe lift_id s'.lifts
           (ileaving, ipax') = lift.pax |> zipiL
                             |> L.partition (\(_, p) -> p.dest == floor_id)
           spaces = lift_cap - L.length ipax'
@@ -67,7 +67,7 @@ update action s = case action of
                      , leaving = L.append leaving' s'.leaving }
           in (s'', ma, schedule_ ma )
     C.Idle lift_id ->
-      let lift = AE.getUnsafe lift_id s'.lifts
+      let lift = A.getUnsafe lift_id s'.lifts
       in if L.isEmpty lift.pax
          then s'.floors |> zipiA
               |> L.filter (\(_, floor) -> not (L.isEmpty floor))
@@ -77,7 +77,7 @@ update action s = case action of
               |> M.withDefault (s', ma, schedule_ ma)
          else
            let dest = lift.pax |> L.map (\p -> p.dest)
-                               |> LE.minimumBy (\d -> abs (lift.dest - d))
+                               |> L.minimumBy (\d -> abs (lift.dest - d))
                                |> M.withDefault lift.dest
            in update (Action (C.Go lift_id dest)) s'
     _ -> (s', ma, schedule_ ma)

@@ -1,14 +1,15 @@
 module Lifty.OneController where
 
 import Maybe       as M
-import Maybe.Extra as ME exposing (join, (?))
+import Maybe.Extra as M exposing ((?))
 import List        as L
-import List.Extra  as LE
-import Array       as A  exposing (Array)
-import Array.Extra as AE
-import Time              exposing (Time, second)
+import List.Extra  as L
+import Array       as A exposing (Array)
+import Array.Extra as A
+import Time             exposing (Time, second)
 
-import Lifty.Util        exposing (f_, zipiA)
+import Lifty.Util       exposing (f_, zipiA)
+
 
 type alias FloorId = Int
 type alias LiftId = Int
@@ -38,7 +39,7 @@ update action s = case action of
   Call dest -> -- send the nearest idle lift
     ( s.lifts |> zipiA
       |> L.filter (snd >> (not << .busy))
-      |> LE.minimumBy (snd >> \l -> abs (l.dest - dest))
+      |> L.minimumBy (snd >> \l -> abs (l.dest - dest))
       |> M.map (\(lift_id, l) -> move lift_id l dest s)
     ) ? (s, Nothing)
   Go lift_id floor_id ->
@@ -46,9 +47,8 @@ update action s = case action of
       |> flip M.andThen (\l -> if not l.busy then Just l else Nothing)
       |> M.map (\l -> move lift_id l floor_id s)
     ) ? (s, Nothing)
-
   Arrive i to ->
     (s, Just (stop_delay, Idle i))
   Idle lift_id ->
-    ( { s | lifts = AE.update lift_id (\l -> { l | busy = False }) s.lifts }
-    , Nothing )
+    let s' = { s | lifts = A.update lift_id (\l -> { l | busy = False }) s.lifts }
+    in (s', Nothing)

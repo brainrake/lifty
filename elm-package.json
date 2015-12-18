@@ -9,6 +9,7 @@
     "exposed-modules": [],
     "dependencies": {
         "Apanatshka/elm-signal-extra": "5.7.0 <= v < 6.0.0",
+        "Dandandan/Easing": "2.0.1 <= v < 3.0.0",
         "NoRedInk/elm-task-extra": "1.0.1 <= v < 2.0.0",
         "circuithub/elm-array-extra": "1.1.2 <= v < 2.0.0",
         "circuithub/elm-list-extra": "3.7.1 <= v < 4.0.0",

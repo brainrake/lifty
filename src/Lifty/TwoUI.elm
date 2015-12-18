@@ -1,59 +1,53 @@
-module Lifty.TwoSim where
+module Lifty.TwoUI where
 
 import Debug
-import Array        as A  exposing (Array)
-import Array.Extra  as AE
+import Maybe        as M
+import Maybe.Extra         exposing ((?))
+import Array        as A   exposing (Array)
+import Set                 exposing (Set)
 import Signal       as S
-import Signal.Extra as SE
-import Task
+import Either              exposing (Either(..), elim)
+import Task                exposing (Task)
 import Task.Extra
-import Time
-import Effects      as E
-import Animation    as Ani exposing (Animation, animation, static, ease)
-import Html
+import Time                exposing (Time)
+import Effects      as E   exposing (Effects, Never)
+import Animation    as Ani exposing (Animation, static)
 import StartApp
 
+import Lifty.Util    exposing (delay)
 import Lifty.TwoController as C
 import Lifty.TwoView       as V
+import Lifty.TwoRender     as R
 
-type alias Model = { t : Time.Time
-                   , floors : Array ()
-                   , lifts : C.Model { ani : Animation } }
 
-type Action = Action C.Action
-            | Tick Time.Time
+type alias Action = Either Time C.Action
 
-init_model : Model
-init_model = { t = 0
+init_state = { t = 0
+             , calls_up = Set.fromList []
+             , calls_down = Set.fromList []
              , floors = A.repeat 5 ()
-             , lifts = A.repeat 2 { dest = 0, busy = False, up = False, ani = static 0 } }
+             , lifts = A.repeat 2 { dests = Set.fromList []
+                                  , last = 0
+                                  , busy = False
+                                  , up = False
+                                  , y = static 0 } }
 
-delay t act = E.task <| Task.Extra.delay t <| Task.succeed <| Action act
 
-update : Action -> Model -> (Model, E.Effects Action)
-update action model = case action of
-  Action a ->
-    case C.update (Debug.log "action" a) model.lifts of
-      (lifts', Just (dt, act)) -> case act of
-        C.Arrive i to ->
-          let l = AE.getUnsafe i model.lifts
-              l' = AE.getUnsafe i lifts'
-              ani = animation model.t |> Ani.from (toFloat l.dest) |> Ani.to (toFloat l'.dest) |> Ani.duration dt
-              lifts'' = A.set i { l' | ani = ani} lifts'
-          in ({ model | lifts = lifts'' }, delay dt act)
-        _ -> ({ model | lifts = lifts' }, delay dt act)
-      (lifts', Nothing) -> ({ model | lifts = lifts' }, E.none)
-  Tick t ->
-    ({ model | t = t }, E.none)
+--update : Action -> V.State s l a -> (V.State s l a, Effects Action)
+update a s = a |> elim
+  (\t -> (V.update t s, E.none))
+  (\a -> C.update (Debug.log "a" a) s |> \(s', ma) ->
+    ( ma |> M.map (\(dt, a') -> (V.animate dt a s a' s', delay dt (Right a')))
+    ) ? (s', E.none) )
+
 
 app = StartApp.start
-  { init = (init_model, E.none)
-  , view = V.view Action
+  { init = (init_state, E.none)
+  , view = R.view Right C.Go C.CallUp C.CallDown
   , update = update
-  , inputs = [Time.fps 30 |> S.foldp (+) 0 |> S.map Tick] }
+  , inputs = [Time.fps 30 |> S.foldp (+) 0 |> S.map Left] }
 
 main = app.html
 
-port tasks : Signal (Task.Task E.Never ())
+port tasks : Signal (Task Never ())
 port tasks = app.tasks
-

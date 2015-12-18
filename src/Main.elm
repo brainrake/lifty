@@ -58,11 +58,11 @@ To keep the types simple, we don't make a distinction between user generated eve
 Next, we'll model the state of our controller, that is the stuff it has to remember between events. Our simple controller only cares wether a Lift is in use, and what its destination floor is. It doesn't need to know where the lift is exactly, or where it's coming from, or what is inside, so we won't model that. Oh and we're modeling multiple lifts.
 
 ```elm
-type alias Lift l = { a | busy : Bool, dest: FloorId }
-type alias State s l = { lifts : Array (Lift l) }
+type alias Lift l = { l | busy : Bool, dest: FloorId }
+type alias State s l = { s | lifts : Array (Lift l) }
 ```
 
-Notice that we left the `Lift` and `State` types polymorphic, using extensible records. This means we can later attach any other properties to the state and to each lift (like passengers carried, or animation data) without having to modify our controller. It simply won't touch anything it doesn't know about. Also, we want to fetch and update lift states by index (LiftId), so we use an immutable Array that conveniently provides such functions, instead of a List.
+Notice that we left the `Lift` and `State` types polymorphic, using extensible records. This means we can later attach any other properties to the state and to each lift (like passengers carried, or animation data) without having to modify our controller. It simply won't touch anything it doesn't know about. Also, we want to fetch and update lift states by index (`LiftId` is an alias of `Int`), so we use an immutable Array that conveniently provides such functions, instead of a List.
 
 Next is our actual controller. It is a function that applies actions to the model. It returns the updated model, and maybe a delay and an `Action` that should happen thereafter.
 

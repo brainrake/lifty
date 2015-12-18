@@ -21,9 +21,10 @@ rect_ x' y' w' h' a' =
 style_ = Html.node "style" [] [Html.text """
 svg { user-select: none; }
 .addbtn:hover circle {fill: #ddd}
-.callbtn       {fill: #084}
-.callbtn:hover {fill: #0f8}
-.liftbtn:hover {fill: #0f8}
+.callbtn         {fill: #084; cursor:pointer}
+.callbtn.pressed {fill: #0f8}
+.callbtn:hover   {fill: #0f8}
+.liftbtn:hover   {fill: #0f8}
 """]
 
 vCallBtns a m =
