@@ -44,23 +44,7 @@ We will deal with the above by simulating ideal users: they respect the passenge
 
 We'll start with a very simple controller, like the ones found in old apartment buildings with few floors. There is one call button on every floor and destination buttons for each floor in every lift. A lift can only be called if one is on standby, and the closest one will come. A lift can only be started if it is not busy. Otherwise, commands are ignored. When a lift arrives at a platform, it becomes available after a fixed delay.
 
-First, we add some synonyms to make type signatures clearer.
-
-```elm
-type alias FloorId = Int
-type alias LiftId = Int
-```
-
-Our controller only cares wether a Lift is in use, and what its destination floor is. It doesn't need to know where the lift is exactly, or where it's coming from, so we won't model that. Oh and we're modeling multiple lifts.
-
-```elm
-type alias Lift a = { a | busy : Bool, dest: FloorId }
-type alias Model a = Array (Lift a)
-```
-
-Notice that we left the Lift and thus Model types polymorphic, using extensible records. This means we can later attach any other properties to each lift (like passengers carried, or animation data) without having to modify our controller. It simply won't touch anything it doesn't know about. Also, we want to fetch and update lift states by index (LiftId), so we use an immutable Array that conveniently provides such functions, instead of a List.
-
-We move on to modeling the events our controller reacts to. This includes user input like `call` and `go` button presses, as well as notifications when a lift arrives at a floor, and when it is no longer busy.
+We'll start by describing the events our controller reacts to. This includes user input like `call` and `go` button presses, as well as notifications when a lift arrives at a floor, and when it is no longer busy.
 
 ```elm
 type Action = Call FloorId
@@ -71,10 +55,19 @@ type Action = Call FloorId
 
 To keep the types simple, we don't make a distinction between user generated events and events that "just happen". Our controller might be used incorrectly by passing Arrive and Standby events to it that weren't supposed to happen. It's the equivalent of the lift's sensors malfunctioning.
 
-Next is our actual controller. It is a function that applies actions to the model, returns the updated model, and maybe a delay and an `Action` that should happen thereafter.
+Next, we'll model the state of our controller, that is the stuff it has to remember between events. Our simple controller only cares wether a Lift is in use, and what its destination floor is. It doesn't need to know where the lift is exactly, or where it's coming from, or what is inside, so we won't model that. Oh and we're modeling multiple lifts.
 
 ```elm
-update : Action -> Model a -> (Model a, Maybe (Time.Time, Action))
+type alias Lift l = { a | busy : Bool, dest: FloorId }
+type alias State s l = { lifts : Array (Lift l) }
+```
+
+Notice that we left the `Lift` and `State` types polymorphic, using extensible records. This means we can later attach any other properties to the state and to each lift (like passengers carried, or animation data) without having to modify our controller. It simply won't touch anything it doesn't know about. Also, we want to fetch and update lift states by index (LiftId), so we use an immutable Array that conveniently provides such functions, instead of a List.
+
+Next is our actual controller. It is a function that applies actions to the model. It returns the updated model, and maybe a delay and an `Action` that should happen thereafter.
+
+```elm
+update : Action -> State a -> (State a, Maybe (Time.Time, Action))
 ```
 
 Once we write `update` ( see [OneController.elm](src/Lifty/OneController.elm)), we need to run it somehow. In order for things to work out, "the world" we run it in should take care of providing user actions as well as feeding back the delayed events to the controller.
@@ -82,7 +75,7 @@ Once we write `update` ( see [OneController.elm](src/Lifty/OneController.elm)), 
 To test our controller, I've built a UI for such a world, extended with animations. You can play with it below. Click the green circle to call an elevator. Click a destination in an elevator shaft to send the elevator there. Floor numbers start from 0 and grow downwards, like most things in computer science. Just imagine an underground building.
 
 
-""", include 240 240 "/src/Lifty/OneSim.elm", md """
+""", include 240 240 "/src/Lifty/OneUI.elm", md """
 
 
 ### Problems
@@ -125,9 +118,11 @@ In addition, waiting passengers will react to `Standby` events and call a lift. 
 ................code..............
 ```
 
-Here's a UI featuring passengers as blue blobs. To add a passenger, click the plus sign on the right of a floor to select the starting floor, and then click on the destination floor to select it.
+Here's a UI featuring passengers as blue blobs. To add a passenger, click the plus sign to the right of the starting floor, and then click the plus sign on the destination floor.
 
-""", include 250 250 "/src/Lifty/OneBuilding.elm", md """
+""", include 360 240 "/src/Lifty/OneSimUI.elm", md """
+
+A lift holds at most 2 passengers. At most 4 passengers will wait on a floor, any more will have to use the stairs.
 
 
 ## Directional Controller

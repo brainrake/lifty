@@ -1,46 +1,54 @@
 module Lifty.OneController where
 
 import Maybe       as M
-import Array       as A  exposing (Array)
+import Maybe.Extra as ME exposing (join, (?))
 import List        as L
 import List.Extra  as LE
-import Time
+import Array       as A  exposing (Array)
+import Array.Extra as AE
+import Time              exposing (Time, second)
 
+import Lifty.Util        exposing (f_, zipiA)
 
 type alias FloorId = Int
 type alias LiftId = Int
-type alias Lift a = { a | busy : Bool, dest: FloorId }
-type alias Model a = Array (Lift a)
 
 type Action = Call FloorId
             | Go LiftId FloorId
             | Arrive LiftId FloorId
             | Idle LiftId
 
+type alias Lift l = { l | busy : Bool
+                        , dest: FloorId }
 
-move_time = 1 * Time.second -- per floor
-stop_time = 1 * Time.second
+type alias State s l = { s | lifts : Array (Lift l) }
 
-move_to model i l to =
-  let time = move_time * (toFloat <| abs <| l.dest - to)
-      model = A.set i ({ l | dest = to, busy = True}) model
-  in (model, Just (time, Arrive i to))
 
-update : Action -> Model a -> (Model a, Maybe (Time.Time, Action))
-update action model =
-  M.withDefault (model, Nothing) <| case action of
-    Call to -> -- send the nearest idle lift
-      A.toList model
-      |> L.indexedMap (,)
-      |> L.filter (\(_, l) -> not l.busy )--&& l.dest /= to)
-      |> LE.minimumBy (\(_, l) -> abs <| l.dest - to)
-      |> M.map (\(i, l) -> move_to model i l to)
-    Go lift_id floor_id ->
-      A.get lift_id model
-      |> (flip M.andThen) (\l -> if not l.busy then Just l else Nothing)
-      |> M.map (\l -> move_to model lift_id l floor_id)
-    Arrive i to ->
-      Just (model, Just (stop_time, Idle i))
-    Idle i ->
-      A.get i model
-      |> M.map (\l -> (A.set i { l | busy = False } model, Nothing))
+move_delay = 1 * second -- per floor
+stop_delay = 1 * second
+
+--move : LiftId -> Lift l -> FloorId -> State -> (State s l, Maybe (Time, Action))
+move lift_id l dest s =
+  ( { s | lifts = A.set lift_id ({ l | dest = dest, busy = True}) s.lifts }
+  , Just ( move_delay * (toFloat <| abs <| l.dest - dest)
+         , Arrive lift_id dest ) )
+
+update : Action -> State s l -> (State s l, Maybe (Time, Action))
+update action s = case action of
+  Call dest -> -- send the nearest idle lift
+    ( s.lifts |> zipiA
+      |> L.filter (snd >> (not << .busy))
+      |> LE.minimumBy (snd >> \l -> abs (l.dest - dest))
+      |> M.map (\(lift_id, l) -> move lift_id l dest s)
+    ) ? (s, Nothing)
+  Go lift_id floor_id ->
+    ( A.get lift_id s.lifts
+      |> flip M.andThen (\l -> if not l.busy then Just l else Nothing)
+      |> M.map (\l -> move lift_id l floor_id s)
+    ) ? (s, Nothing)
+
+  Arrive i to ->
+    (s, Just (stop_delay, Idle i))
+  Idle lift_id ->
+    ( { s | lifts = AE.update lift_id (\l -> { l | busy = False }) s.lifts }
+    , Nothing )

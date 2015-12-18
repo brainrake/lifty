@@ -12,6 +12,7 @@
         "NoRedInk/elm-task-extra": "1.0.1 <= v < 2.0.0",
         "circuithub/elm-array-extra": "1.1.2 <= v < 2.0.0",
         "circuithub/elm-list-extra": "3.7.1 <= v < 4.0.0",
+        "circuithub/elm-maybe-extra": "1.5.1 <= v < 2.0.0",
         "elm-lang/core": "3.0.0 <= v < 4.0.0",
         "evancz/automaton": "1.1.0 <= v < 2.0.0",
         "evancz/elm-effects": "2.0.1 <= v < 3.0.0",
