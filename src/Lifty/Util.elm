@@ -9,6 +9,8 @@ import Time               exposing (Time)
 import Task               exposing (Task)
 import Task.Extra
 import Effects     as E   exposing (Effects, Never)
+import Svg                exposing (rect)
+import Svg.Attributes     exposing (x, y, width, height)
 
 s_ f = f << toString
 
@@ -27,3 +29,6 @@ delay t action = E.task <| Task.Extra.delay t <| Task.succeed <| action
 
 schedule : (a -> b) -> Maybe (Time, a) -> Effects b
 schedule act ma = M.map (\(dt, a) -> delay dt (act a)) ma ? E.none
+
+rect_ x' y' w' h' a' =
+  rect (L.append [s_ x x', s_ y y', s_ width w', s_ height h'] a') []

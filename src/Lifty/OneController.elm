@@ -29,26 +29,27 @@ move_delay = 1 * second -- per floor
 stop_delay = 1 * second
 
 --move : LiftId -> Lift l -> FloorId -> State -> (State s l, Maybe (Time, Action))
-move lift_id l dest s =
-  ( { s | lifts = A.set lift_id ({ l | dest = dest, busy = True}) s.lifts }
-  , Just ( move_delay * (toFloat <| abs <| l.dest - dest)
-         , Arrive lift_id dest ) )
+move lift_id l dest s = let
+  s' = { s | lifts = A.set lift_id { l | dest = dest, busy = True} s.lifts }
+  ma = Just (move_delay * toFloat (abs (l.dest - dest)), Arrive lift_id dest)
+  in (s', ma)
 
 update : Action -> State s l -> (State s l, Maybe (Time, Action))
 update action s = case action of
-  Call dest -> -- send the nearest idle lift
-    ( s.lifts |> zipiA
+  Call dest ->  -- send the nearest idle lift
+    ( zipiA s.lifts
       |> L.filter (snd >> (not << .busy))
       |> L.minimumBy (snd >> \l -> abs (l.dest - dest))
       |> M.map (\(lift_id, l) -> move lift_id l dest s)
     ) ? (s, Nothing)
   Go lift_id floor_id ->
-    ( A.get lift_id s.lifts
-      |> flip M.andThen (\l -> if not l.busy then Just l else Nothing)
+    ( A.get lift_id s.lifts `M.andThen`
+      (\l -> if not l.busy then Just l else Nothing)
       |> M.map (\l -> move lift_id l floor_id s)
     ) ? (s, Nothing)
   Arrive i to ->
     (s, Just (stop_delay, Idle i))
   Idle lift_id ->
-    let s' = { s | lifts = A.update lift_id (\l -> { l | busy = False }) s.lifts }
+    let s' = { s | lifts = A.update lift_id (\l ->
+               { l | busy = False }) s.lifts }
     in (s', Nothing)

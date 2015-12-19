@@ -10,26 +10,27 @@ include w h s = iframe [src s, width (w+10), height (h+10), style [("border","0"
 
 main = div [] [ md """
 
-# Exploring Elevators
+#@ Exploring Elevators
 
 I was challenged to build an elevator controller. As usual, I started overthinking things a little, and so I got ~~inspired~~ an excuse to build an interactive playground for exploring the problem.
 
 Lifts provide an interesting design space with subtle tradeoffs, that spawned many research papers, just see ["elevator scheduling" on Google Scholar](https://scholar.google.com/scholar?q=elevator+scheduling).
-Instead of choosing a favorite algorithm and implementing it, we will focus on building a visual intuition of the algorithms' behaviors through live interaction in the spirit of [Explorable Explanations](http://explorableexplanations.com).
+Instead of choosing a favorite algorithm and implementing it, we will focus on building a visual intuition of the logic's behavior through live interaction in the spirit of [Explorable Explanations](http://explorableexplanations.com).
 
-We'll use [Elm](elm-lang.org), for the following reasons
-- it is a language specifically created for interactive browser apps
-- it has a simple but neat static type system that lets us describe and enforce our logic effectively and rules out runtime type errors and exceptions
-- it is built on a simple variant of functional reactive programming that lets us create interactive apps in a (mostly) pure functional setting, without callbacks, using immutable data structures
+We will also explore the interface between language and computation: types. Types give structure and meaning to otherwise homogenous data and control flow by expressing logical relations and invariants. In languages with strong type systems, programs with valid (meaningful) types will never go wrong (e.g. crash or throw an exception).
 
-Elm's intentional simplicity and parsimony of language constructs worked out remarkably, as evidenced by its blossoming, easy-to-use [library ecosystem](http://package.elm-lang.org), despite lacking even [type classes](https://en.wikipedia.org/wiki/Type_class), widely considered a basic construct in statically typed functional languages.
+[Elm](elm-lang.org) will serve well for this dual purpose, for the following reasons:
+- it is a small functional language specifically created for interactive browser apps
+- it has a simple but neat strong static type system
+- it employs functional reactive programming through `Signals`, a reasonable way to handle interactivity in a (mostly) pure functional setting
 
-As usual, this simplicity comes at a cost, which I will occasionally point out. The general theme is that it's sometimes hard to express static invariants of our program and have the type system enforce it.
+Elm's intentional simplicity and parsimony of language constructs worked out remarkably, as evidenced by its blossoming, easy-to-use [library ecosystem](http://package.elm-lang.org). This simplicity comes at a cost though, which I will occasionally point out.
 
 
-### Scope
+#### Scope
 
 We will limit ourselves to essential aspects of the problem. In particular, we will *not* model the following:
+
 - elevator door and door sensor
 - occupancy sensor
 - overweight sensor
@@ -37,95 +38,99 @@ We will limit ourselves to essential aspects of the problem. In particular, we w
 - lights
 - acceleration
 
-We will deal with the above by simulating ideal users: they respect the passenger limit, only enter or exit the cabin when it arrives at a platform, and never have emergencies. Also, the cabin will move at constant speed.
+We simuate Ideal users, who respect the passenger limit, only enter or exit the cabin when it arrives at a platform, and never have emergencies. Also, the cabin will move at constant speed.
 
 
-## Simple Controller
+### Simple Controller
 
 We'll start with a very simple controller, like the ones found in old apartment buildings with few floors. There is one call button on every floor and destination buttons for each floor in every lift. A lift can only be called if one is on standby, and the closest one will come. A lift can only be started if it is not busy. Otherwise, commands are ignored. When a lift arrives at a platform, it becomes available after a fixed delay.
 
-We'll start by describing the events our controller reacts to. This includes user input like `call` and `go` button presses, as well as notifications when a lift arrives at a floor, and when it is no longer busy.
+We attack the problem at the interface of language and computation: types. We directly model all of the inputs of the controller in a simple algebraic datatype. This includes user input like `call` and `go` button presses, as well as notifications when a lift arrives at a floor, and when it is no longer busy. This type defines a unique language and a universe of possible computation.
 
-```elm
+```
 type Action = Call FloorId
             | Go LiftId FloorId
             | Arrive LiftId FloorId
-            | Standby LiftId
+            | Idle LiftId
 ```
+`LiftId` and `Floorid` mean `Int`. To keep things simple, we don't make a distinction between user generated events and events that "just happen" because the state of the universe evolves. Our controller might be used incorrectly by passing Arrive or Standby events to it that weren't supposed to happen. It's the equivalent of the lift's sensors malfunctioning.
 
-To keep the types simple, we don't make a distinction between user generated events and events that "just happen". Our controller might be used incorrectly by passing Arrive and Standby events to it that weren't supposed to happen. It's the equivalent of the lift's sensors malfunctioning.
+Next, we'll model the state of our controller, that is the stuff it has to remember between events. Our simple controller only cares wether a Lift is in use, and what its destination floor is. It doesn't need to know where the lift is exactly, or where it's coming from, or what is inside, so we won't specify that for now.
 
-Next, we'll model the state of our controller, that is the stuff it has to remember between events. Our simple controller only cares wether a Lift is in use, and what its destination floor is. It doesn't need to know where the lift is exactly, or where it's coming from, or what is inside, so we won't model that. Oh and we're modeling multiple lifts.
-
-```elm
+```
 type alias Lift l = { l | busy : Bool, dest: FloorId }
 type alias State s l = { s | lifts : Array (Lift l) }
 ```
 
-Notice that we left the `Lift` and `State` types polymorphic, using extensible records. This means we can later attach any other properties to the state and to each lift (like passengers carried, or animation data) without having to modify our controller. It simply won't touch anything it doesn't know about. Also, we want to fetch and update lift states by index (`LiftId` is an alias of `Int`), so we use an immutable Array that conveniently provides such functions, instead of a List.
+Notice that we left the `Lift` and `State` types polymorphic, using extensible records. This means we can later attach any other properties to the state and to each lift (like passengers carried, or animation data) without having to modify our controller. It simply won't touch anything it doesn't know about. Also, we want to fetch and update lift states by index, so we use an immutable Array that conveniently provides such functions, instead of a List.
 
-Next is our actual controller. It is a function that applies actions to the model. It returns the updated model, and maybe a delay and an `Action` that should happen thereafter.
+Next is our actual controller. The function updates the state in response to actions, and maybe also results in an action to be scheduled for later.
 
-```elm
+```
 update : Action -> State a -> (State a, Maybe (Time.Time, Action))
 ```
 
-Once we write `update` ( see [OneController.elm](src/Lifty/OneController.elm)), we need to run it somehow. In order for things to work out, "the world" we run it in should take care of providing user actions as well as feeding back the delayed events to the controller.
+Writing `update` is fairly straightforward, as Elm provides the usual functional tools, with an unassuming and regular syntax that closely resembles SML, plus records. No do syntax or other extensions are provided. There are few combinators and infix operators in the libraries, as well as few specialized or rarely used functions, even for common data types. This keeps the libraries' surface very small and quickly comprehensible, and it's easy enough to define helpers.
 
-To test our controller, I've built a UI for such a world, extended with animations. You can play with it below. Click the green circle to call an elevator. Click a destination in an elevator shaft to send the elevator there. Floor numbers start from 0 and grow downwards, like most things in computer science. Just imagine an underground building.
+The lack of typeclasses means that common operations like mapping or filtering Sets, Lists, Arrays are implemented (or not) separately for each datatype, sometimes named inconsistently, although arguably more in line with what one would expect from the data type at hand.
 
+In order to run our controller function, we need a machine that feeds it user input as well as the delayed events it produces.
 
-""", include 240 240 "/src/Lifty/OneUI.elm", md """
-
-
-### Problems
-
-This system is woefully inefficient. In our simple building,
-* a lift can only be called when one is empty
-* lifts will not stop to pick up more passengers on the way, even if there is room
-
-In addition, it requires a "smart" user, ie. there is a lot of logic that users need to implement to be able to use the lift at all.
-* wait until a lift is in standby to press the call button
-* decide which floor to go to next, as a group, when more than one person is in the lift
-* remember which direction the lift came from, and if there are other users in it; only enter if it is going in the right direction
-
-The only smart thing the controller does is choose the nearest empty lift to service calls.
+To test the controller, I've built a visual interface using the [elm architecture](https://github.com/evancz/elm-architecture-tutorial/) built on its first-order FRP implentation in [`Signals`]() as well as  `Tasks`, `Effects`, `ports`. You can play with it below. Click the green circle to call an elevator. Click a destination in an elevator shaft to send the elevator there. Floor numbers start from 0 and grow downwards, like most things in computer science. Just imagine an underground building.
 
 
-## Simulation
+""", include 240 240 "out/OneUI.html", md """
+
+
+#### Simulation
 
 Before improving our controller, let's simulate a a building with passengers queueing up to use the lifts.
 
-```
-...
-```
-
-Unfortunately, we need to simulate the complex user behavior described above.
-We'll make it a bit easier and implement group behaviors in one function.
-
-
-Getting in and out of the cabin
- whole getting in and out of the cabin and selecting the next stop in one function that takes a floor (representing a queue of passengers) and a lift. It is called when the `Arrive` event happens and results in either the next Go command for that lift, or a Standby event.
+In addition to the controller's input, we can also add a passenger to the simulation.
 
 ```
-..............code...............
+type Action = AddPassenger FloorId FloorId
+            | Action C.Action
 ```
 
-
-In addition, waiting passengers will react to `Standby` events and call a lift. If there are passengers on multiple floors, every command is sent, here implicitly ordered starting with the lowest floor number.
+Now We compose the simulation state type and the controller state type `C.Type`
 
 ```
-................code..............
+type alias Passenger p = { p | dest: FloorId }
+
+type alias Lift l p = { l | pax : List (Passenger p) }
+
+type alias State s l p =
+  C.State { s | floors : Array (List (Passenger p)) } (Lift l (Passenger p))
 ```
 
-Here's a UI featuring passengers as blue blobs. To add a passenger, click the plus sign to the right of the starting floor, and then click the plus sign on the destination floor.
+Unfortunately, we need to simulate the complex user behavior described above, so we need an update function. The code in [OneSim.elm]() gets a bit more complex than this, although it also handles passenger animations, for which we track the indices of passengers in the queue.
 
-""", include 360 240 "/src/Lifty/OneSimUI.elm", md """
+In the `update` function, passengers react to lift sensor events: they enter and exit lifts when they `Arrive` at a floor, and send or call a lift when it becomes `Idle`.
 
-A lift holds at most 2 passengers. At most 4 passengers will wait on a floor, any more will have to use the stairs.
+Note that animations in reaction to queued events, and keeping track of time are dealt with similarly in [OneSimView.elm](), keeping things nicely separated. [OneSimUI.elm]() puts it all together, hooks up signals and ports and provides a main function.
+
+""", include 360 240 "out/OneSimUI.html", md """
+
+To add a passenger, click the plus sign to the right of the starting floor, and then click the plus sign on the destination floor.
+
+Here, A lift holds at most 2 passengers. At most 4 passengers will wait on a floor, any more would prefer the stairs.
 
 
-## Directional Controller
+#### Room for improvement
+
+This system is woefully inefficient. In our simple building,
+- a lift can only be called when one is empty
+- lifts will not stop to pick up more passengers on the way, even if there is room
+
+There is a lot of logic that users need to implement to be able to use the lift at all.
+- wait until a lift is in standby to press the call button
+- decide which floor to go to next, as a group
+
+On the language side, our nested polymorphic records have gotten somewhat entangled. Also, We can't have two modules reuse each other's type aliases when sharing a record, to avoid circular imports. We could move the types to separate modules which both import. The quick solution is to just leave off the type annotations. When correct, Elm will gladly infer the types for us and everything magically works, but it's hard for the type checker to determine where exactly a type error is in a call graph of unannotated function calls. We could also make the parts completely independent and send messages (like `Action`s) between them, but that is also cumbersome, largely negating the advantages of records.
+
+
+### Directional Controller
 
 We will now model a more advanced controller:
 - two call buttons on each floor, one for going up and one for going down
@@ -134,16 +139,11 @@ We will now model a more advanced controller:
 - lifts keeps going in one direction until there are no more stops scheduled in that direction
 - lifts make stops for each selected destination and each call that matches the direction the lift is going in
 
-This is probably the most commonly found lift controller. It increases efficiency and fairness while maintaining a simple interface. Although there are more buttons (two on each floor), it is simpler to use, so we can remove some of the passenger simulation logic. Specifically, passengers don't need to decide where the lift should go next, they just press the button for their destination when they enter the lift.
+This is probably the most commonly found type of controller. It increases efficiency and fairness while maintaining a simple interface. Although there are more buttons (two on each floor), it is simpler to use, so we can remove some of the passenger simulation logic. Specifically, passengers don't need to decide where the lift should go next, they just press the button for their destination when they enter the lift.
 
 
-...... code ........
+""", include 360 240 "out/TwoSimUI.html", md """
 
-
-
-
-
-### Problems
 
 This system is still inefficient.
 * the lift stops even when it is full
@@ -152,32 +152,25 @@ This system is still inefficient.
 
 ## Smart Controller
 
-You live in an engineering college dorm, with thousands of people moving through tens of floors. Being engineers, you and your friends set out to fix the problems above and stop wasting time and power, gaining an eco badge in the process.
+You live in an engineering college dorm, and want fix the problems above and stop wasting time and power. You realize that the inefficiencies stem from the knowledge gap between the controller and the passenger. If the lift knew where people want to go, it could calculate a more efficient itinerary. It could also skip pickups when full.
 
-You realize that the inefficiencies stem from the knowledge gap between the controller and the passenger. If the lift knew where people want to go, it could calculate a more efficient itinerary. It could also skip pickups when full.
-
-So let's tell it. We change the user interface: instead of directional calling buttons, there are buttons for each destination floor. The passenger presses the button for the floor where they want to go. When a lift arrives, a display shows which destinations it will go to. For each displayed destination, the first person in queue for that destination boards the lift. There are no controls inside the cabin (except emergency stop, which we will not model), you simply get off at your destination.
-
-It sounds a little bit complicated, but in reality it's very easy to get used to. By the way, I'm not making this up. The lift in my university's dorm works like this, saving hours of waiting time and kilowatt-hours of energy each day.
-
+So let's tell it. Interestingly, the system reduces to one kind of input:
 
 ```
-........code...........
+type Action = AddPassenger FloorId FloorId
 ```
 
-There is little change required to our passenger simulator. We can throw out even more logic
+That is, our lift controller's outer surface is the same as a simulation's. We can even reuse the UI, and get rid of call and go buttons.
 
-```
-...
-```
+The crucial difference is, the controller now gets access to the whole state in one place, including positions and destinations of all passengers. In contrast, our simple controller exchanged passengers between one floor and one lift at a time.
 
-In the spirit of skepticism, I tried to find some drawbacks of this controller. I found that usability problems arise only when the lift is used incorrectly, for example if the passenger:
-* presses the wrong destination button
-* changes her mind mid-trip
-* boards the lift when his destination is not displayed
-* forgets to disembark at the destination
+All the user needs to do is press the button for the destination when they arrive, then get in the lift when the destination shows up on a display.
 
-Our sims are fortunately "perfectly stupid", that is they can only do very simple things, but they do those perfectly.
+
+""", include 360 240 "out/SimUI.html", md """
+
+
+There is less tolerance or incorrect use, like pressing the wrong button or forgetting to get off. However, our sims are fortunately "perfectly stupid".
 
 
 ## Comparing Controllers

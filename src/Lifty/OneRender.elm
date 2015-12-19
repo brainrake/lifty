@@ -10,12 +10,8 @@ import Svg.Attributes as Sa exposing (..)
 import Svg.Events           exposing (..)
 import Html
 
-import Lifty.Util exposing (s_, f_, mapiA)
+import Lifty.Util exposing (s_, f_, mapiA, rect_)
 import Lifty.OneController as C
-
-
-rect_ x' y' w' h' a' =
-  rect (L.append [s_ x x', s_ y y', s_ width w', s_ height h'] a') []
 
 
 style_ = Html.node "style" [] [Html.text """
