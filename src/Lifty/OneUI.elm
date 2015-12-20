@@ -19,6 +19,7 @@ import Lifty.OneRender     as R
 
 type alias Action = Either Time C.Action
 
+init_state : V.State (C.State {} {}) {} ()
 init_state = { t = 0.0
              , floors = A.repeat 5 ()
              , lifts = A.repeat 2 { dest = 0, busy = False, y = static 0 } }
@@ -41,4 +42,3 @@ main = app.html
 
 port tasks : Signal (Task Never ())
 port tasks = app.tasks
-

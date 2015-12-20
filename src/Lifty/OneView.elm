@@ -6,15 +6,15 @@ import Array.Extra    as A
 import Time                exposing (Time)
 import Animation           exposing (Animation, animate)
 
-import Lifty.Util    exposing (s_, f_, mapiA, anim)
+import Lifty.Util    exposing (s_, f_, anim)
 import Lifty.OneController as C
 import Lifty.OneRender     as R
 
 
 type alias Lift l = { l | y : Animation }
 
-type alias State s l a = C.State { s | t : Time
-                                 , floors: Array a } (Lift l)
+type alias State s l f = C.State { s | t : Time
+                                     , floors: Array f } (Lift l)
 
 
 update : Time -> State s l a -> State s l a

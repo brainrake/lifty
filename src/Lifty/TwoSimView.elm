@@ -1,28 +1,30 @@
-module Lifty.OneSimView where
+module Lifty.TwoSimView where
 
 import Maybe          as M
 import List           as L
 import Array          as A   exposing (Array)
 import Array.Extra    as A
 import Time                  exposing (Time)
-import Animation      as Ani exposing (Animation, animate, retarget)
+import Either                exposing (Either(..))
+import Animation      as Ani exposing (Animation, animate, retarget, ease)
 import Effects        as E   exposing (Effects, Never)
 
 import Lifty.Util    exposing (s_, f_, izipL, anim, delay)
-import Lifty.OneController as C
-import Lifty.OneView       as V
-import Lifty.OneSim        as Sim
+import Lifty.OneController        exposing (LiftId, FloorId)
+import Lifty.TwoController as C
+import Lifty.TwoView       as V
+import Lifty.TwoSim        as Sim
 
 
 type alias Passenger p = { p | x: Animation }
 
-type Action = StartAdd C.FloorId
-            | FinishAdd C.FloorId
+type Action = StartAdd FloorId
+            | FinishAdd FloorId
             | Tick Time
 
 
 type alias State s l p = { s | t : Time
-                              , adding : Maybe C.FloorId
+                              , adding : Maybe FloorId
                               , leaving : List (Passenger p)
                               , lifts : Array l }
 
@@ -43,15 +45,16 @@ update a s = case a of
 
 
 --animate : State s l p -> State s l p -> Time -> C.Action -> State s l p
-animate s s' dt a' = case a' of
-  C.Arrive lift_id dest ->
-    let l = A.getUnsafe lift_id s.lifts
-        l' = A.getUnsafe lift_id s'.lifts
-        y = anim s'.t (f_ l.dest) (f_ l'.dest) dt
-        (ileaving, ipax') = izipL l.pax
-                            |> L.partition (\(_, p) -> p.dest == dest)
-        floor = A.getUnsafe dest s'.floors
-        floor' = floor |> L.map (\p -> {p | x = p.x})
-    in { s' | floors = A.set dest floor' s'.floors
-            , lifts = A.set lift_id { l' | y = y } s'.lifts }
-  _ -> s'
+animate dt a s a' s' =
+  let s'' = case a of
+    Sim.Action (C.Approach lift_id dest) ->
+      let l' = A.getUnsafe lift_id s'.lifts
+          y = anim (s'.t) (Ani.animate s'.t l'.y) (f_ dest) dt |> ease identity
+      in { s' | lifts = A.set lift_id { l' | y = y } s'.lifts }
+    _ -> s'
+  in case a' of
+    C.Arrive lift_id dest ->
+      let l' = A.getUnsafe lift_id s''.lifts
+          y = anim (s''.t) (Ani.animate s'.t l'.y) (f_ dest) dt |> ease identity
+      in { s'' | lifts = A.set lift_id { l' | y = y } s''.lifts }
+    _ -> s''

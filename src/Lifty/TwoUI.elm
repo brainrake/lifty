@@ -22,18 +22,19 @@ import Lifty.TwoRender     as R
 
 type alias Action = Either Time C.Action
 
+init_state : V.State (C.State {} {} ()) (C.Lift {}) ()
 init_state = { t = 0
              , calls_up = Set.fromList []
              , calls_down = Set.fromList []
              , floors = A.repeat 5 ()
              , lifts = A.repeat 2 { dests = Set.fromList []
-                                  , last = 0
+                                  , next = 0
                                   , busy = False
                                   , up = False
                                   , y = static 0 } }
 
 
---update : Action -> V.State s l a -> (V.State s l a, Effects Action)
+update : Action -> V.State s l a -> (V.State s l a, Effects Action)
 update a s = a |> elim
   (\t -> (V.update t s, E.none))
   (\a -> C.update (Debug.log "a" a) s |> \(s', ma) ->

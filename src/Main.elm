@@ -10,7 +10,7 @@ include w h s = iframe [src s, width (w+10), height (h+10), style [("border","0"
 
 main = div [] [ md """
 
-#@ Exploring Elevators
+# Exploring Elevators
 
 I was challenged to build an elevator controller. As usual, I started overthinking things a little, and so I got ~~inspired~~ an excuse to build an interactive playground for exploring the problem.
 
@@ -110,7 +110,9 @@ In the `update` function, passengers react to lift sensor events: they enter and
 
 Note that animations in reaction to queued events, and keeping track of time are dealt with similarly in [OneSimView.elm](), keeping things nicely separated. [OneSimUI.elm]() puts it all together, hooks up signals and ports and provides a main function.
 
+
 """, include 360 240 "out/OneSimUI.html", md """
+
 
 To add a passenger, click the plus sign to the right of the starting floor, and then click the plus sign on the destination floor.
 
@@ -170,7 +172,7 @@ The controller remembers call button presses until they are serviced.
 
 The `update` function in [TwoController.elm]() is somewhat more involved this time, with many edge cases to cover.
 
-
+""", include 240 240 "out/TwoUI.html", md """
 
 
 

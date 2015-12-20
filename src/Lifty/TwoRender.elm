@@ -13,13 +13,13 @@ import Svg                  exposing (svg, g, rect, circle, text', text)
 import Svg.Attributes as Sa exposing (..)
 import Svg.Events           exposing (..)
 
-import Lifty.Util exposing (f_, s_, mapiA, mapiL)
+import Lifty.Util exposing (f_, s_, imapA, rect_)
 import Lifty.TwoController as C
 import Lifty.OneRender exposing (..)
 
 
 vCallBtns a m =
-  g [] <| mapiA m.floors <| \(floor_id, _)  ->
+  g [] <| imapA m.floors <| \(floor_id, _)  ->
     g [] [ circle
             [ cx "-0.5", s_ cy (f_ floor_id + 0.72), r "0.2"
             , class (if Set.member floor_id m.calls_up then "callbtn pressed" else "callbtn")
@@ -39,13 +39,13 @@ vLiftBtn a m lift id floor_id =
         , onClick <| S.message a.address <| a.act (a.go id floor_id) ]
 
 vLifts a m =
-  g [] <| mapiA m.lifts <| \(lift_id, lift) -> g []
+  g [] <| imapA m.lifts <| \(lift_id, lift) -> g []
     [ rect_ (f_ lift_id + 0.1) 0.04  0.8 ((f_ <| A.length m.floors) - 0.04)
             [ fill "#000", opacity "0.7"]
-    , g [] <| mapiA m.floors <| \(floor_id, _) ->
+    , g [] <| imapA m.floors <| \(floor_id, _) ->
         vLiftBtn a m lift lift_id floor_id
     , vLift a m lift_id lift
-    , rect_ lift_id lift.last 0.2 0.2 [fill "red"]]
+    , rect_ lift_id lift.next 0.2 0.2 [fill "red"]]
 
 
 view act go callup calldown address m =
