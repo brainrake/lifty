@@ -8,7 +8,7 @@ import Time                  exposing (Time)
 import Animation      as Ani exposing (Animation, animate, retarget)
 import Effects        as E   exposing (Effects, Never)
 
-import Lifty.Util    exposing (s_, f_, zipiL, mapiA, anim, delay)
+import Lifty.Util    exposing (s_, f_, izipL, anim, delay)
 import Lifty.OneController as C
 import Lifty.OneView       as V
 import Lifty.OneSim        as Sim
@@ -47,8 +47,8 @@ animate s s' dt a' = case a' of
     let l = A.getUnsafe lift_id s.lifts
         l' = A.getUnsafe lift_id s'.lifts
         y = anim s'.t (f_ l.dest) (f_ l'.dest) dt
-        (ileaving, ipax') = l.pax |> zipiL
-                          |> L.partition (\(_, p) -> p.dest == dest)
+        (ileaving, ipax') = izipL l.pax
+                            |> L.partition (\(_, p) -> p.dest == dest)
         floor = A.getUnsafe dest s'.floors
         floor' = floor |> L.map (\p -> {p | x = p.x})
     in { s' | floors = A.set dest floor' s'.floors

@@ -12,10 +12,8 @@ import Svg                  exposing (svg, g, rect, circle, text', text)
 import Svg.Attributes as Sa exposing (..)
 import Svg.Events           exposing (..)
 
-import Lifty.Util exposing (mapiA, mapiL)
+import Lifty.Util exposing (s_, imapA, imapL)
 import Lifty.OneRender exposing (..)
-
-s_ f = f << toString
 
 
 vPa m p y' = g []
@@ -27,20 +25,20 @@ vPa m p y' = g []
             , fontSize "0.4", fill "#ddd" ] [text <| toString p.dest] ]
 
 vLiftPax a m =
-  g [] <| mapiA m.lifts <| \(lift_id, lift) ->
-    g [] <| mapiL lift.pax <| \(p_id, p) ->
+  g [] <| imapA m.lifts <| \(lift_id, lift) ->
+    g [] <| imapL lift.pax <| \(p_id, p) ->
       vPa m p <| animate m.t lift.y
 
 vLeavingPax a m =
   g [] <| flip L.map m.leaving <| \(p) -> vPa m p <| toFloat p.dest
 
 vFloorPax a m =
-  g [] <| mapiA m.floors <| \(floor_id, floor) ->
+  g [] <| imapA m.floors <| \(floor_id, floor) ->
     g [] <| flip L.map (L.reverse floor) <| \(p) ->
       vPa m p <| toFloat floor_id
 
 vAddPax a m =
-  g [] <| mapiA m.floors <| \(floor_id, floor) ->
+  g [] <| imapA m.floors <| \(floor_id, floor) ->
     let action = m.adding |> M.map (\_ -> a.endadd floor_id)
                           |> M.withDefault (a.startadd floor_id)
     in  g [ onClick <| S.message a.address action, Sa.cursor "pointer", class "addbtn"]

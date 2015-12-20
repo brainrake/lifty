@@ -70,7 +70,7 @@ Next is our actual controller. The function updates the state in response to act
 update : Action -> State a -> (State a, Maybe (Time.Time, Action))
 ```
 
-Writing `update` is fairly straightforward, as Elm provides the usual functional tools, with an unassuming and regular syntax that closely resembles SML, plus records. No do syntax or other extensions are provided. There are few combinators and infix operators in the libraries, as well as few specialized or rarely used functions, even for common data types. This keeps the libraries' surface very small and quickly comprehensible, and it's easy enough to define helpers.
+Writing `update` is fairly straightforward, as Elm provides the usual functional tools, with an unassuming and regular syntax that closely resembles SML, plus records. No do syntax, operator sections or other extensions are available. There are few combinators and infix operators in the libraries, as well as few specialized or rarely used functions, even for common data types. This keeps the libraries' surface very small and quickly comprehensible, and it's easy enough to define helpers.
 
 The lack of typeclasses means that common operations like mapping or filtering Sets, Lists, Arrays are implemented (or not) separately for each datatype, sometimes named inconsistently, although arguably more in line with what one would expect from the data type at hand.
 
@@ -104,7 +104,7 @@ type alias State s l p =
   C.State { s | floors : Array (List (Passenger p)) } (Lift l (Passenger p))
 ```
 
-Unfortunately, we need to simulate the complex user behavior described above, so we need an update function. The code in [OneSim.elm]() gets a bit more complex than this, although it also handles passenger animations, for which we track the indices of passengers in the queue.
+We need to simulate the user behavior described above, so we need an update function. The code in [OneSim.elm]() gets a bit more complex than this, although it also handles passenger animations, for which we track the indices of passengers in the queue.
 
 In the `update` function, passengers react to lift sensor events: they enter and exit lifts when they `Arrive` at a floor, and send or call a lift when it becomes `Idle`.
 
@@ -141,6 +141,38 @@ We will now model a more advanced controller:
 
 This is probably the most commonly found type of controller. It increases efficiency and fairness while maintaining a simple interface. Although there are more buttons (two on each floor), it is simpler to use, so we can remove some of the passenger simulation logic. Specifically, passengers don't need to decide where the lift should go next, they just press the button for their destination when they enter the lift.
 
+```
+type Action = CallUp FloorId
+            | CallDown FloorId
+            | Go LiftId FloorId
+            | Approach LiftId FloorId
+            | Arrive LiftId FloorId
+            | Idle LiftId
+```
+
+The inputs are a bit more detailed than before. `Approach` is scheduled before arriving at a floor, in time to schedule a stop and `Arrive` at the floor. The rest should be familiar.
+
+```
+type alias Lift l = { l | busy : Bool
+                        , up: Bool
+                        , next: FloorId
+                        , dests: Set FloorId }
+```
+Our lifts now also remember their directions and set of destinations (button presses inside the cabin).
+
+```
+type alias State s l = { s | lifts : Array (Lift l)
+                           , calls_up : Set FloorId
+                           , calls_down : Set FloorId}
+```
+
+The controller remembers call button presses until they are serviced.
+
+The `update` function in [TwoController.elm]() is somewhat more involved this time, with many edge cases to cover.
+
+
+
+
 
 """, include 360 240 "out/TwoSimUI.html", md """
 
@@ -150,7 +182,7 @@ This system is still inefficient.
 * TODO
 
 
-## Smart Controller
+### Smart Controller
 
 You live in an engineering college dorm, and want fix the problems above and stop wasting time and power. You realize that the inefficiencies stem from the knowledge gap between the controller and the passenger. If the lift knew where people want to go, it could calculate a more efficient itinerary. It could also skip pickups when full.
 
@@ -167,27 +199,32 @@ The crucial difference is, the controller now gets access to the whole state in 
 All the user needs to do is press the button for the destination when they arrive, then get in the lift when the destination shows up on a display.
 
 
-""", include 360 240 "out/SimUI.html", md """
+""", include 360 240 "out/AllUI.html", md """
 
 
 There is less tolerance or incorrect use, like pressing the wrong button or forgetting to get off. However, our sims are fortunately "perfectly stupid".
 
 
-## Comparing Controllers
+### Comparing Controllers
 
 We'd like to evaluate these options side by side, and see how they measure up when subjected to the same load.
 
 
+""", include 960 600 "out/AnyUI.html", md """
 
 
+#### What's missing
 
-## Challenge Ideas
+Live code editing and time-travel debugging, pending updates and a fix in `elm-reactor`.
+
+
+#### Challenge Ideas
 
 Improve the controllers and simulations by implementing acceleration. Add other features from the Scope section.
 
 Try to optimize wait time by sending empty elevators to predefined positions determined by analyzing traffic, at the expense of power use.
 
-## Space Challenge
+#### Space Challenge
 
 You are building a one million km long space lift that can accelerate to 0.5c. Build a controller that minimizes travel time, accounting for relativistic time dilation.
 """ ]

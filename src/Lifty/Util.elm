@@ -16,10 +16,10 @@ s_ f = f << toString
 
 f_ = toFloat
 
-zipiL l = A.toIndexedList (A.fromList l)
-zipiA l = A.toIndexedList l
-mapiL l f = L.map f (zipiL l)
-mapiA l f = L.map f (zipiA l)
+izipL l = A.toIndexedList (A.fromList l)
+izipA l = A.toIndexedList l
+imapL l f = L.map f (izipL l)
+imapA l f = L.map f (izipA l)
 
 anim start from to duration =
   Ani.animation start |> Ani.from from |> Ani.to to |> Ani.duration duration

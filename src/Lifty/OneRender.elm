@@ -10,7 +10,7 @@ import Svg.Attributes as Sa exposing (..)
 import Svg.Events           exposing (..)
 import Html
 
-import Lifty.Util exposing (s_, f_, mapiA, rect_)
+import Lifty.Util exposing (s_, f_, imapA, rect_)
 import Lifty.OneController as C
 
 
@@ -24,14 +24,14 @@ svg { user-select: none; }
 """]
 
 vCallBtns a m =
-  g [] <| mapiA m.floors <| \(floor_id, _)  -> circle
+  g [] <| imapA m.floors <| \(floor_id, _)  -> circle
     [ class "callbtn", cx "-0.5", s_ cy (f_ floor_id + 0.5), r "0.2"
     , Sa.cursor "pointer"
     , onClick <| S.message a.address <| a.act (a.call floor_id) ] []
 
 vFloors a m = g []
   [ rect_ (-2) (f_ <| A.length m.floors) 0 0.04 [width "100%", fill "white"]
-  , g [] <| mapiA m.floors <| \(floor_id, _)  -> g []
+  , g [] <| imapA m.floors <| \(floor_id, _)  -> g []
     [ rect_ (-2) (f_ floor_id) 0 0.04 [width "100%", fill "white"]
     , text' [s_ x (-1.6), s_ y (f_ floor_id + 0.7), fontSize "0.5", fill "white"]
             [s_ text floor_id] ]]
@@ -52,10 +52,10 @@ vLift a m lift_id lift = g []
 
 
 vLifts a m =
-  g [] <| mapiA m.lifts <| \(lift_id, lift) -> g []
+  g [] <| imapA m.lifts <| \(lift_id, lift) -> g []
     [ rect_ (f_ lift_id + 0.1) 0.04  0.8 ((f_ <| A.length m.floors) - 0.04)
             [ fill "#000", opacity "0.7"]
-    , g [] <| mapiA m.floors <| \(floor_id, _) ->
+    , g [] <| imapA m.floors <| \(floor_id, _) ->
         vLiftBtn a m lift lift_id floor_id
     , vLift a m lift_id lift ]
 

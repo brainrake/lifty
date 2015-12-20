@@ -15,7 +15,7 @@ import Time                exposing (Time)
 import Effects      as E   exposing (Effects)
 import Animation    as Ani exposing (Animation, static, retarget)
 
-import Lifty.Util    exposing (f_, zipiL, zipiA, mapiL, mapiA, delay, schedule)
+import Lifty.Util    exposing (f_, izipL, izipA, imapL, schedule)
 import Lifty.OneController as C exposing (LiftId)
 
 
@@ -47,22 +47,22 @@ update action s = case action of
             , Nothing, E.task <| Task.succeed <| Action <| C.Call src)
        else (s, Nothing, E.none)
   Action a -> case C.update (Debug.log "Action" a) s of (s', ma) -> case a of
-    C.Arrive lift_id floor_id ->  (arrive lift_id floor_id s, ma, schedule_ ma)
-    C.Idle lift_id -> idle lift_id ma s
+    C.Arrive lift_id floor_id ->  (arrive lift_id floor_id s', ma, schedule_ ma)
+    C.Idle lift_id -> idle lift_id ma s'
     _ -> (s', ma, schedule_ ma)
 
 arrive lift_id floor_id s = let
   floor = A.getUnsafe floor_id s.floors
   lift = A.getUnsafe lift_id s.lifts
-  (i'leaving, i'pax) = lift.pax |> zipiL
+  (i'leaving, i'pax) = lift.pax |> izipL
                      |> L.partition (\(_, p) -> p.dest == floor_id)
   spaces = lift_cap - L.length i'pax
-  i'floor = L.reverse <| zipiL floor
+  i'floor = L.reverse <| izipL floor
   (i'entering, i'floor') = ( L.take spaces i'floor, L.drop spaces i'floor)
   i'pax' = L.append i'pax i'entering
-  pax' =  mapiL i'pax' <| \(new, (old, p)) ->
+  pax' =  imapL i'pax' <| \(new, (old, p)) ->
     { p | x = retarget s.t (f_ lift_id + (f_ new) / 3) p.x }
-  floor' = L.reverse (mapiL (i'floor') <| \(new, (old, p)) ->
+  floor' = L.reverse (imapL (i'floor') <| \(new, (old, p)) ->
     { p | x = retarget s.t (2 + (f_ new) / 3) p.x})
   leaving' = i'leaving |> L.map (\(_, p) ->
     { p | x = retarget s.t (-3) p.x })
@@ -75,7 +75,7 @@ arrive lift_id floor_id s = let
 idle lift_id ma s = let
   l = A.getUnsafe lift_id s.lifts
   in if L.isEmpty l.pax
-     then ( zipiA s.floors
+     then ( izipA s.floors
             |> L.filter (\(_, floor) -> not (L.isEmpty floor))
             |> L.head |> M.map (\(floor_id, _) ->
               case update (Action (C.Call floor_id)) s of

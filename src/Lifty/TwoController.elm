@@ -22,7 +22,7 @@ type Action = CallUp FloorId
 
 type alias Lift l = { l | busy : Bool
                         , up: Bool
-                        , last: FloorId
+                        , next: FloorId
                         , dests: Set FloorId }
 
 type alias State s l = { s | lifts : Array (Lift l)
@@ -37,8 +37,8 @@ is_coming : Int -> Bool -> State s l -> Bool
 is_coming floor_id up s =
   s.lifts |> A.filter (not << .busy)
           |> A.filter (\l -> (l.busy)
-                          && ((not up) && l.last > floor_id && (not l.up))
-                          || ((    up) && l.last < floor_id && (    l.up)))
+                          && ((not up) && l.next >= floor_id && (not l.up))
+                          || ((    up) && l.next <= floor_id && (    l.up)))
           |> not << A.isEmpty
 
 find_idle dest s =
@@ -65,21 +65,7 @@ start lift_id l dest s =
            { l | busy = True, up = dest > l.last}) s.lifts }
        , Just (0, Approach lift_id (next_in_dir l.last (dest > l.last)) ) )
 
-approach lift_id l floor_id s =
-  let s' = s --{ s | lifts = A.set lift_id { l | last = floor_id } s.lifts }
-  in if at_end floor_id s
-     --|| next_dest src
-     then (s', Just (move_delay, Arrive lift_id floor_id))
-     else (s', Just (move_delay, Approach lift_id (next_in_dir floor_id l.up)))
 
-
-call floor_id up s =
-  let s' = if up then { s | calls_up = insert floor_id s.calls_up}
-                 else { s | calls_down = insert floor_id s.calls_down}
-  in if is_coming floor_id up s then (s', Nothing)
-     else ( find_idle floor_id s'
-            |> M.map (\(lift_id, l) -> start lift_id l floor_id s')
-          ) ? (s', Nothing)
 
 --update : Action -> State s l -> (State s l, Maybe (Time.Time, Action))
 update action s = case action of
@@ -105,4 +91,19 @@ update action s = case action of
     in ( next_dest l'.last l'.up l s
          |> M.map (\dest -> start lift_id l' dest s)
        ) ? (s', Nothing)
+
+call floor_id up s =
+  let s' = if up then { s | calls_up = insert floor_id s.calls_up}
+                 else { s | calls_down = insert floor_id s.calls_down}
+  in if is_coming floor_id up s then (s', Nothing)
+     else ( find_idle floor_id s'
+            |> M.map (\(lift_id, l) -> start lift_id l floor_id s')
+          ) ? (s', Nothing)
+
+approach lift_id l floor_id s =
+  let s' = s --{ s | lifts = A.set lift_id { l | last = floor_id } s.lifts }
+  in if at_end floor_id s
+     --|| next_dest src
+     then (s', Just (move_delay, Arrive lift_id floor_id))
+     else (s', Just (move_delay, Approach lift_id (next_in_dir floor_id l.up)))
 
