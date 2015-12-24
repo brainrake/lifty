@@ -14664,7 +14664,12 @@ Elm.Lifty.OneSimView.make = function (_elm) {
       var old_leaving = _p0._1;
       var new_leaving$ = A2($List.map,
       function (p) {
-         return _U.update(p,{x: A3($Animation.retarget,s.t,-3,p.x)});
+         return _U.update(p,
+         {x: A4($Lifty$Util.anim,
+         s$.t,
+         A2($Animation.animate,s$.t,p.x),
+         -10,
+         1000)});
       },
       new_leaving);
       var leaving$ = A2($List.append,new_leaving$,old_leaving);

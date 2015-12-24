@@ -15354,7 +15354,7 @@ Elm.Lifty.TwoSimRender.make = function (_elm) {
          return _U.list([A2($Svg.circle,
          _U.list([A2($Lifty$Util.s_,
                  $Svg$Attributes.cx,
-                 2.6 + $Lifty$Util.f_($Array.length(m.floors)))
+                 2.6 + $Lifty$Util.f_($Array.length(m.lifts)))
                  ,A2($Lifty$Util.s_,
                  $Svg$Attributes.cy,
                  0.69 + $Lifty$Util.f_(floor_id))
@@ -16105,7 +16105,12 @@ Elm.Lifty.OneSimView.make = function (_elm) {
       var old_leaving = _p0._1;
       var new_leaving$ = A2($List.map,
       function (p) {
-         return _U.update(p,{x: A3($Animation.retarget,s.t,-3,p.x)});
+         return _U.update(p,
+         {x: A4($Lifty$Util.anim,
+         s$.t,
+         A2($Animation.animate,s$.t,p.x),
+         -10,
+         1000)});
       },
       new_leaving);
       var leaving$ = A2($List.append,new_leaving$,old_leaving);
