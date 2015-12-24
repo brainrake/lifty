@@ -30,7 +30,7 @@ init_state = { t = 0
              , lifts = A.repeat 2 { dests = Set.fromList []
                                   , next = 0
                                   , busy = False
-                                  , up = False
+                                  , up = True
                                   , y = static 0 } }
 
 

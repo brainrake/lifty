@@ -12,7 +12,7 @@ import Svg                  exposing (svg, g, rect, circle, text', text)
 import Svg.Attributes as Sa exposing (..)
 import Svg.Events           exposing (..)
 
-import Lifty.Util           exposing (s_, imapA, imapL)
+import Lifty.Util           exposing (s_, f_, imapA, imapL)
 import Lifty.OneRender      exposing (..)
 import Lifty.TwoRender as R exposing (..)
 --import Lifty.TwoSimRender exposing (..)
@@ -32,33 +32,36 @@ vLiftPax a m =
       vPa m p <| animate m.t lift.y
 
 vLeavingPax a m =
-  g [] <| flip L.map m.leaving <| \(p) -> vPa m p <| toFloat p.dest
+  g [] <| flip L.map m.leaving <| \(p) -> vPa m p <| f_ p.dest
 
 vFloorPax a m =
   g [] <| imapA m.floors <| \(floor_id, floor) ->
     g [] <| flip L.map (L.reverse floor) <| \(p) ->
-      vPa m p <| toFloat floor_id
+      vPa m p <| f_ floor_id
 
 vAddPax a m =
   g [] <| imapA m.floors <| \(floor_id, floor) ->
     let action = m.adding |> M.map (\_ -> a.endadd floor_id)
                           |> M.withDefault (a.startadd floor_id)
-    in  g [ onClick <| S.message a.address action, Sa.cursor "pointer", class "addbtn"]
-          [ circle [ s_ cx 4.6, s_ cy (0.69 + toFloat floor_id), r "0.3"
+    in  g [ onClick <| S.message a.address action
+          , Sa.cursor "pointer", class "addbtn"]
+          [ circle [ s_ cx (2.6 + f_ (A.length m.floors))
+                   , s_ cy (0.69 + (f_ floor_id)), r "0.3"
                    , fill "#888", strokeWidth "0.02"] []
-          , text' [ s_ x 4.47, s_ y (0.82 + toFloat floor_id)
+          , text' [ s_ x (2.47 + f_ (A.length m.floors))
+                  , s_ y (0.82 + (f_ floor_id))
                   , fontSize "0.4", fill "#ddd" ] [text "+"] ]
 
 vAddingPax a m =
   g [] <| M.withDefault [] <| flip M.map m.adding <| \(floor_id) ->
-    [ circle [ s_ cx (4.6), s_ cy (0.69 + (toFloat floor_id))
+    [ circle [ s_ cx (2.6 + f_ (A.length m.floors)), s_ cy (0.69 + (f_ floor_id))
              , r "0.3", fill "#08f", stroke "#444", strokeWidth "0.02"] [] ]
 
 
 view act go callup calldown startadd endadd address m =
   let a = { act = act, go = go, callup = callup, calldown = calldown, startadd = startadd, endadd = endadd, address = address }
-      w = 2 + 3 + toFloat (A.length m.lifts)
-      h = 1 + toFloat (A.length m.floors)
+      w = 2 + 3 + f_ (A.length m.lifts)
+      h = 1 + f_ (A.length m.floors)
   in Html.div [] [style_, svg
     [ x "0", y "0", s_ width (40 * w) , s_ height (40 * h)
     , vbox (-2) (-0.5) w h ]

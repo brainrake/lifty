@@ -21,7 +21,7 @@
   <script>
     hljs.configure({languages: ["elm"]});
     hljs.initHighlightingOnLoad();
-    Elm.embed(Elm.Main, document.getElementById("ct"));
+    window.main = Elm.embed(Elm.Main, document.getElementById("ct"));
   </script>
 </body>
 </html>

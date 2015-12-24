@@ -11,6 +11,7 @@ import Effects        as E   exposing (Effects, Never)
 
 import Lifty.Util    exposing (s_, f_, izipL, anim, delay)
 import Lifty.OneController        exposing (LiftId, FloorId)
+import Lifty.OneSimView    as OneSimView
 import Lifty.TwoController as C
 import Lifty.TwoView       as V
 import Lifty.TwoSim        as Sim
@@ -23,20 +24,20 @@ type Action = StartAdd FloorId
             | Tick Time
 
 
-type alias State s l p = { s | t : Time
-                              , adding : Maybe FloorId
-                              , leaving : List (Passenger p)
-                              , lifts : Array l }
+type alias State s l p = Sim.State { s | t : Time
+                                       , adding : Maybe FloorId
+                                       , floors : Array (List (Passenger p))
+                                       , lifts : Array l } l (Passenger p)
 
 
--- update : Action -> State s l p -> (State s l p, Effects (Sim.Action p))
+--update : Action -> State s l p -> (State s l p, Effects (Sim.Action (Passenger p)))
 update a s = case a of
   StartAdd src -> ({ s | adding = Just src }, E.none)
   FinishAdd dest ->
     s.adding
     |> M.map (\src ->
       let floor = (A.getUnsafe src s.floors)
-          x = anim s.t 4.3  (2 + (f_ <| L.length floor) / 3) 500
+          x = anim s.t (2.3 + f_ (A.length s.floors))  (2 + (f_ <| L.length floor) / 3) 500
       in Sim.update (Sim.AddPassenger src dest { x = x, dest = dest })
                     { s | adding = Nothing }
     |> \(s, ma, e) -> (s, e))
@@ -44,13 +45,15 @@ update a s = case a of
   Tick t -> (V.update t s, E.none)
 
 
---animate : State s l p -> State s l p -> Time -> C.Action -> State s l p
+-- animate : Time -> Sim.Action p -> State s l p -> C.Action -> State s l p -> State s l p
 animate dt a s a' s' =
   let s'' = case a of
     Sim.Action (C.Approach lift_id dest) ->
       let l' = A.getUnsafe lift_id s'.lifts
           y = anim (s'.t) (Ani.animate s'.t l'.y) (f_ dest) dt |> ease identity
       in { s' | lifts = A.set lift_id { l' | y = y } s'.lifts }
+    Sim.Action (C.Arrive lift_id floor_id) ->
+      OneSimView.animate_arrived lift_id floor_id s s'
     _ -> s'
   in case a' of
     C.Arrive lift_id dest ->

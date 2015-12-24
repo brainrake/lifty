@@ -2,7 +2,7 @@ module Lifty.OneUI where
 
 import Maybe         as M
 import Maybe.Extra          exposing ((?))
-import Array         as A
+import Array         as A   exposing (Array)
 import Task                 exposing (Task)
 import Time                 exposing (Time)
 import Signal        as S
@@ -19,12 +19,14 @@ import Lifty.OneRender     as R
 
 type alias Action = Either Time C.Action
 
-init_state : V.State (C.State {} {}) {} ()
+type alias State = V.State (C.State { floors : Array () } {}) (C.Lift {})
+
+init_state : State
 init_state = { t = 0.0
              , floors = A.repeat 5 ()
              , lifts = A.repeat 2 { dest = 0, busy = False, y = static 0 } }
 
-update : Action -> V.State s l a -> (V.State s l a, Effects Action)
+update : Action -> State -> (State, Effects Action)
 update a s = a |> elim
   (\t -> (V.update t s, E.none))
   (\a -> C.update a s |> \(s', ma) ->

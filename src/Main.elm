@@ -181,30 +181,7 @@ The `update` function in [TwoController.elm]() is somewhat more involved this ti
 
 This system is still inefficient.
 * the lift stops even when it is full
-* TODO
-
-
-### Smart Controller
-
-You live in an engineering college dorm, and want fix the problems above and stop wasting time and power. You realize that the inefficiencies stem from the knowledge gap between the controller and the passenger. If the lift knew where people want to go, it could calculate a more efficient itinerary. It could also skip pickups when full.
-
-So let's tell it. Interestingly, the system reduces to one kind of input:
-
-```
-type Action = AddPassenger FloorId FloorId
-```
-
-That is, our lift controller's outer surface is the same as a simulation's. We can even reuse the UI, and get rid of call and go buttons.
-
-The crucial difference is, the controller now gets access to the whole state in one place, including positions and destinations of all passengers. In contrast, our simple controller exchanged passengers between one floor and one lift at a time.
-
-All the user needs to do is press the button for the destination when they arrive, then get in the lift when the destination shows up on a display.
-
-
-""", include 360 240 "out/AllUI.html", md """
-
-
-There is less tolerance or incorrect use, like pressing the wrong button or forgetting to get off. However, our sims are fortunately "perfectly stupid".
+* it is unfair: if the lift always fills up on the ground floor, noone on the first floor can ever go up
 
 
 ### Comparing Controllers
@@ -212,7 +189,7 @@ There is less tolerance or incorrect use, like pressing the wrong button or forg
 We'd like to evaluate these options side by side, and see how they measure up when subjected to the same load.
 
 
-""", include 960 600 "out/AnyUI.html", md """
+""", include 960 600 "out/CompareUI.html", md """
 
 
 #### What's missing
@@ -228,5 +205,5 @@ Try to optimize wait time by sending empty elevators to predefined positions det
 
 #### Space Challenge
 
-You are building a one million km long space lift that can accelerate to 0.5c. Build a controller that minimizes travel time, accounting for relativistic time dilation.
+You are building a one million km long space lift that can accelerate to 0.5c. Build a controller that minimizes total experienced (proper) travel time, accounting for relativistic time dilation.
 """ ]

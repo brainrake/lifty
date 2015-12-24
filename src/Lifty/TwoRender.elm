@@ -44,15 +44,14 @@ vLifts a m =
             [ fill "#000", opacity "0.7"]
     , g [] <| imapA m.floors <| \(floor_id, _) ->
         vLiftBtn a m lift lift_id floor_id
-    , vLift a m lift_id lift
-    , rect_ lift_id lift.next 0.2 0.2 [fill "red"]]
+    , rect_ (0.45 + f_ lift_id) (0.55 + f_ lift.next) 0.1 0.1 [fill "#444"]
+    , vLift a m lift_id lift ]
 
 
 view act go callup calldown address m =
   let a = { act = act, go = go, callup = callup, calldown = calldown, address = address }
       w = 2 + f_ (A.length m.lifts)
       h = 1 + f_ (A.length m.floors)
-      --_ = Debug.log "floors" <| toString m.floors
   in Html.div [] [style_, svg
     [ x "0", y "0", s_ width (40 * w) , s_ height (40 * h)
     , vbox (-2) (-0.5) w h ]

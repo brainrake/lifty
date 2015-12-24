@@ -1,9 +1,11 @@
-module Lifty.OneSimRender where
+module Lifty.AllRender where
 
 import Debug
 import String               exposing (join)
 import Maybe          as M
+import Maybe.Extra    as M  exposing ((?))
 import List           as L
+import List.Extra     as L
 import Array          as A
 import Signal         as S
 import Animation            exposing (animate)
@@ -12,8 +14,9 @@ import Svg                  exposing (svg, g, rect, circle, text', text)
 import Svg.Attributes as Sa exposing (..)
 import Svg.Events           exposing (..)
 
-import Lifty.Util exposing (s_, f_, imapA, imapL)
+import Lifty.Util exposing (s_, f_, imapA, imapL, rect_)
 import Lifty.OneRender exposing (..)
+import Lifty.OneSimRender exposing (..)
 
 
 vPa s p y' = g []
@@ -22,20 +25,21 @@ vPa s p y' = g []
              , r "0.3", fill "#08f", stroke "#444", strokeWidth "0.02"] []
     , text' [ s_ x (0.16 + animate s.t p.x)
             , s_ y (0.82 + y')
-            , fontSize "0.4", fill "#ddd" ] [text <| toString p.dest] ]
+            , fontSize "0.4", fill "#ddd" ] [text <| toString p.dest]
+    , text' [ s_ x (0.1 + animate s.t p.x)
+            , s_ y (0.6 + y')
+            , fontSize "0.3", fill "#ddd" ] [text <| (p.mlift |> M.map (\i -> toString i)) ? "."] ]
+
+vFloorPax a s =
+  let floors = L.groupBy (\p1 p2 -> p1.src == p2.src) s.pax
+  in g [] <| imapL floors <| \(_, floor) ->
+    g [] <| flip L.map (L.reverse floor) <| \(p) ->
+      vPa s p <| toFloat (p.src)
 
 vLiftPax a s =
   g [] <| imapA s.lifts <| \(lift_id, lift) ->
     g [] <| imapL lift.pax <| \(p_id, p) ->
       vPa s p <| animate s.t lift.y
-
-vLeavingPax a s =
-  g [] <| flip L.map s.leaving <| \(p) -> vPa s p <| toFloat p.dest
-
-vFloorPax a s =
-  g [] <| imapA s.floors <| \(floor_id, floor) ->
-    g [] <| flip L.map (L.reverse floor) <| \(p) ->
-      vPa s p <| toFloat floor_id
 
 vAddPax a s =
   g [] <| imapA s.floors <| \(floor_id, floor) ->
@@ -53,8 +57,14 @@ vAddingPax a s =
              , r "0.3", fill "#08f", stroke "#444", strokeWidth "0.02"] [] ]
 
 
-view act go call startadd endadd address s =
-  let a = { act = act, go = go, call = call, startadd = startadd, endadd = endadd, address = address }
+vLifts a s =
+  g [] <| imapA s.lifts <| \(lift_id, lift) -> g []
+    [ rect_ (f_ lift_id + 0.1) 0.04  0.8 ((f_ <| A.length s.floors) - 0.04)
+            [ fill "#000", opacity "0.7"]
+    , vLift a s lift_id lift ]
+
+view startadd endadd address s =
+  let a = { startadd = startadd, endadd = endadd, address = address }
       w = 2 + 3 + toFloat (A.length s.lifts)
       h = 1 + toFloat (A.length s.floors)
   in Html.div [] [style_, svg
@@ -62,7 +72,6 @@ view act go call startadd endadd address s =
     , vbox (-2) (-0.5) w h ]
     [ vBg
     , vFloors a s
-    , vCallBtns a s
     , vLifts a s
     , vAddPax a s
     , vAddingPax a s

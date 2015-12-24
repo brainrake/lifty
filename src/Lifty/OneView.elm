@@ -7,22 +7,23 @@ import Time                exposing (Time)
 import Animation           exposing (Animation, animate)
 
 import Lifty.Util    exposing (s_, f_, anim)
-import Lifty.OneController as C
+import Lifty.OneController as C exposing (FloorId)
 import Lifty.OneRender     as R
 
 
-type alias Lift l = { l | y : Animation }
+type alias Lift l = { l | y : Animation
+                        , dest : FloorId }
 
-type alias State s l f = C.State { s | t : Time
-                                     , floors: Array f } (Lift l)
+type alias State s l = { s | t : Time
+                           , lifts : Array (Lift l) }
 
 
-update : Time -> State s l a -> State s l a
+update : Time -> State s l -> State s l
 update t s = { s | t = t }
 
-animate : Time -> State s l a -> C.Action -> State s l a -> State s l a
+animate : Time -> State s l -> C.Action -> State s l -> State s l
 animate dt s a' s' = case a' of
-  C.Arrive lift_id dest ->
+  C.Arrive lift_id floor_id ->
     let l = A.getUnsafe lift_id s.lifts
         l' = A.getUnsafe lift_id s'.lifts
         y = anim s'.t (f_ l.dest) (f_ l'.dest) dt

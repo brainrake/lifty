@@ -18,9 +18,13 @@ import Lifty.OneSimView    as V
 import Lifty.OneSimRender  as R
 
 
-type alias Action p = Either (V.Action p) (Sim.Action p)
+type alias Passenger = V.Passenger {}
 
+type alias Action = Either (V.Action) (Sim.Action Passenger)
 
+type alias State = V.State (Sim.State (C.State {} {}) {} {}) {} {}
+
+init_state : State
 init_state =
   { t = 0
   , floors = A.repeat 5 []
@@ -28,11 +32,11 @@ init_state =
   , adding = Nothing
   , leaving = [] }
 
---update : Action p -> V.State s l p -> (V.State s l p, Effects (Action p))
+--update : Action -> State -> (State, Effects (Action))
 update a s = a |> elim
   (\a -> V.update a s |> \(s', e) -> (s', E.map Right e))
   (\a -> Sim.update a s |> \(s', ma, e) ->
-    ( ma |> M.map (\(dt, a') -> (V.animate s s' dt a', E.map Right e))
+    ( ma |> M.map (\(dt, a') -> (V.animate dt s a s' a', E.map Right e))
     ) ? (s', E.map Right e) )
 
 app = StartApp.start
