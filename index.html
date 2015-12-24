@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title></title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.6/darkly/bootstrap.min.css"/>
+<link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+<style>
+  code {background-color: #282b2e;; color: #e0e2e4; font-family: Source Code Pro !important}
+  a code {color: #0ce3ac;}
+  pre {background-color: #282b2e; border: 0;}
+  pre code {color: #e0e2e4}
+  pre code span {font-weight: normal !important;}
+</style>
+<link rel="stylesheet" href="/assets/highlight.css"/>
+</head>
+<body>
+  <div id="ct" class="container"></div>
+  <br/><br/><br/><br/><br/><br/>
+  <script src="/assets/highlight.pack.js"></script>
+  <script src="/out/Main.js"></script>
+  <script>
+    hljs.configure({languages: ["elm"]});
+    hljs.initHighlightingOnLoad();
+    window.main = Elm.embed(Elm.Main, document.getElementById("ct"));
+  </script>
+</body>
+</html>
