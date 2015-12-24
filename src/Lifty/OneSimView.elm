@@ -75,6 +75,6 @@ animate_arrived lift_id floor_id s s' = let
   ldiff = L.length s'.leaving - L.length s.leaving
   (new_leaving, old_leaving) = L.splitAt ldiff s'.leaving
   new_leaving' = new_leaving |> L.map (\p ->
-    { p | x = retarget s.t (-3) p.x })
+    { p | x = anim s'.t (Ani.animate s'.t p.x) (-10) 1000 })
   leaving' = L.append new_leaving' old_leaving
   in { s' | lifts = lifts', floors = floors', leaving = leaving' }

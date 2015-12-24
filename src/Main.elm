@@ -77,7 +77,7 @@ The lack of typeclasses means that common operations like mapping or filtering S
 
 In order to run our controller function, we need a machine that feeds it user input as well as the delayed events it produces.
 
-To test the controller, I've built a visual interface using the [elm architecture](https://github.com/evancz/elm-architecture-tutorial/) built on its first-order FRP implentation in [`Signals`]() as well as  `Tasks`, `Effects`, `ports`. You can play with it below. Click the green circle to call an elevator. Click a destination in an elevator shaft to send the elevator there. Floor numbers start from 0 and grow downwards, like most things in computer science. Just imagine an underground building.
+To test the controller, I've built a visual interface using the [elm architecture](https://github.com/evancz/elm-architecture-tutorial/) using its first-order FRP implentation in [`Signals`]() as well as  `Tasks`, `Effects`, `ports` etc. You can play with it below. Click the green circle to call an elevator. Click a destination in an elevator shaft to send the elevator there. Floor numbers start from 0 and grow downwards, like most things in computer science. Just imagine an underground building.
 
 
 """, include 240 240 "out/OneUI.html", md """
@@ -105,11 +105,11 @@ type alias State s l p =
   C.State { s | floors : Array (List (Passenger p)) } (Lift l (Passenger p))
 ```
 
-We need to simulate the user behavior described above, so we need an update function. The code in [OneSim.elm]() gets a bit more complex than this, although it also handles passenger animations, for which we track the indices of passengers in the queue.
+We need to simulate the user behavior described above, so we need an update function. The code in [OneSim.elm](https://github.com/brainrape/lifty/blob/master/src/Lifty/OneSim.elm) gets a bit more complex than this, although it also handles passenger animations, for which we track the indices of passengers in the queue.
 
 In the `update` function, passengers react to lift sensor events: they enter and exit lifts when they `Arrive` at a floor, and send or call a lift when it becomes `Idle`.
 
-Note that animations in reaction to queued events, and keeping track of time are dealt with similarly in [OneSimView.elm](), keeping things nicely separated. [OneSimUI.elm]() puts it all together, hooks up signals and ports and provides a main function.
+Note that animations in reaction to queued events, and keeping track of time are dealt with similarly in [OneSimView.elm](https://github.com/brainrape/lifty/blob/master/src/Lifty/OneSimView.elm), keeping things nicely separated. [OneSimUI.elm](https://github.com/brainrape/lifty/blob/master/src/Lifty/OneSimUI.elm) puts it all together, hooks up signals and ports and provides a main function.
 
 
 """, include 360 240 "out/OneSimUI.html", md """
@@ -171,7 +171,7 @@ type alias State s l = { s | lifts : Array (Lift l)
 
 The controller remembers call button presses until they are serviced.
 
-The `update` function in [TwoController.elm]() is somewhat more involved this time, with many edge cases to cover. Here's the result:
+The `update` function in [TwoController.elm](https://github.com/brainrape/lifty/blob/master/src/Lifty/TwoController.elm) is somewhat more involved this time, with many edge cases to cover. Here's the result:
 
 """, include 240 240 "out/TwoUI.html", md """
 
@@ -182,7 +182,7 @@ To build a simulation, we can remove some of the passenger logic from OneSim.
 
 This system is still inefficient.
 * the lift stops even when it is full
-* it is unfair: if the lift always fills up on the ground floor, noone on the first floor can ever go up
+* it is unfair: if the lift always fills up on the ground floor, no one on the first floor can ever go up
 
 
 ### Comparing Controllers
@@ -192,12 +192,14 @@ We'd like to evaluate these options side by side, and see how they measure up wh
 
 """, include 600 224 "out/CompareUI.html", md """
 
+It looks like the second controller is somewhat slower in this configuration, because it stops all the time when full.
+
 
 #### What's missing
 
 * live code editing and time-travel debugging, pending updates and fixes in `elm-reactor`
 * improved visuals
-* simulation speed control
+* more simulation parameter controls (speed, number of floors/lifts)
 
 #### Challenge Ideas
 

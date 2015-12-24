@@ -54,7 +54,7 @@ vAddPax a m =
 
 vAddingPax a m =
   g [] <| M.withDefault [] <| flip M.map m.adding <| \(floor_id) ->
-    [ circle [ s_ cx (2.6 + f_ (A.length m.floors)), s_ cy (0.69 + (f_ floor_id))
+    [ circle [ s_ cx (2.6 + f_ (A.length m.lifts)), s_ cy (0.69 + (f_ floor_id))
              , r "0.3", fill "#08f", stroke "#444", strokeWidth "0.02"] [] ]
 
 
