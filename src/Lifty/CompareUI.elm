@@ -35,7 +35,8 @@ type Action p = StartAdd FloorId
               | Action1 (Sim1.Action p)
               | Action2 (Sim2.Action p)
               | Tick Time
-              | Pax Time
+              | AddRandom Time
+              | ToggleRandom
 
 init_state1 =
   { t = 0
@@ -62,7 +63,8 @@ init_state = { s1 = init_state1
              , s2 = init_state2
              , adding = Nothing
              , src_seed = Random.initialSeed 0
-             , dest_seed = Random.initialSeed 1}
+             , dest_seed = Random.initialSeed 1
+             , random_enabled = True }
 
 
 update_sim1 a s =
@@ -103,21 +105,23 @@ update a s = case a of
     s' = { s | s1 = { s1' | leaving = s1'.leaving |> clearLeaving }
              , s2 = { s2' | leaving = s2'.leaving |> clearLeaving } }
     in (s', E.batch [E.map Action1 e1, E.map Action2 e2])
-  Pax t ->
+  AddRandom t ->
     let _ = Debug.log "Pax" t in
-    if M.isJust s.adding then (s, E.none) else let
+    if M.isJust s.adding || not s.random_enabled then (s, E.none) else let
     (src, src_seed) = Random.generate (Random.int 0 9) s.src_seed
     (dest, dest_seed) = Random.generate (Random.int 0 9) s.dest_seed
     _ = Debug.log "Paxx" (src, dest)
     s' = { s | src_seed = src_seed, dest_seed = dest_seed}
     in if src /= dest then update (AddPassenger src dest) s' else (s', E.none)
+  ToggleRandom ->
+    ({ s | random_enabled = not s.random_enabled }, E.none)
 
 app = StartApp.start
   { init = (init_state, E.none)
   , view = R.view (Action1 << Sim1.Action) StartAdd EndAdd
   , update = update
   , inputs = [ Time.fps 30 |> S.foldp (+) 0 |> S.map Tick,
-               Time.fps  1 |> S.foldp (+) 0 |> S.map Pax ] }
+               Time.fps  1 |> S.foldp (+) 0 |> S.map AddRandom ] }
 
 main = app.html
 

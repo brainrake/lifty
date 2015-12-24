@@ -10,7 +10,7 @@ include w h s = iframe [src s, width (w+10), height (h+10), style [("border","0"
 
 main = div [] [ md """
 
-# Exploring Elevators
+## Exploring Elevators
 
 I was challenged to build an elevator controller. As usual, I started overthinking things a little, and so I got ~~inspired~~ an excuse to build an interactive playground for exploring the problem.
 
@@ -58,7 +58,8 @@ type Action = Call FloorId
 Next, we'll model the state of our controller, that is the stuff it has to remember between events. Our simple controller only cares wether a Lift is in use, and what its destination floor is. It doesn't need to know where the lift is exactly, or where it's coming from, or what is inside, so we won't specify that for now.
 
 ```
-type alias Lift l = { l | busy : Bool, dest: FloorId }
+type alias Lift l = { l | busy : Bool
+                        , dest: FloorId }
 type alias State s l = { s | lifts : Array (Lift l) }
 ```
 
@@ -67,7 +68,7 @@ Notice that we left the `Lift` and `State` types polymorphic, using extensible r
 Next is our actual controller. The function updates the state in response to actions, and maybe also results in an action to be scheduled for later.
 
 ```
-update : Action -> State a -> (State a, Maybe (Time.Time, Action))
+update : Action -> State s l -> (State s l, Maybe (Time, Action))
 ```
 
 Writing `update` is fairly straightforward, as Elm provides the usual functional tools, with an unassuming and regular syntax that closely resembles SML, plus records. No do syntax, operator sections or other extensions are available. There are few combinators and infix operators in the libraries, as well as few specialized or rarely used functions, even for common data types. This keeps the libraries' surface very small and quickly comprehensible, and it's easy enough to define helpers.
@@ -170,11 +171,11 @@ type alias State s l = { s | lifts : Array (Lift l)
 
 The controller remembers call button presses until they are serviced.
 
-The `update` function in [TwoController.elm]() is somewhat more involved this time, with many edge cases to cover.
+The `update` function in [TwoController.elm]() is somewhat more involved this time, with many edge cases to cover. Here's the result:
 
 """, include 240 240 "out/TwoUI.html", md """
 
-
+To build a simulation, we can remove some of the passenger logic from OneSim.
 
 """, include 360 240 "out/TwoSimUI.html", md """
 
@@ -189,13 +190,14 @@ This system is still inefficient.
 We'd like to evaluate these options side by side, and see how they measure up when subjected to the same load.
 
 
-""", include 960 600 "out/CompareUI.html", md """
+""", include 600 224 "out/CompareUI.html", md """
 
 
 #### What's missing
 
-Live code editing and time-travel debugging, pending updates and a fix in `elm-reactor`.
-
+* live code editing and time-travel debugging, pending updates and fixes in `elm-reactor`
+* improved visuals
+* simulation speed control
 
 #### Challenge Ideas
 

@@ -45,10 +45,10 @@ vAddPax a m =
                           |> M.withDefault (a.startadd floor_id)
     in  g [ onClick <| S.message a.address action
           , Sa.cursor "pointer", class "addbtn"]
-          [ circle [ s_ cx (2.6 + f_ (A.length m.floors))
+          [ circle [ s_ cx (2.6 + f_ (A.length m.lifts))
                    , s_ cy (0.69 + (f_ floor_id)), r "0.3"
                    , fill "#888", strokeWidth "0.02"] []
-          , text' [ s_ x (2.47 + f_ (A.length m.floors))
+          , text' [ s_ x (2.47 + f_ (A.length m.lifts))
                   , s_ y (0.82 + (f_ floor_id))
                   , fontSize "0.4", fill "#ddd" ] [text "+"] ]
 

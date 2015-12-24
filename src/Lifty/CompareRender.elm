@@ -7,6 +7,7 @@ import Maybe.Extra    as M  exposing ((?))
 import List           as L
 import List.Extra     as L
 import Array          as A
+import Set
 import Signal         as S
 import Animation            exposing (animate)
 import Html
@@ -24,7 +25,7 @@ import Lifty.TwoSimRender as SR2
 vPa s p y' = g []
     [ circle [ s_ cx (0.3 + animate s.t p.x)
              , s_ cy (0.69 + y')
-             , r "0.3", fill "#08f", stroke "#444", strokeWidth "0.02"] []
+             , r "0.3", fill "#06c", stroke "#444", strokeWidth "0.02"] []
     , text' [ s_ x (0.16 + animate s.t p.x)
             , s_ y (0.82 + y')
             , fontSize "0.4", fill "#ddd" ] [text <| toString p.dest]
@@ -55,29 +56,58 @@ vAddPax a s =
     let action = s.adding |> M.map (\_ -> a.endadd floor_id)
                           |> M.withDefault (a.startadd floor_id)
     in  g [ onClick <| S.message a.address action, Sa.cursor "pointer", class "addbtn"]
-          [ circle [ s_ cx (7.6 + f_ (A.length s.s1.lifts + A.length s.s2.lifts))
+          [ circle [ s_ cx (8.6 + f_ (A.length s.s1.lifts + A.length s.s2.lifts))
                    , s_ cy (0.69 + toFloat floor_id), r "0.3"
                    , fill "#888", strokeWidth "0.02"] []
-          , text' [ s_ x (7.47 + f_ (A.length s.s1.lifts + A.length s.s2.lifts))
+          , text' [ s_ x (8.47 + f_ (A.length s.s1.lifts + A.length s.s2.lifts))
                   , s_ y (0.82 + toFloat floor_id)
                   , fontSize "0.4", fill "#ddd" ] [text "+"] ]
 
 vAddingPax a s =
   g [] <| M.withDefault [] <| flip M.map s.adding <| \(floor_id) ->
-    [ circle [ s_ cx (7.6 + f_ (A.length s.s1.lifts + A.length s.s2.lifts))
+    [ circle [ s_ cx (8.6 + f_ (A.length s.s1.lifts + A.length s.s2.lifts))
              , s_ cy (0.69 + (toFloat floor_id))
              , r "0.3", fill "#08f", stroke "#444", strokeWidth "0.02"] [] ]
 
+vCallBtns2 a m =
+  g [] <| imapA m.floors <| \(floor_id, _)  ->
+    g [] [ circle
+            [ cx "-0.5", s_ cy (f_ floor_id + 0.72), r "0.2"
+            , fill (if Set.member floor_id m.calls_up then "#0f8" else "#084")
+            , opacity (if floor_id == ((A.length m.floors) - 1) then "0" else "1") ] []
+         , circle
+            [ cx "-0.5", s_ cy (f_ floor_id + 0.28), r "0.2"
+            , fill (if Set.member floor_id m.calls_down then "#0f8" else "#084")
+            , opacity (if floor_id == 0 then "0" else "1") ] [] ]
 
-vLifts a s =
+vLiftBtn1 a m lift id floor_id =
+  rect_ (f_ id + 0.1) ((f_ floor_id) + 0.2) 0.8 0.84
+        [ fill (if floor_id == lift.dest then "#084" else "transparent")]
+
+vLifts1 a s =
   g [] <| imapA s.lifts <| \(lift_id, lift) -> g []
     [ rect_ (f_ lift_id + 0.1) 0.04  0.8 ((f_ <| A.length s.floors) - 0.04)
             [ fill "#000", opacity "0.7"]
+    , g [] <| imapA s.floors <| \(floor_id, _) ->
+        vLiftBtn1 a s lift lift_id floor_id
+    , R1.vLift a s lift_id lift ]
+
+vLiftBtn2 a m lift id floor_id =
+  rect_ (f_ id + 0.1) ((f_ floor_id) + 0.2) 0.8 0.84
+        [ fill (if Set.member floor_id lift.dests then "#084" else "transparent")]
+
+vLifts2 a s =
+  g [] <| imapA s.lifts <| \(lift_id, lift) -> g []
+    [ rect_ (f_ lift_id + 0.1) 0.04  0.8 ((f_ <| A.length s.floors) - 0.04)
+            [ fill "#000", opacity "0.7"]
+    , g [] <| imapA s.floors <| \(floor_id, _) ->
+        vLiftBtn2 a s lift lift_id floor_id
+    , rect_ (0.45 + f_ lift_id) (0.55 + f_ lift.next) 0.1 0.1 [fill "#444"]
     , R1.vLift a s lift_id lift ]
 
 view act startadd endadd address s =
   let a = { act = act, startadd = startadd, endadd = endadd, address = address }
-      w = 4 + 6 + toFloat ((A.length s.s1.lifts) + (A.length s.s2.lifts))
+      w = 4 + 7 + toFloat ((A.length s.s1.lifts) + (A.length s.s2.lifts))
       h = 1 + toFloat (A.length s.s1.floors)
   in Html.div [] [R1.style_, svg
     [ x "0", y "0", s_ width ( 20 * w) , s_ height (20 * h)
@@ -87,7 +117,7 @@ view act startadd endadd address s =
             [ R1.vBg
             , R1.vFloors a s.s1
             --, R1.vCallBtns a s1
-            , vLifts a s.s1
+            , vLifts1 a s.s1
             , SR1.vFloorPax a s.s1
             , SR1.vLiftPax a s.s1
             , SR1.vLeavingPax a s.s1
@@ -95,7 +125,8 @@ view act startadd endadd address s =
         , g [transform ("translate ("++ toString (5 + A.length s.s1.lifts) ++ ", 0)")]
             [ R1.vBg
             , vFloors a s.s2
-            , vLifts a s.s2
+            , vLifts2 a s.s2
+            , vCallBtns2 a s.s2
             , SR2.vFloorPax a s.s2
             , SR2.vLiftPax a s.s2
             , SR2.vLeavingPax a s.s2

@@ -40,7 +40,7 @@ update a s = case a of
   FinishAdd dest ->
     s.adding |> M.map (\src -> let
       floor = (A.getUnsafe src s.floors)
-      x = anim s.t (2.3 + f_ (A.length s.lifts))  (2 + f_ (A.length s.lifts) + (f_ <| L.length floor) / 3) 500
+      x = anim s.t (2.3 + f_ (A.length s.lifts))  (f_ (A.length s.lifts) + (f_ <| L.length floor) / 3) 500
       in Sim.update (Sim.AddPassenger src dest { x = x, dest = dest })
                     { s | adding = Nothing }
     |> \(s, ma, e) -> (s, e))
@@ -65,11 +65,12 @@ animate dt s a s' a' =
 animate_arrived lift_id floor_id s s' = let
   l = A.getUnsafe lift_id s'.lifts
   pax' = imapL l.pax (\(i, p) ->
-    { p | x = retarget s'.t (f_ lift_id + (f_ i) / 3) p.x })
+    --{ p | x = retarget s'.t (f_ lift_id + (f_ i) / 3) p.x })
+    { p | x = anim (s.t) (Ani.animate (s.t) (p.x)) (f_ lift_id + (f_ i) / 3) 1000 })
   lifts' = A.set lift_id { l | pax = pax' } s'.lifts
   f = A.getUnsafe floor_id s'.floors
   f' =  L.reverse <| imapL (L.reverse f) (\(i, p) ->
-    { p | x = retarget s'.t (2 + (f_ lift_id) + (f_ i) / 3) p.x})
+    { p | x = retarget s'.t ((f_ (A.length s.lifts)) + (f_ i) / 3) p.x})
   floors' = A.set floor_id f' s'.floors
   ldiff = L.length s'.leaving - L.length s.leaving
   (new_leaving, old_leaving) = L.splitAt ldiff s'.leaving

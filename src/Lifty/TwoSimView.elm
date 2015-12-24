@@ -37,7 +37,7 @@ update a s = case a of
     s.adding
     |> M.map (\src ->
       let floor = (A.getUnsafe src s.floors)
-          x = anim s.t (2.3 + f_ (A.length s.floors))  (2 + (f_ <| L.length floor) / 3) 500
+          x = anim s.t (2.3 + f_ (A.length s.lifts)) (2 + (f_ <| L.length floor) / 3) 500
       in Sim.update (Sim.AddPassenger src dest { x = x, dest = dest })
                     { s | adding = Nothing }
     |> \(s, ma, e) -> (s, e))
