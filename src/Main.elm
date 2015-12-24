@@ -77,7 +77,29 @@ The lack of typeclasses means that common operations like mapping or filtering S
 
 In order to run our controller function, we need a machine that feeds it user input as well as the delayed events it produces.
 
-To test the controller, I've built a visual interface using the [elm architecture](https://github.com/evancz/elm-architecture-tutorial/) using its first-order FRP implentation in [`Signals`]() as well as  `Tasks`, `Effects`, `ports` etc. You can play with it below. Click the green circle to call an elevator. Click a destination in an elevator shaft to send the elevator there. Floor numbers start from 0 and grow downwards, like most things in computer science. Just imagine an underground building.
+To test the controller, we'll build a visual interface using the [elm architecture](https://github.com/evancz/elm-architecture-tutorial/) using its first-order FRP implentation in [`Signals`]() as well as  `Tasks`, `Effects`, `ports` etc.
+
+The view ([OneView.elm](https://github.com/brainrape/lifty/blob/master/src/Lifty/OneView.elm)) needs some additional state, mainly for animation:
+
+```
+type alias Lift l = { l | y : Animation
+                        , dest : FloorId }
+
+type alias State s l = { s | t : Time
+                           , lifts : Array (Lift l) }
+```
+
+In ([OneUI.elm](https://github.com/brainrape/lifty/blob/master/src/Lifty/OneUI.elm)), we compose the view and controller states:
+
+```
+type alias Action = Either Time C.Action
+
+type alias State = V.State (C.State { floors : Array () } {}) (C.Lift {})
+```
+
+The UI provides a `main` function, hooks up signals, sets up the initial state, dispatches actions to the view's and controller's update functions.
+
+You can play with it below. Click the green circle to call an elevator. Click a destination in an elevator shaft to send the elevator there. Floor numbers start from 0 and grow downwards, like most things in computer science. Just imagine an underground building.
 
 
 """, include 240 240 "out/OneUI.html", md """
@@ -94,15 +116,18 @@ type Action = AddPassenger FloorId FloorId
             | Action C.Action
 ```
 
-Now We compose the simulation state type and the controller state type `C.Type`
+The simulation needs the following state (some of it common with the controller):
 
 ```
 type alias Passenger p = { p | dest: FloorId }
 
-type alias Lift l p = { l | pax : List (Passenger p) }
+type alias Lift l p = { l | pax : List (Passenger p)
+                          , busy : Bool
+                          , dest : FloorId }
 
-type alias State s l p =
-  C.State { s | floors : Array (List (Passenger p)) } (Lift l (Passenger p))
+type alias State s l p = { s | floors : Array (List (Passenger p))
+                             , lifts : Array (Lift l p)
+                             , leaving : List (Passenger p)}
 ```
 
 We need to simulate the user behavior described above, so we need an update function. The code in [OneSim.elm](https://github.com/brainrape/lifty/blob/master/src/Lifty/OneSim.elm) gets a bit more complex than this, although it also handles passenger animations, for which we track the indices of passengers in the queue.
@@ -192,7 +217,7 @@ We'd like to evaluate these options side by side, and see how they measure up wh
 
 """, include 600 224 "out/CompareUI.html", md """
 
-It looks like the second controller is somewhat slower in this configuration, because it stops all the time when full.
+It looks like the two button controller is somewhat slower in this configuration, because it stops all the time when full.
 
 
 #### What's missing
