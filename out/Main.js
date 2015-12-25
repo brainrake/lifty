@@ -11461,7 +11461,7 @@ Elm.Main.make = function (_elm) {
            ,md("\n\nTo build a simulation, we can remove some of the passenger logic from OneSim.\n\n")
            ,A3(include,360,240,"out/TwoSimUI.html")
            ,md("\n\n\nThis system is still inefficient.\n* the lift stops even when it is full\n* it is unfair: if the lift always fills up on the ground floor, no one on the first floor can ever go up\n\n\n### Comparing Controllers\n\nWe\'d like to evaluate these options side by side, and see how they measure up when subjected to the same load.\n\n\n")
-           ,A3(include,600,224,"out/CompareUI.html")
+           ,A3(include,800,448,"out/CompareUI.html")
            ,md("\n\nIt looks like the two button controller is somewhat slower in this configuration, because it stops all the time when full.\n\n\n#### What\'s missing\n\n* live code editing and time-travel debugging, pending updates and fixes in `elm-reactor`\n* improved visuals\n* more simulation parameter controls (speed, number of floors/lifts)\n\n#### Challenge Ideas\n\nImprove the controllers and simulations by implementing acceleration. Add other features from the Scope section.\n\nTry to optimize wait time by sending empty elevators to predefined positions determined by analyzing traffic, at the expense of power use.\n\n#### Space Challenge\n\nYou are building a one million km long space lift that can accelerate to 0.5c. Build a controller that minimizes total experienced (proper) travel time, accounting for relativistic time dilation.\n")]));
    return _elm.Main.values = {_op: _op
                              ,md: md
