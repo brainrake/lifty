@@ -37,6 +37,7 @@ type Action p = StartAdd FloorId
               | Tick Time
               | AddRandom Time
               | ToggleRandom
+              | Nop
 
 init_state1 =
   { t = 0
@@ -115,10 +116,11 @@ update a s = case a of
     in if src /= dest then update (AddPassenger src dest) s' else (s', E.none)
   ToggleRandom ->
     ({ s | random_enabled = not s.random_enabled }, E.none)
+  Nop -> (s, E.none)
 
 app = StartApp.start
   { init = (init_state, E.none)
-  , view = R.view (Action1 << Sim1.Action) StartAdd EndAdd
+  , view = R.view Nop StartAdd EndAdd
   , update = update
   , inputs = [ Time.fps 30 |> S.foldp (+) 0 |> S.map Tick,
                Time.fps  1 |> S.foldp (+) 0 |> S.map AddRandom ] }

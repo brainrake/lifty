@@ -89,7 +89,7 @@ type alias State s l = { s | t : Time
                            , lifts : Array (Lift l) }
 ```
 
-In ([OneUI.elm](https://github.com/brainrape/lifty/blob/master/src/Lifty/OneUI.elm)), we compose the view and controller states, and add an array of floors so the renderer ([OneRender.elm](https://github.com/brainrape/lifty/blob/master/src/Lifty/OneRender.elm)) knows how many there are:
+In ([OneUI.elm](https://github.com/brainrape/lifty/blob/master/src/Lifty/OneUI.elm)), we compose the view and controller states, and add an array of floors so the renderer ([OneRende.erlm](https://github.com/brainrape/lifty/blob/master/src/Lifty/OneRender.elm)) knows how many there are:
 
 ```
 type alias Action = Either Time C.Action

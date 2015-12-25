@@ -44,7 +44,9 @@ update a s = a |> elim
 
 app = StartApp.start
   { init = (init_state, E.none)
-  , view = R.view Right C.Go C.CallUp C.CallDown
+  , view = R.render ((<<) Right << C.Go)
+                    (Right << C.CallUp)
+                    (Right << C.CallDown)
   , update = update
   , inputs = [Time.fps 30 |> S.foldp (+) 0 |> S.map Left] }
 

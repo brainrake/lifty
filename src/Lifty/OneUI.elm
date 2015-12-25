@@ -8,7 +8,7 @@ import Time                 exposing (Time)
 import Signal        as S
 import Either               exposing (Either(..), elim)
 import Effects       as E   exposing (Effects, Never)
-import Animation     as Ani exposing (Animation, static)
+import Animation            exposing (static)
 import StartApp
 
 import Lifty.Util exposing (delay)
@@ -36,7 +36,7 @@ update a s = a |> elim
 
 app = StartApp.start
   { init = (init_state, E.none)
-  , view = R.view Right C.Go C.Call
+  , view = R.render ((<<) Right << C.Go) (Right << C.Call)
   , update = update
   , inputs = [Time.fps 30 |> S.foldp (+) 0 |> S.map Left] }
 
