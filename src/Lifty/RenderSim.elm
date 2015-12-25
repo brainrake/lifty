@@ -1,19 +1,20 @@
 module Lifty.RenderSim where
 
 import Maybe          as M
-import Maybe.Extra    as M  exposing ((?))
+import Maybe.Extra    as M   exposing ((?))
 import List           as L
-import Array          as A  exposing (Array)
-import Signal         as S  exposing (Message)
-import Time                 exposing (Time)
-import Animation            exposing (Animation, animate)
-import Svg                  exposing (Svg, g)
-import Svg.Attributes       exposing (class, style, transform, fill, stroke, strokeWidth, fontSize)
-import Svg.Events           exposing (onClick)
+import Array          as A   exposing (Array)
+import Signal         as S   exposing (Message)
+import Time                  exposing (Time)
+import Animation      as Ani exposing (Animation, animate, ease)
+import Easing                exposing (easeInExpo)
+import Svg                   exposing (Svg, g)
+import Svg.Attributes        exposing (class, style, transform, fill, stroke, strokeWidth, fontSize, opacity)
+import Svg.Events            exposing (onClick)
 import Svg.Lazy       as SL
 
-import Lifty.Util           exposing (s_, f_, zeroTo, imapA, imapL, mkM, mkM2)
-import Lifty.Render         exposing (Passenger, movexy, movex, movey, rect_, circle_, text_, rBg, style_, vbox)
+import Lifty.Util            exposing (s_, f_, zeroTo, imapA, imapL, mkM, mkM2)
+import Lifty.Render          exposing (Passenger, movexy, movex, movey, rect_, circle_, text_, rBg, style_, vbox)
 
 
 type alias Lift l p = { l | pax : List (Passenger p), y : Animation }
@@ -38,7 +39,11 @@ rLiftPax num_floors lifts t =
 
 rLeavingPax : Int -> List (Passenger p) -> Time -> Svg
 rLeavingPax num_floors leaving t =
-  g [] <| flip L.map leaving <| \(p) -> movey p.dest [rPa num_floors p t]
+  g [] <| flip L.map leaving <| \(p) ->
+    (animate t p.x) |> SL.lazy (\_->
+      g [ opacity (s_ ( animate t (
+            p.x |> Ani.from 1 |> Ani.to 0 |> ease easeInExpo )))]
+        [ movey p.dest [rPa num_floors p t] ])
 
 rFloorPax : Array (List (Passenger p)) -> Time -> Svg
 rFloorPax floors t =

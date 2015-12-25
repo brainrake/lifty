@@ -82,14 +82,10 @@ init_state = { s1 = init_state1
 
 
 update_sim1 a s =
-  (Sim1.update a s) |> \(s', ma, e) ->
-    ( ma |> M.map (\(dt, a') -> (V1.animate dt s a s' a', E.map Action1 e))
-    ) ? (s', E.map Action1 e)
+  Sim1.update a s |> \(s', ma, e) -> (V1.animate s a s' ma, E.map Action1 e)
 
 update_sim2 a s =
-  (Sim2.update a s) |> \(s', ma, e) ->
-    ( ma |> M.map (\(dt, a') -> (V2.animate dt a s a' s', E.map Action2 e))
-    ) ? (s', E.map Action2 e)
+  Sim2.update a s |> \(s', ma, e) -> (V2.animate s a s' ma, E.map Action2 e)
 
 gen_dest src seed =
   let (dest, seed') = Random.generate (Random.int 0 (num_floors - 1)) seed
@@ -122,12 +118,11 @@ update a s = case a of
   Action1 a -> update_sim1 a s.s1 |> (\(s1', e) -> ({ s | s1 = s1'}, e))
   Action2 a -> update_sim2 a s.s2 |> (\(s2', e) -> ({ s | s2 = s2'}, e))
   Tick t -> let
-    (s1', e1) = V1.update (V1.Tick t) (s.s1)
-    (s2', e2) = V2.update (V2.Tick t) (s.s2)
-    clearLeaving ls = ls |> L.filter (\l -> Ani.isDone (t-100) l.x)
-    s' = { s | s1 = { s1' | leaving = s1'.leaving |> clearLeaving }
-             , s2 = { s2' | leaving = s2'.leaving |> clearLeaving } }
-    in (s', E.batch [E.map Action1 e1, E.map Action2 e2])
+    clearLeaving = L.filter (\p -> not <| Ani.isDone t p.x)
+    (s1, s2) = (s.s1, s.s2)
+    s' = { s | s1 = { s1 | t = t, leaving = s1.leaving |> clearLeaving }
+             , s2 = { s2 | t = t, leaving = s2.leaving |> clearLeaving } }
+    in (s', E.none)
   AddRandom t ->
     if M.isJust s.adding || not s.random_enabled then (s, E.none) else let
     ((src, dest), seed') = gen_srcdest s.seed

@@ -23,7 +23,7 @@ import Lifty.OneRender      exposing (rCallBtns, rLiftsOne)
 render go call startAdd endAdd a s = let
   num_floors = A.length s.floors
   num_lifts = A.length s.lifts
-  w = 2 + 3 + f_ num_lifts
+  w = 1 + 3 + f_ num_lifts
   h = 1 + f_ num_floors
   in Html.div [] [style_, svg
     [ x "0", y "0", width (s_ (40 * w)) , height (s_ (40 * h))

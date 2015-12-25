@@ -48,14 +48,14 @@ update a s = case a of
   Tick t -> (V.update t s, E.none)
 
 
-animate : Time -> State s l p -> Sim.Action p' -> State s l p -> C.Action -> State s l p
-animate dt s a s' a' =
+animate : State s l p -> Sim.Action p' -> State s l p -> Maybe (Time, C.Action) -> State s l p
+animate s a s' ma =
   let s'' = case a of
     Sim.Action (C.Arrive lift_id floor_id) ->
       animate_arrived lift_id floor_id s s'
     _ -> s'
-  in case a' of
-    C.Arrive lift_id dest ->
+  in case ma of
+    Just (dt, C.Arrive lift_id dest) ->
       let l = A.getUnsafe lift_id s.lifts
           l' = A.getUnsafe lift_id s''.lifts
           y = anim s''.t (f_ l.dest) (f_ l'.dest) dt |> ease identity
@@ -75,6 +75,6 @@ animate_arrived lift_id floor_id s s' = let
   ldiff = L.length s'.leaving - L.length s.leaving
   (new_leaving, old_leaving) = L.splitAt ldiff s'.leaving
   new_leaving' = new_leaving |> L.map (\p ->
-    { p | x = anim s'.t (Ani.animate s'.t p.x) (-10) 1000 })
+    { p | x = anim s'.t (Ani.animate s'.t p.x) (-0.3) 800 })
   leaving' = L.append new_leaving' old_leaving
   in { s' | lifts = lifts', floors = floors', leaving = leaving' }

@@ -43,8 +43,7 @@ init_state =
 update a s = a |> elim
   (\a -> V.update a s |> \(s', e) -> (s', E.map Right e))
   (\a -> Sim.update (Debug.log "a" a) s |> \(s', ma, e) ->
-    ( ma |> M.map (\(dt, a') -> (V.animate dt a s a' s', E.map Right e))
-    ) ? (s', E.map Right e) )
+    (V.animate s a s' ma, E.map Right e))
 
 app = StartApp.start
   { init = (init_state, E.none)

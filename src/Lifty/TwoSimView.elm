@@ -46,17 +46,17 @@ update a s = case a of
 
 
 -- animate : Time -> Sim.Action p -> State s l p -> C.Action -> State s l p -> State s l p
-animate dt a s a' s' =
+animate s a s' ma =
   let s'' = case a of
     Sim.Action (C.Approach lift_id dest) ->
       let l' = A.getUnsafe lift_id s'.lifts
-          y = anim (s'.t) (Ani.animate s'.t l'.y) (f_ dest) dt |> ease identity
+          y = anim (s'.t) (Ani.animate s'.t l'.y) (f_ dest) 1000 |> ease identity
       in { s' | lifts = A.set lift_id { l' | y = y } s'.lifts }
     Sim.Action (C.Arrive lift_id floor_id) ->
       OneSimView.animate_arrived lift_id floor_id s s'
     _ -> s'
-  in case a' of
-    C.Arrive lift_id dest ->
+  in case ma of
+    Just (dt, C.Arrive lift_id dest) ->
       let l' = A.getUnsafe lift_id s''.lifts
           y = anim (s''.t) (Ani.animate s'.t l'.y) (f_ dest) dt |> ease identity
       in { s'' | lifts = A.set lift_id { l' | y = y } s''.lifts }
