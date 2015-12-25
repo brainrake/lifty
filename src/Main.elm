@@ -99,8 +99,7 @@ type alias State = V.State (C.State { floors : Array () } {}) (C.Lift {})
 
 The UI provides a `main` function, hooks up signals, sets up the initial state, dispatches actions to the view's and controller's update functions.
 
-You can play with it below. Click the green circle to call an elevator. Click a destination in an elevator shaft to send the elevator there. Floor numbers start from 0 and grow downwards, like most things in computer science. Just imagine an underground building.
-
+You can play with it below. Click the green circle to call a lift. Click the destination floor in the elevator shaft to send the lift there.
 
 """, include 240 240 "out/OneUI.html", md """
 
@@ -215,7 +214,7 @@ This system is still inefficient.
 We'd like to evaluate these options side by side, and see how they measure up when subjected to the same load.
 
 
-""", include 600 224 "out/CompareUI.html", md """
+""", include 800 480 "out/CompareUI.html", md """
 
 It looks like the two button controller is somewhat slower in this configuration, because it stops all the time when full.
 

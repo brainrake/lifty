@@ -48,7 +48,7 @@ update action s = case action of
        then ( { s | floors = A.update src (\f -> p :: f) s.floors }
             , Nothing, E.task <| Task.succeed <| Action <| C.Call src)
        else (s, Nothing, E.none)
-  Action a -> case C.update (Debug.log "Action" a) s of (s', ma) -> case a of
+  Action a -> case C.update a s of (s', ma) -> case a of
     C.Arrive lift_id floor_id ->  (arrive lift_id floor_id s', ma, schedule_ ma)
     C.Idle lift_id -> idle lift_id ma s'
     _ -> (s', ma, schedule_ ma)

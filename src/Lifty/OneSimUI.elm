@@ -24,15 +24,20 @@ type alias Action = Either (V.Action) (Sim.Action Passenger)
 
 type alias State = V.State (Sim.State (C.State {} {}) {} {}) {} {}
 
+num_floors = 5
+
 init_state : State
 init_state =
   { t = 0
-  , floors = A.repeat 5 []
-  , lifts = A.repeat 2 { dest = 0, busy = False, pax = [], y = static 0}
+  , floors = A.repeat num_floors []
   , adding = Nothing
   , leaving = []
   , max_queue = 4
-  , lift_cap = 2 }
+  , lift_cap = 2
+  , lifts = A.repeat 2 { dest = num_floors - 1
+                       , busy = False
+                       , pax = []
+                       , y = static (num_floors - 1) } }
 
 --update : Action -> State -> (State, Effects (Action))
 update a s = a |> elim

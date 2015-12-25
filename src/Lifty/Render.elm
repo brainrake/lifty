@@ -65,10 +65,10 @@ rLifts is_dest num_floors lifts t goM =
 
 rBg : Int -> Int -> Svg
 rBg num_floors num_lifts = g []
-  [ rect_ -2 -0.5 0 0 [width "100%", height "100%", fill "#555"]
-  , rect_ (-2) num_floors 0 0.04 [width "100%", fill "white"]
+  [ rect_ -1 -0.5 0 0 [width "100%", height "100%", fill "#555"]
+  , rect_ (-1) num_floors 0 0.04 [width "100%", fill "white"]
   , g [] <| flip L.map (zeroTo num_floors) <| \(floor_id) ->
-      movey floor_id [ rect_ -2 0 0 0.04 [width "100%", fill "white"]
+      movey floor_id [ rect_ -1 0 0 0.04 [width "100%", fill "white"]
                      ]--, text_ (s_ floor_id) -1.6 0.7 [fontSize "0.5"] ]
   , g [] <| flip L.map (zeroTo num_lifts) <| \(lift_id) ->
       movex lift_id [ rect_ 0.1 0.04  0.8 ((f_ num_floors) - 0.04)
@@ -76,7 +76,8 @@ rBg num_floors num_lifts = g []
 
 style_ : Html
 style_ = Html.node "style" [] [Html.text """
-html { background-color: #222 }
+html { background-color: #222; color: #fff; font-size: 15px;
+       font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif; }
 svg { user-select: none; }
 svg text { fill: white; }
 .addbtn          {cursor:pointer}

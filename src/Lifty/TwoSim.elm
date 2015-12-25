@@ -1,6 +1,5 @@
 module Lifty.TwoSim where
 
-import Debug
 import Maybe        as M
 import Maybe.Extra  as M   exposing ((?))
 import List         as L
@@ -49,7 +48,7 @@ update action s = case action of
             , Nothing, E.task <| Task.succeed <| Action <|
                 (if dest > src then C.CallUp src else C.CallDown src))
        else (s, Nothing, E.none)
-  Action a -> case C.update (Debug.log "Action" a) s of (s', ma) -> case a of
+  Action a -> case C.update a s of (s', ma) -> case a of
     C.Arrive lift_id floor_id -> let
      (s'', eff) = arrive lift_id floor_id s'
      in (s'', ma, E.batch [schedule_ ma, eff])

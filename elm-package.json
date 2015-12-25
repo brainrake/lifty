@@ -23,6 +23,7 @@
         "evancz/start-app": "2.0.2 <= v < 3.0.0",
         "imeckler/either": "1.0.1 <= v < 2.0.0",
         "imeckler/piece": "2.1.0 <= v < 3.0.0",
+        "jwmerrill/elm-animation-frame": "1.0.5 <= v < 2.0.0",
         "mgold/elm-animation": "1.0.3 <= v < 2.0.0"
     },
     "elm-version": "0.16.0 <= v < 0.17.0"

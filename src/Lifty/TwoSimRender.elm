@@ -24,7 +24,7 @@ render go callUp callDown startAdd endAdd a s = let
   h = 1 + f_ num_floors
   in Html.div [] [style_, svg
     [ x "0", y "0", width (s_ (40 * w)), height (s_ (40 * h))
-    , vbox (-2) (-0.5) w h ]
+    , vbox (-1) (-0.5) w h ]
     [ rBg num_floors num_lifts
     , rCallBtns num_floors s.calls_up s.calls_down (mkM a callUp) (mkM a callDown)
     , rLiftsTwo num_floors s.lifts s.t (mkM2 a go)

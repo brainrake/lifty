@@ -21,10 +21,14 @@ type alias Action = Either Time C.Action
 
 type alias State = V.State (C.State { floors : Array () } {}) (C.Lift {})
 
+num_floors = 5
+
 init_state : State
 init_state = { t = 0.0
-             , floors = A.repeat 5 ()
-             , lifts = A.repeat 2 { dest = 0, busy = False, y = static 0 } }
+             , floors = A.repeat num_floors ()
+             , lifts = A.repeat 2 { dest = num_floors - 1
+                                  , busy = False
+                                  , y = static (num_floors - 1) } }
 
 update : Action -> State -> (State, Effects Action)
 update a s = a |> elim

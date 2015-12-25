@@ -10,6 +10,7 @@ import Animation            exposing (Animation, animate)
 import Svg                  exposing (Svg, g)
 import Svg.Attributes       exposing (class, style, transform, fill, stroke, strokeWidth, fontSize)
 import Svg.Events           exposing (onClick)
+import Svg.Lazy       as SL
 
 import Lifty.Util           exposing (s_, f_, zeroTo, imapA, imapL, mkM, mkM2)
 import Lifty.Render         exposing (Passenger, movexy, movex, movey, rect_, circle_, text_, rBg, style_, vbox)
@@ -20,14 +21,14 @@ type alias Lift l p = { l | pax : List (Passenger p), y : Animation }
 
 rPa : Int -> Passenger p -> Time -> Svg
 rPa num_floors p t =
-  movex (animate t p.x)
-    [ g [transform "translate(0.12,0.2)"] [ g [transform ("scale(0.16,"++ (s_ (0.8 / f_ num_floors)) ++")")]
-      [ rect_ 0 0 1 num_floors [ fill "#1c1c1c" ]
-      , g [] <| flip L.map (zeroTo num_floors) <| \fi ->
-          rect_ 0 (f_ fi - 0.1) 1 0.2 [ fill "#888"]
-      , rect_ 0 p.dest 1 1 [ fill "#084" ]
-      ]
-    ]]
+  movex (animate t p.x) [
+    (num_floors, p.dest) |> SL.lazy (\(num_floors, dest) ->
+      g [transform "translate(0.12,0.2)"]
+        [ g [transform ("scale(0.16,"++ (s_ (0.8 / f_ num_floors)) ++")")]
+            [ rect_ 0 0 1 num_floors [ fill "#1c1c1c" ]
+            , g [] <| flip L.map (zeroTo num_floors) <| \fi ->
+                rect_ 0 (f_ fi - 0.1) 1 0.2 [ fill "#888"]
+            , rect_ 0 dest 1 1 [ fill "#084" ] ] ])]
 
 rLiftPax : Int -> Array (Lift l p) -> Time -> Svg
 rLiftPax num_floors lifts t =
@@ -49,17 +50,17 @@ rAddPax : Int -> Int -> Maybe Int -> (Int -> Message) -> (Int -> Message) -> Svg
 rAddPax num_floors num_lifts adding startAddM endAddM =
   g [] <| flip L.map (zeroTo num_floors) <| \(floor_id) ->
     let msg = ((adding |> M.map (\_ -> endAddM)) ? startAddM) floor_id
-    in movey floor_id
-      [ circle_ (2.6 + f_ num_lifts) 0.69 0.3 [ fill "#888", strokeWidth "0.02"
+    in movexy num_lifts floor_id
+      [ rect_ 2.4 0.2 0.4 0.8 [ fill "#888", strokeWidth "0.02"
                                               , onClick msg, class "addbtn"]
-      , text_ "+" (2.47 + f_ num_lifts) 0.82
+      , text_ "+" 2.47 0.72
               [fontSize "0.4", fill "#ddd", style "pointer-events:none"] ]
 
 rAddingPax : Int -> Maybe Int -> Svg
 rAddingPax num_lifts adding =
   M.withDefault (g [] []) <| flip M.map adding <| \(floor_id) ->
     movexy num_lifts floor_id
-      [ circle_ 2.6 0.69 0.3 [fill "#08f", stroke "#444", strokeWidth "0.02"] ]
+      [ rect_ 2.4 0.2 0.4 0.8 [fill "#084"] ]
 
 rPax startAddM endAddM s = let
   num_floors = A.length s.floors

@@ -21,22 +21,23 @@ import Lifty.TwoSimRender  as R
 
 type alias Action p = Either (V.Action p) (Sim.Action p)
 
+num_floors = 5
 
 init_state =
   { t = 0
-  , floors = A.repeat 5 []
-  , lifts = A.repeat 2 { dests = Set.empty
-                       , next = 0
-                       , up = False
-                       , busy = False
-                       , pax = []
-                       , y = static 0 }
+  , floors = A.repeat num_floors []
   , calls_up = Set.empty
   , calls_down = Set.empty
   , adding = Nothing
   , leaving = []
   , max_queue = 10
-  , lift_cap = 4 }
+  , lift_cap = 4
+  , lifts = A.repeat 2 { dests = Set.empty
+                       , next = num_floors - 1
+                       , up = False
+                       , busy = False
+                       , pax = []
+                       , y = static (num_floors - 1) } }
 
 --update : Action p -> V.State s l p -> (V.State s l p, Effects (Action p))
 update a s = a |> elim
