@@ -66,11 +66,11 @@ animate_arrived lift_id floor_id s s' = let
   l = A.getUnsafe lift_id s'.lifts
   pax' = imapL l.pax (\(i, p) ->
     --{ p | x = retarget s'.t (f_ lift_id + (f_ i) / 3) p.x })
-    { p | x = anim (s.t) (Ani.animate (s.t) (p.x)) (f_ lift_id + (f_ i) / 3) 1000 })
+    { p | x = anim (s.t) (Ani.animate (s.t) (p.x)) (f_ lift_id + (f_ i) / 5) 1000 })
   lifts' = A.set lift_id { l | pax = pax' } s'.lifts
   f = A.getUnsafe floor_id s'.floors
   f' =  L.reverse <| imapL (L.reverse f) (\(i, p) ->
-    { p | x = retarget s'.t ((f_ (A.length s.lifts)) + (f_ i) / 3) p.x})
+    { p | x = retarget s'.t ((f_ (A.length s.lifts)) + (f_ i) / 5) p.x})
   floors' = A.set floor_id f' s'.floors
   ldiff = L.length s'.leaving - L.length s.leaving
   (new_leaving, old_leaving) = L.splitAt ldiff s'.leaving

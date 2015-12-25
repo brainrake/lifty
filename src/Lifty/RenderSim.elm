@@ -8,37 +8,42 @@ import Signal         as S  exposing (Message)
 import Time                 exposing (Time)
 import Animation            exposing (Animation, animate)
 import Svg                  exposing (Svg, g)
-import Svg.Attributes       exposing (class, style, fill, stroke, strokeWidth, fontSize)
+import Svg.Attributes       exposing (class, style, transform, fill, stroke, strokeWidth, fontSize)
 import Svg.Events           exposing (onClick)
 
 import Lifty.Util           exposing (s_, f_, zeroTo, imapA, imapL, mkM, mkM2)
-import Lifty.Render         exposing (Passenger, movexy, movex, movey, circle_, text_, rBg, style_, vbox)
+import Lifty.Render         exposing (Passenger, movexy, movex, movey, rect_, circle_, text_, rBg, style_, vbox)
 
 
 type alias Lift l p = { l | pax : List (Passenger p), y : Animation }
 
 
-rPa : Passenger p -> Time -> Svg
-rPa p t =
+rPa : Int -> Passenger p -> Time -> Svg
+rPa num_floors p t =
   movex (animate t p.x)
-    [ circle_ 0.3 0.69 0.3 [fill "#06c", stroke "#444", strokeWidth "0.02"]
-    , text_ (s_ p.dest) 0.16 0.82 [fontSize "0.4", fill "#ddd" ] ]
+    [ g [transform "translate(0.12,0.2)"] [ g [transform ("scale(0.16,"++ (s_ (0.8 / f_ num_floors)) ++")")]
+      [ rect_ 0 0 1 num_floors [ fill "#1c1c1c" ]
+      , g [] <| flip L.map (zeroTo num_floors) <| \fi ->
+          rect_ 0 (f_ fi - 0.1) 1 0.2 [ fill "#888"]
+      , rect_ 0 p.dest 1 1 [ fill "#084" ]
+      ]
+    ]]
 
-rLiftPax : Array (Lift l p) -> Time -> Svg
-rLiftPax lifts t =
+rLiftPax : Int -> Array (Lift l p) -> Time -> Svg
+rLiftPax num_floors lifts t =
   g [] <| imapA lifts <| \(lift_id, lift) ->
     g [] <| imapL lift.pax <| \(p_id, p) ->
-      movey (animate t lift.y) [rPa p t]
+      movey (animate t lift.y) [rPa num_floors p t]
 
-rLeavingPax : List (Passenger p) -> Time -> Svg
-rLeavingPax leaving t =
-  g [] <| flip L.map leaving <| \(p) -> movey p.dest [rPa p t]
+rLeavingPax : Int -> List (Passenger p) -> Time -> Svg
+rLeavingPax num_floors leaving t =
+  g [] <| flip L.map leaving <| \(p) -> movey p.dest [rPa num_floors p t]
 
 rFloorPax : Array (List (Passenger p)) -> Time -> Svg
 rFloorPax floors t =
   g [] <| imapA floors <| \(floor_id, floor) ->
     g [] <| flip L.map (L.reverse floor) <| \(p) ->
-      movey floor_id [rPa p t]
+      movey floor_id [rPa (A.length floors) p t]
 
 rAddPax : Int -> Int -> Maybe Int -> (Int -> Message) -> (Int -> Message) -> Svg
 rAddPax num_floors num_lifts adding startAddM endAddM =
@@ -56,9 +61,12 @@ rAddingPax num_lifts adding =
     movexy num_lifts floor_id
       [ circle_ 2.6 0.69 0.3 [fill "#08f", stroke "#444", strokeWidth "0.02"] ]
 
-rPax startAddM endAddM s = g []
-  [ rAddPax (A.length s.floors) (A.length s.lifts) s.adding startAddM endAddM
-  , rAddingPax (A.length s.lifts) s.adding
-  , rFloorPax s.floors s.t
-  , rLiftPax s.lifts s.t
-  , rLeavingPax s.leaving s.t]
+rPax startAddM endAddM s = let
+  num_floors = A.length s.floors
+  num_lifts = A.length s.lifts
+  in g []
+       [ rAddPax num_floors num_lifts s.adding startAddM endAddM
+       , rAddingPax num_lifts s.adding
+       , rFloorPax s.floors s.t
+       , rLiftPax num_floors s.lifts s.t
+       , rLeavingPax num_floors s.leaving s.t]

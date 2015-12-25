@@ -27,16 +27,15 @@ type alias Passenger p = { p | dest: FloorId }
 
 type alias Lift l p = { l | pax : List (Passenger p) }
 
-type alias State s l p = C.State { s | leaving : List (Passenger p) }
+type alias State s l p = C.State { s | leaving : List (Passenger p)
+                                     , max_queue : Int
+                                     , lift_cap : Int }
                                  (Lift l p)
                                  (List (Passenger p))
 
 type Action p = AddPassenger FloorId FloorId (Passenger p)
               | Action C.Action
 
-
-max_queue = 4
-lift_cap = 2
 
 schedule_ = schedule Action
 
@@ -45,7 +44,7 @@ update : Action p -> State s l p
 update action s = case action of
   AddPassenger src dest p -> let
     floor = A.getUnsafe src s.floors
-    in if L.length floor < max_queue
+    in if L.length floor < s.max_queue
        then ( { s | floors = A.update src (\f -> p :: f) s.floors }
             , Nothing, E.task <| Task.succeed <| Action <|
                 (if dest > src then C.CallUp src else C.CallDown src))
@@ -63,7 +62,7 @@ arrive lift_id floor_id s = let
   floor = A.getUnsafe floor_id s.floors
   lift = A.getUnsafe lift_id s.lifts
   (leaving, pax) = lift.pax |> L.partition (\p -> p.dest == floor_id)
-  spaces = lift_cap - L.length pax
+  spaces = s.lift_cap - L.length pax
   rfloor = L.reverse floor
   (entering, rfloor') = ( L.take spaces rfloor, L.drop spaces rfloor)
   pax' = L.append pax entering

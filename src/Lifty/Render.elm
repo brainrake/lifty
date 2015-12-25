@@ -47,9 +47,9 @@ vbox x y w h = viewBox <| join " " <| [s_ x, s_ y, s_ w, s_ h]
 
 rLift : Bool -> List Svg
 rLift busy =
-  [ rect_ 0.1 0.2 0.8 0.8  [fill (if busy then "#ddd" else "#888")]
-  , rect_ 0.1 1   0.8 0.04 [fill (if busy then "#fff" else "#ddd")]
-  , rect_ 0.1 0.2 0.8 0.04 [fill (if busy then "#fff" else "#ddd")] ]
+  [ rect_ 0.1 0.2  0.8 0.8  [fill (if busy then "#ddd" else "#888")]
+  , rect_ 0.1 1    0.8 0.04 [fill (if busy then "#fff" else "#ddd")]
+  , rect_ 0.1 0.16 0.8 0.04 [fill (if busy then "#fff" else "#ddd")] ]
 
 rLiftBtn : Message -> Bool -> List Svg
 rLiftBtn msg is_dest =
@@ -69,13 +69,14 @@ rBg num_floors num_lifts = g []
   , rect_ (-2) num_floors 0 0.04 [width "100%", fill "white"]
   , g [] <| flip L.map (zeroTo num_floors) <| \(floor_id) ->
       movey floor_id [ rect_ -2 0 0 0.04 [width "100%", fill "white"]
-                     , text_ (s_ floor_id) -1.6 0.7 [fontSize "0.5"] ]
+                     ]--, text_ (s_ floor_id) -1.6 0.7 [fontSize "0.5"] ]
   , g [] <| flip L.map (zeroTo num_lifts) <| \(lift_id) ->
       movex lift_id [ rect_ 0.1 0.04  0.8 ((f_ num_floors) - 0.04)
                             [ fill "#000", opacity "0.7"] ] ]
 
 style_ : Html
 style_ = Html.node "style" [] [Html.text """
+html { background-color: #222 }
 svg { user-select: none; }
 svg text { fill: white; }
 .addbtn          {cursor:pointer}

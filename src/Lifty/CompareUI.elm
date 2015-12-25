@@ -44,7 +44,9 @@ init_state1 =
   , floors = A.repeat 10 []
   , lifts = A.repeat 4 { dest = 0, busy = False, pax = [], y = static 0}
   , adding = Nothing
-  , leaving = [] }
+  , leaving = []
+  , max_queue = 10
+  , lift_cap = 4 }
 
 init_state2 =
   { t = 0
@@ -58,7 +60,9 @@ init_state2 =
   , calls_up = Set.empty
   , calls_down = Set.empty
   , adding = Nothing
-  , leaving = [] }
+  , leaving = []
+  , max_queue = 10
+  , lift_cap = 4 }
 
 init_state = { s1 = init_state1
              , s2 = init_state2
@@ -88,10 +92,10 @@ update a s = case a of
     floor1 = A.getUnsafe src s.s1.floors
     floor2 = A.getUnsafe src s.s2.floors
     x1 = anim s.s1.t (2.3 + f_ (A.length s.s1.lifts))
-              (0 + f_ (A.length s.s1.lifts) + (f_ <| L.length floor1) / 3) 500
+              (0 + f_ (A.length s.s1.lifts) + (f_ <| L.length floor1) / 5) 500
     p1 = { x = x1, dest = dest}
     x2 = anim s.s2.t (2.3 + f_ (A.length s.s2.lifts))
-              (0 + f_ (A.length s.s2.lifts) + (f_ <| L.length floor2) / 3) 500
+              (0 + f_ (A.length s.s2.lifts) + (f_ <| L.length floor2) / 5) 500
     p2 = { x = x2, dest = dest}
     (s1', ma1, e1) = Sim1.update (Sim1.AddPassenger src dest p1) s.s1
     (s2', ma2, e2) = Sim2.update (Sim2.AddPassenger src dest p2) s.s2

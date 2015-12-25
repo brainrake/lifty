@@ -15,7 +15,7 @@ import Svg.Attributes       exposing (x, y, width, height, class, fill, stroke, 
 import Svg.Events           exposing (onClick)
 
 import Lifty.Util           exposing (s_, f_, zeroTo, imapA, imapL, mkM, mkM2)
-import Lifty.Render         exposing (Passenger, movexy, movex, movey, circle_, text_, rBg, rPa, style_, vbox)
+import Lifty.Render         exposing (Passenger, movexy, movex, movey, circle_, text_, rBg, style_, vbox)
 import Lifty.RenderSim      exposing (rPax)
 import Lifty.OneRender      exposing (rCallBtns, rLiftsOne)
 

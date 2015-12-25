@@ -34,7 +34,9 @@ init_state =
   , calls_up = Set.empty
   , calls_down = Set.empty
   , adding = Nothing
-  , leaving = [] }
+  , leaving = []
+  , max_queue = 10
+  , lift_cap = 4 }
 
 --update : Action p -> V.State s l p -> (V.State s l p, Effects (Action p))
 update a s = a |> elim

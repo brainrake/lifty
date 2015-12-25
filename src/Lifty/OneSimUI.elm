@@ -30,7 +30,9 @@ init_state =
   , floors = A.repeat 5 []
   , lifts = A.repeat 2 { dest = 0, busy = False, pax = [], y = static 0}
   , adding = Nothing
-  , leaving = [] }
+  , leaving = []
+  , max_queue = 4
+  , lift_cap = 2 }
 
 --update : Action -> State -> (State, Effects (Action))
 update a s = a |> elim
