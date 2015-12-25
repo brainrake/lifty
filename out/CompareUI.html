@@ -15282,6 +15282,7 @@ Elm.Lifty.RenderSim.make = function (_elm) {
    $Array = Elm.Array.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
+   $Easing = Elm.Easing.make(_elm),
    $Lifty$Render = Elm.Lifty.Render.make(_elm),
    $Lifty$Util = Elm.Lifty.Util.make(_elm),
    $List = Elm.List.make(_elm),
@@ -15418,9 +15419,19 @@ Elm.Lifty.RenderSim.make = function (_elm) {
       $List.map,
       leaving,
       function (p) {
-         return A2($Lifty$Render.movey,
-         p.dest,
-         _U.list([A3(rPa,num_floors,p,t)]));
+         return A2($Svg$Lazy.lazy,
+         function (_p9) {
+            return A2($Svg.g,
+            _U.list([$Svg$Attributes.opacity($Lifty$Util.s_(A2($Animation.animate,
+            t,
+            A2($Animation.ease,
+            $Easing.easeInExpo,
+            A2($Animation.to,0,A2($Animation.from,1,p.x))))))]),
+            _U.list([A2($Lifty$Render.movey,
+            p.dest,
+            _U.list([A3(rPa,num_floors,p,t)]))]));
+         },
+         A2($Animation.animate,t,p.x));
       }));
    });
    var rFloorPax = F2(function (floors,t) {
@@ -15428,16 +15439,16 @@ Elm.Lifty.RenderSim.make = function (_elm) {
       _U.list([]),
       A2($Lifty$Util.imapA,
       floors,
-      function (_p9) {
-         var _p10 = _p9;
+      function (_p10) {
+         var _p11 = _p10;
          return A2($Svg.g,
          _U.list([]),
          A3($Basics.flip,
          $List.map,
-         $List.reverse(_p10._1),
+         $List.reverse(_p11._1),
          function (p) {
             return A2($Lifty$Render.movey,
-            _p10._0,
+            _p11._0,
             _U.list([A3(rPa,$Array.length(floors),p,t)]));
          }));
       }));
@@ -15653,7 +15664,7 @@ Elm.Lifty.OneSimRender.make = function (_elm) {
    var _op = {};
    var render = F6(function (go,call,startAdd,endAdd,a,s) {
       var num_lifts = $Array.length(s.lifts);
-      var w = 2 + 3 + $Lifty$Util.f_(num_lifts);
+      var w = 1 + 3 + $Lifty$Util.f_(num_lifts);
       var num_floors = $Array.length(s.floors);
       var h = 1 + $Lifty$Util.f_(num_floors);
       return A2($Html.div,
@@ -15713,7 +15724,7 @@ Elm.Lifty.TwoSimRender.make = function (_elm) {
    a,
    s) {
       var num_lifts = $Array.length(s.lifts);
-      var w = 2 + 3 + $Lifty$Util.f_(num_lifts);
+      var w = 1 + 3 + $Lifty$Util.f_(num_lifts);
       var num_floors = $Array.length(s.floors);
       var h = 1 + $Lifty$Util.f_(num_floors);
       return A2($Html.div,
@@ -16230,8 +16241,8 @@ Elm.Lifty.OneSimView.make = function (_elm) {
          {x: A4($Lifty$Util.anim,
          s$.t,
          A2($Animation.animate,s$.t,p.x),
-         -10,
-         1000)});
+         -0.3,
+         800)});
       },
       new_leaving);
       var leaving$ = A2($List.append,new_leaving$,old_leaving);
@@ -16268,7 +16279,7 @@ Elm.Lifty.OneSimView.make = function (_elm) {
       return _U.update(s$,
       {lifts: lifts$,floors: floors$,leaving: leaving$});
    });
-   var animate = F5(function (dt,s,a,s$,a$) {
+   var animate = F4(function (s,a,s$,ma) {
       var s$$ = function () {
          var _p7 = a;
          if (_p7.ctor === "Action" && _p7._0.ctor === "Arrive") {
@@ -16277,9 +16288,10 @@ Elm.Lifty.OneSimView.make = function (_elm) {
                return s$;
             }
       }();
-      var _p8 = a$;
-      if (_p8.ctor === "Arrive") {
-            var _p9 = _p8._0;
+      var _p8 = ma;
+      if (_p8.ctor === "Just" && _p8._0.ctor === "_Tuple2" && _p8._0._1.ctor === "Arrive")
+      {
+            var _p9 = _p8._0._1._0;
             var l$ = A2($Array$Extra.getUnsafe,_p9,s$$.lifts);
             var l = A2($Array$Extra.getUnsafe,_p9,s.lifts);
             var y = A2($Animation.ease,
@@ -16288,7 +16300,7 @@ Elm.Lifty.OneSimView.make = function (_elm) {
             s$$.t,
             $Lifty$Util.f_(l.dest),
             $Lifty$Util.f_(l$.dest),
-            dt));
+            _p8._0._0));
             return _U.update(s$$,
             {lifts: A3($Array.set,_p9,_U.update(l$,{y: y}),s$$.lifts)});
          } else {
@@ -16797,7 +16809,7 @@ Elm.Lifty.TwoSimView.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Time = Elm.Time.make(_elm);
    var _op = {};
-   var animate = F5(function (dt,a,s,a$,s$) {
+   var animate = F4(function (s,a,s$,ma) {
       var s$$ = function () {
          var _p0 = a;
          _v0_2: do {
@@ -16811,7 +16823,7 @@ Elm.Lifty.TwoSimView.make = function (_elm) {
                        s$.t,
                        A2($Animation.animate,s$.t,l$.y),
                        $Lifty$Util.f_(_p0._0._1),
-                       dt));
+                       1000));
                        return _U.update(s$,
                        {lifts: A3($Array.set,_p1,_U.update(l$,{y: y}),s$.lifts)});
                      case "Arrive": return A4($Lifty$OneSimView.animate_arrived,
@@ -16826,17 +16838,18 @@ Elm.Lifty.TwoSimView.make = function (_elm) {
          } while (false);
          return s$;
       }();
-      var _p2 = a$;
-      if (_p2.ctor === "Arrive") {
-            var _p3 = _p2._0;
+      var _p2 = ma;
+      if (_p2.ctor === "Just" && _p2._0.ctor === "_Tuple2" && _p2._0._1.ctor === "Arrive")
+      {
+            var _p3 = _p2._0._1._0;
             var l$ = A2($Array$Extra.getUnsafe,_p3,s$$.lifts);
             var y = A2($Animation.ease,
             $Basics.identity,
             A4($Lifty$Util.anim,
             s$$.t,
             A2($Animation.animate,s$.t,l$.y),
-            $Lifty$Util.f_(_p2._1),
-            dt));
+            $Lifty$Util.f_(_p2._0._1._1),
+            _p2._0._0));
             return _U.update(s$$,
             {lifts: A3($Array.set,_p3,_U.update(l$,{y: y}),s$$.lifts)});
          } else {
@@ -16999,38 +17012,20 @@ Elm.Lifty.CompareUI.make = function (_elm) {
    var update_sim2 = F2(function (a,s) {
       return function (_p3) {
          var _p4 = _p3;
-         var _p8 = _p4._0;
-         var _p7 = _p4._2;
-         return A2($Maybe$Extra._op["?"],
-         A2($Maybe.map,
-         function (_p5) {
-            var _p6 = _p5;
-            return {ctor: "_Tuple2"
-                   ,_0: A5($Lifty$TwoSimView.animate,_p6._0,a,s,_p6._1,_p8)
-                   ,_1: A2($Effects.map,Action2,_p7)};
-         },
-         _p4._1),
-         {ctor: "_Tuple2",_0: _p8,_1: A2($Effects.map,Action2,_p7)});
+         return {ctor: "_Tuple2"
+                ,_0: A4($Lifty$TwoSimView.animate,s,a,_p4._0,_p4._1)
+                ,_1: A2($Effects.map,Action2,_p4._2)};
       }(A2($Lifty$TwoSim.update,a,s));
    });
    var Action1 = function (a) {
       return {ctor: "Action1",_0: a};
    };
    var update_sim1 = F2(function (a,s) {
-      return function (_p9) {
-         var _p10 = _p9;
-         var _p14 = _p10._0;
-         var _p13 = _p10._2;
-         return A2($Maybe$Extra._op["?"],
-         A2($Maybe.map,
-         function (_p11) {
-            var _p12 = _p11;
-            return {ctor: "_Tuple2"
-                   ,_0: A5($Lifty$OneSimView.animate,_p12._0,s,a,_p14,_p12._1)
-                   ,_1: A2($Effects.map,Action1,_p13)};
-         },
-         _p10._1),
-         {ctor: "_Tuple2",_0: _p14,_1: A2($Effects.map,Action1,_p13)});
+      return function (_p5) {
+         var _p6 = _p5;
+         return {ctor: "_Tuple2"
+                ,_0: A4($Lifty$OneSimView.animate,s,a,_p6._0,_p6._1)
+                ,_1: A2($Effects.map,Action1,_p6._2)};
       }(A2($Lifty$OneSim.update,a,s));
    });
    var AddPassenger = F2(function (a,b) {
@@ -17038,168 +17033,155 @@ Elm.Lifty.CompareUI.make = function (_elm) {
    });
    var update = F2(function (a,s) {
       update: while (true) {
-         var _p15 = a;
-         switch (_p15.ctor)
+         var _p7 = a;
+         switch (_p7.ctor)
          {case "StartAdd": return {ctor: "_Tuple2"
-                                  ,_0: _U.update(s,{adding: $Maybe.Just(_p15._0)})
+                                  ,_0: _U.update(s,{adding: $Maybe.Just(_p7._0)})
                                   ,_1: $Effects.none};
             case "EndAdd": return A2($Maybe$Extra._op["?"],
               A2($Maybe.map,
               function (src) {
                  return A2(update,
-                 A2(AddPassenger,src,_p15._0),
+                 A2(AddPassenger,src,_p7._0),
                  _U.update(s,{adding: $Maybe.Nothing}));
               },
               s.adding),
               {ctor: "_Tuple2"
               ,_0: _U.update(s,{adding: $Maybe.Nothing})
               ,_1: $Effects.none});
-            case "AddPassenger": var _p19 = _p15._0;
-              var _p18 = _p15._1;
-              var floor2 = A2($Array$Extra.getUnsafe,_p19,s.s2.floors);
+            case "AddPassenger": var _p11 = _p7._0;
+              var _p10 = _p7._1;
+              var floor2 = A2($Array$Extra.getUnsafe,_p11,s.s2.floors);
               var x2 = A4($Lifty$Util.anim,
               s.s2.t,
               3.3 + $Lifty$Util.f_($Array.length(s.s2.lifts)),
               0 + $Lifty$Util.f_($Array.length(s.s2.lifts)) + $Lifty$Util.f_($List.length(floor2)) / 5,
               500);
-              var p2 = {x: x2,dest: _p18};
-              var _p16 = A2($Lifty$TwoSim.update,
-              A3($Lifty$TwoSim.AddPassenger,_p19,_p18,p2),
+              var p2 = {x: x2,dest: _p10};
+              var _p8 = A2($Lifty$TwoSim.update,
+              A3($Lifty$TwoSim.AddPassenger,_p11,_p10,p2),
               s.s2);
-              var s2$ = _p16._0;
-              var ma2 = _p16._1;
-              var e2 = _p16._2;
-              var floor1 = A2($Array$Extra.getUnsafe,_p19,s.s1.floors);
+              var s2$ = _p8._0;
+              var ma2 = _p8._1;
+              var e2 = _p8._2;
+              var floor1 = A2($Array$Extra.getUnsafe,_p11,s.s1.floors);
               var x1 = A4($Lifty$Util.anim,
               s.s1.t,
               3.3 + $Lifty$Util.f_($Array.length(s.s1.lifts)),
               0 + $Lifty$Util.f_($Array.length(s.s1.lifts)) + $Lifty$Util.f_($List.length(floor1)) / 5,
               500);
-              var p1 = {x: x1,dest: _p18};
-              var _p17 = A2($Lifty$OneSim.update,
-              A3($Lifty$OneSim.AddPassenger,_p19,_p18,p1),
+              var p1 = {x: x1,dest: _p10};
+              var _p9 = A2($Lifty$OneSim.update,
+              A3($Lifty$OneSim.AddPassenger,_p11,_p10,p1),
               s.s1);
-              var s1$ = _p17._0;
-              var ma1 = _p17._1;
-              var e1 = _p17._2;
+              var s1$ = _p9._0;
+              var ma1 = _p9._1;
+              var e1 = _p9._2;
               var s$ = _U.update(s,{s1: s1$,s2: s2$});
               return {ctor: "_Tuple2"
                      ,_0: s$
                      ,_1: $Effects.batch(_U.list([A2($Effects.map,Action1,e1)
                                                  ,A2($Effects.map,Action2,e2)]))};
-            case "Action1": return function (_p20) {
-                 var _p21 = _p20;
+            case "Action1": return function (_p12) {
+                 var _p13 = _p12;
                  return {ctor: "_Tuple2"
-                        ,_0: _U.update(s,{s1: _p21._0})
-                        ,_1: _p21._1};
-              }(A2(update_sim1,_p15._0,s.s1));
-            case "Action2": return function (_p22) {
-                 var _p23 = _p22;
+                        ,_0: _U.update(s,{s1: _p13._0})
+                        ,_1: _p13._1};
+              }(A2(update_sim1,_p7._0,s.s1));
+            case "Action2": return function (_p14) {
+                 var _p15 = _p14;
                  return {ctor: "_Tuple2"
-                        ,_0: _U.update(s,{s2: _p23._0})
-                        ,_1: _p23._1};
-              }(A2(update_sim2,_p15._0,s.s2));
-            case "Tick": var _p26 = _p15._0;
-              var clearLeaving = function (ls) {
-                 return A2($List.filter,
-                 function (l) {
-                    return A2($Animation.isDone,_p26 - 100,l.x);
-                 },
-                 ls);
-              };
-              var _p24 = A2($Lifty$TwoSimView.update,
-              $Lifty$TwoSimView.Tick(_p26),
-              s.s2);
-              var s2$ = _p24._0;
-              var e2 = _p24._1;
-              var _p25 = A2($Lifty$OneSimView.update,
-              $Lifty$OneSimView.Tick(_p26),
-              s.s1);
-              var s1$ = _p25._0;
-              var e1 = _p25._1;
+                        ,_0: _U.update(s,{s2: _p15._0})
+                        ,_1: _p15._1};
+              }(A2(update_sim2,_p7._0,s.s2));
+            case "Tick": var _p17 = _p7._0;
+              var _p16 = {ctor: "_Tuple2",_0: s.s1,_1: s.s2};
+              var s1 = _p16._0;
+              var s2 = _p16._1;
+              var clearLeaving = $List.filter(function (p) {
+                 return $Basics.not(A2($Animation.isDone,_p17,p.x));
+              });
               var s$ = _U.update(s,
-              {s1: _U.update(s1$,{leaving: clearLeaving(s1$.leaving)})
-              ,s2: _U.update(s2$,{leaving: clearLeaving(s2$.leaving)})});
-              return {ctor: "_Tuple2"
-                     ,_0: s$
-                     ,_1: $Effects.batch(_U.list([A2($Effects.map,Action1,e1)
-                                                 ,A2($Effects.map,Action2,e2)]))};
+              {s1: _U.update(s1,{t: _p17,leaving: clearLeaving(s1.leaving)})
+              ,s2: _U.update(s2,
+              {t: _p17,leaving: clearLeaving(s2.leaving)})});
+              return {ctor: "_Tuple2",_0: s$,_1: $Effects.none};
             case "AddRandom":
             if ($Maybe$Extra.isJust(s.adding) || $Basics.not(s.random_enabled))
               return {ctor: "_Tuple2",_0: s,_1: $Effects.none}; else {
-                    var _p27 = gen_srcdest(s.seed);
-                    var src = _p27._0._0;
-                    var dest = _p27._0._1;
-                    var seed$ = _p27._1;
-                    var _v9 = A2(AddPassenger,src,dest),
-                    _v10 = _U.update(s,{seed: seed$});
-                    a = _v9;
-                    s = _v10;
+                    var _p18 = gen_srcdest(s.seed);
+                    var src = _p18._0._0;
+                    var dest = _p18._0._1;
+                    var seed$ = _p18._1;
+                    var _v7 = A2(AddPassenger,src,dest),
+                    _v8 = _U.update(s,{seed: seed$});
+                    a = _v7;
+                    s = _v8;
                     continue update;
                  }
-            case "ToggleRandom": var _p29 = _p15._0;
-              var _p28 = A2($Debug.log,"ToggleRandom",_p29);
+            case "ToggleRandom": var _p20 = _p7._0;
+              var _p19 = A2($Debug.log,"ToggleRandom",_p20);
               return {ctor: "_Tuple2"
-                     ,_0: _U.update(s,{random_enabled: _p29})
+                     ,_0: _U.update(s,{random_enabled: _p20})
                      ,_1: $Effects.none};
-            case "Fill": var upd = F2(function (a,_p30) {
-                 var _p31 = _p30;
-                 var _p32 = A2(update,a,_p31._0);
-                 var s$ = _p32._0;
-                 var e$ = _p32._1;
+            case "Fill": var upd = F2(function (a,_p21) {
+                 var _p22 = _p21;
+                 var _p23 = A2(update,a,_p22._0);
+                 var s$ = _p23._0;
+                 var e$ = _p23._1;
                  return {ctor: "_Tuple2"
                         ,_0: s$
-                        ,_1: $Effects.batch(_U.list([_p31._1,e$]))};
+                        ,_1: $Effects.batch(_U.list([_p22._1,e$]))};
               });
-              var gen_floor = F3(function (floor_id,p_id,_p33) {
-                 var _p34 = _p33;
-                 var _p38 = _p34._1;
-                 var _p37 = _p34._0;
+              var gen_floor = F3(function (floor_id,p_id,_p24) {
+                 var _p25 = _p24;
+                 var _p29 = _p25._1;
+                 var _p28 = _p25._0;
                  if (_U.cmp(p_id,0) < 0) return {ctor: "_Tuple2"
-                                                ,_0: _p37
-                                                ,_1: _p38}; else {
-                       var _p35 = A2(gen_dest,floor_id,_p38);
-                       var dest = _p35._0;
-                       var seed$ = _p35._1;
+                                                ,_0: _p28
+                                                ,_1: _p29}; else {
+                       var _p26 = A2(gen_dest,floor_id,_p29);
+                       var dest = _p26._0;
+                       var seed$ = _p26._1;
                        var act = A2(AddPassenger,floor_id,dest);
-                       var _p36 = A3(gen_floor,
+                       var _p27 = A3(gen_floor,
                        floor_id,
                        p_id - 1,
-                       {ctor: "_Tuple2",_0: _p37,_1: seed$});
-                       var acts$ = _p36._0;
-                       var seed$$ = _p36._1;
+                       {ctor: "_Tuple2",_0: _p28,_1: seed$});
+                       var acts$ = _p27._0;
+                       var seed$$ = _p27._1;
                        return {ctor: "_Tuple2"
                               ,_0: A2($List._op["::"],act,acts$)
                               ,_1: seed$$};
                     }
               });
-              var gen_all = F2(function (floor_id,_p39) {
+              var gen_all = F2(function (floor_id,_p30) {
                  gen_all: while (true) {
-                    var _p40 = _p39;
-                    var _p43 = _p40._1;
-                    var _p42 = _p40._0;
+                    var _p31 = _p30;
+                    var _p34 = _p31._1;
+                    var _p33 = _p31._0;
                     if (_U.cmp(floor_id,0) < 0) return {ctor: "_Tuple2"
-                                                       ,_0: _p42
-                                                       ,_1: _p43}; else {
-                          var _p41 = A3(gen_floor,
+                                                       ,_0: _p33
+                                                       ,_1: _p34}; else {
+                          var _p32 = A3(gen_floor,
                           floor_id,
                           max_queue - 1,
-                          {ctor: "_Tuple2",_0: _p42,_1: _p43});
-                          var acts$ = _p41._0;
-                          var seed$ = _p41._1;
-                          var _v14 = floor_id - 1,
-                          _v15 = {ctor: "_Tuple2",_0: acts$,_1: seed$};
-                          floor_id = _v14;
-                          _p39 = _v15;
+                          {ctor: "_Tuple2",_0: _p33,_1: _p34});
+                          var acts$ = _p32._0;
+                          var seed$ = _p32._1;
+                          var _v12 = floor_id - 1,
+                          _v13 = {ctor: "_Tuple2",_0: acts$,_1: seed$};
+                          floor_id = _v12;
+                          _p30 = _v13;
                           continue gen_all;
                        }
                  }
               });
-              var _p44 = A2(gen_all,
+              var _p35 = A2(gen_all,
               num_floors - 1,
               {ctor: "_Tuple2",_0: _U.list([]),_1: s.seed});
-              var acts = _p44._0;
-              var seed$ = _p44._1;
+              var acts = _p35._0;
+              var seed$ = _p35._1;
               return A3($List.foldl,
               upd,
               {ctor: "_Tuple2"

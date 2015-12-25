@@ -6479,6 +6479,234 @@ Elm.Time.make = function (_elm) {
                              ,timestamp: timestamp
                              ,delay: delay
                              ,since: since};
+};Elm.Easing = Elm.Easing || {};
+Elm.Easing.make = function (_elm) {
+   "use strict";
+   _elm.Easing = _elm.Easing || {};
+   if (_elm.Easing.values) return _elm.Easing.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var cycle = F3(function (animation,d,t) {
+      return A2(animation,
+      1,
+      t / d - $Basics.toFloat($Basics.floor(t / d)));
+   });
+   var flip = F2(function (easing,time) {
+      return easing(1 - time);
+   });
+   var retour = F2(function (easing,time) {
+      return _U.cmp(time,0.5) < 0 ? easing(time * 2) : A2(flip,
+      easing,
+      (time - 0.5) * 2);
+   });
+   var invert = F2(function (easing,time) {
+      return 1 - easing(1 - time);
+   });
+   var inOut = F3(function (e1,e2,time) {
+      return _U.cmp(time,
+      0.5) < 0 ? e1(time * 2) / 2 : 0.5 + e2((time - 0.5) * 2) / 2;
+   });
+   var easeInElastic = function (time) {
+      var t$ = time - 1;
+      var p = 0.3;
+      var s = 7.5e-2;
+      return 0 - Math.pow(2,
+      10 * t$) * $Basics.sin((t$ - s) * (2 * $Basics.pi) / p);
+   };
+   var easeOutElastic = invert(easeInElastic);
+   var easeInOutElastic = A2(inOut,easeInElastic,easeOutElastic);
+   var easeOutBounce = function (time) {
+      var t4 = time - 2.65 / 2.75;
+      var t3 = time - 2.25 / 2.75;
+      var t2 = time - 1.5 / 2.75;
+      var a = 7.5625;
+      return _U.cmp(time,
+      1 / 2.75) < 0 ? a * time * time : _U.cmp(time,
+      2 / 2.75) < 0 ? a * t2 * t2 + 0.75 : _U.cmp(time,
+      2.5 / 2.75) < 0 ? a * t3 * t3 + 0.9375 : a * t4 * t4 + 0.984375;
+   };
+   var easeInBounce = invert(easeOutBounce);
+   var easeInOutBounce = A2(inOut,easeInBounce,easeOutBounce);
+   var easeInBack = function (time) {
+      return time * time * (2.70158 * time - 1.70158);
+   };
+   var easeOutBack = invert(easeInBack);
+   var easeInOutBack = A2(inOut,easeInBack,easeOutBack);
+   var easeOutCirc = function (time) {
+      return $Basics.sqrt(1 - Math.pow(time - 1,2));
+   };
+   var easeInCirc = invert(easeOutCirc);
+   var easeInOutCirc = A2(inOut,easeInCirc,easeOutCirc);
+   var easeInExpo = function (time) {
+      return Math.pow(2,10 * (time - 1));
+   };
+   var easeOutExpo = invert(easeInExpo);
+   var easeInOutExpo = A2(inOut,easeInExpo,easeOutExpo);
+   var easeOutSine = function (time) {
+      return $Basics.sin(time * ($Basics.pi / 2));
+   };
+   var easeInSine = invert(easeOutSine);
+   var easeInOutSine = A2(inOut,easeInSine,easeOutSine);
+   var easeInQuint = function (time) {
+      return Math.pow(time,5);
+   };
+   var easeOutQuint = invert(easeInQuint);
+   var easeInOutQuint = A2(inOut,easeInQuint,easeOutQuint);
+   var easeInQuart = function (time) {
+      return Math.pow(time,4);
+   };
+   var easeOutQuart = invert(easeInQuart);
+   var easeInOutQuart = A2(inOut,easeInQuart,easeOutQuart);
+   var easeInCubic = function (time) {
+      return Math.pow(time,3);
+   };
+   var easeOutCubic = invert(easeInCubic);
+   var easeInOutCubic = A2(inOut,easeInCubic,easeOutCubic);
+   var easeInQuad = function (time) {    return Math.pow(time,2);};
+   var easeOutQuad = invert(easeInQuad);
+   var easeInOutQuad = A2(inOut,easeInQuad,easeOutQuad);
+   var linear = $Basics.identity;
+   var pair = F4(function (interpolate,_p1,_p0,v) {
+      var _p2 = _p1;
+      var _p3 = _p0;
+      return {ctor: "_Tuple2"
+             ,_0: A3(interpolate,_p2._0,_p3._0,v)
+             ,_1: A3(interpolate,_p2._1,_p3._1,v)};
+   });
+   var $float = F3(function (from,to,v) {
+      return from + (to - from) * v;
+   });
+   var point2d = F3(function (from,to,v) {
+      return {x: A3($float,from.x,to.x,v)
+             ,y: A3($float,from.y,to.y,v)};
+   });
+   var point3d = F3(function (from,to,v) {
+      return {x: A3($float,from.x,to.x,v)
+             ,y: A3($float,from.y,to.y,v)
+             ,z: A3($float,from.z,to.z,v)};
+   });
+   var color = F3(function (from,to,v) {
+      var float$ = F3(function (from,to,v) {
+         return $Basics.round(A3($float,
+         $Basics.toFloat(from),
+         $Basics.toFloat(to),
+         v));
+      });
+      var _p4 = {ctor: "_Tuple2"
+                ,_0: $Color.toRgb(from)
+                ,_1: $Color.toRgb(to)};
+      var rgb1 = _p4._0;
+      var rgb2 = _p4._1;
+      var _p5 = {ctor: "_Tuple4"
+                ,_0: rgb1.red
+                ,_1: rgb1.green
+                ,_2: rgb1.blue
+                ,_3: rgb1.alpha};
+      var r1 = _p5._0;
+      var g1 = _p5._1;
+      var b1 = _p5._2;
+      var a1 = _p5._3;
+      var _p6 = {ctor: "_Tuple4"
+                ,_0: rgb2.red
+                ,_1: rgb2.green
+                ,_2: rgb2.blue
+                ,_3: rgb2.alpha};
+      var r2 = _p6._0;
+      var g2 = _p6._1;
+      var b2 = _p6._2;
+      var a2 = _p6._3;
+      return A4($Color.rgba,
+      A3(float$,r1,r2,v),
+      A3(float$,g1,g2,v),
+      A3(float$,b1,b2,v),
+      A3($float,a1,a2,v));
+   });
+   var bezier = F5(function (x1,y1,x2,y2,time) {
+      var casteljau = function (ps) {
+         casteljau: while (true) {
+            var _p7 = ps;
+            if (_p7.ctor === "::" && _p7._0.ctor === "_Tuple2" && _p7._1.ctor === "[]")
+            {
+                  return _p7._0._1;
+               } else {
+                  var _p8 = _p7;
+                  var _v3 = A3($List.map2,
+                  F2(function (x,y) {    return A4(pair,$float,x,y,time);}),
+                  _p8,
+                  A2($Maybe.withDefault,_U.list([]),$List.tail(_p8)));
+                  ps = _v3;
+                  continue casteljau;
+               }
+         }
+      };
+      return casteljau(_U.list([{ctor: "_Tuple2",_0: 0,_1: 0}
+                               ,{ctor: "_Tuple2",_0: x1,_1: y1}
+                               ,{ctor: "_Tuple2",_0: x2,_1: y2}
+                               ,{ctor: "_Tuple2",_0: 1,_1: 1}]));
+   });
+   var ease = F6(function (easing,
+   interpolation,
+   from,
+   to,
+   duration,
+   time) {
+      return A3(interpolation,
+      from,
+      to,
+      easing(A2($Basics.min,time / duration,1)));
+   });
+   return _elm.Easing.values = {_op: _op
+                               ,ease: ease
+                               ,$float: $float
+                               ,point2d: point2d
+                               ,point3d: point3d
+                               ,color: color
+                               ,pair: pair
+                               ,cycle: cycle
+                               ,invert: invert
+                               ,retour: retour
+                               ,inOut: inOut
+                               ,flip: flip
+                               ,bezier: bezier
+                               ,linear: linear
+                               ,easeInQuad: easeInQuad
+                               ,easeOutQuad: easeOutQuad
+                               ,easeInOutQuad: easeInOutQuad
+                               ,easeInCubic: easeInCubic
+                               ,easeOutCubic: easeOutCubic
+                               ,easeInOutCubic: easeInOutCubic
+                               ,easeInQuart: easeInQuart
+                               ,easeOutQuart: easeOutQuart
+                               ,easeInOutQuart: easeInOutQuart
+                               ,easeInQuint: easeInQuint
+                               ,easeOutQuint: easeOutQuint
+                               ,easeInOutQuint: easeInOutQuint
+                               ,easeInSine: easeInSine
+                               ,easeOutSine: easeOutSine
+                               ,easeInOutSine: easeInOutSine
+                               ,easeInExpo: easeInExpo
+                               ,easeOutExpo: easeOutExpo
+                               ,easeInOutExpo: easeInOutExpo
+                               ,easeInCirc: easeInCirc
+                               ,easeOutCirc: easeOutCirc
+                               ,easeInOutCirc: easeInOutCirc
+                               ,easeInBack: easeInBack
+                               ,easeOutBack: easeOutBack
+                               ,easeInOutBack: easeInOutBack
+                               ,easeInBounce: easeInBounce
+                               ,easeOutBounce: easeOutBounce
+                               ,easeInOutBounce: easeInOutBounce
+                               ,easeInElastic: easeInElastic
+                               ,easeOutElastic: easeOutElastic
+                               ,easeInOutElastic: easeInOutElastic};
 };Elm.Task = Elm.Task || {};
 Elm.Task.Extra = Elm.Task.Extra || {};
 Elm.Task.Extra.make = function (_elm) {
@@ -14498,6 +14726,7 @@ Elm.Lifty.RenderSim.make = function (_elm) {
    $Array = Elm.Array.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
+   $Easing = Elm.Easing.make(_elm),
    $Lifty$Render = Elm.Lifty.Render.make(_elm),
    $Lifty$Util = Elm.Lifty.Util.make(_elm),
    $List = Elm.List.make(_elm),
@@ -14634,9 +14863,19 @@ Elm.Lifty.RenderSim.make = function (_elm) {
       $List.map,
       leaving,
       function (p) {
-         return A2($Lifty$Render.movey,
-         p.dest,
-         _U.list([A3(rPa,num_floors,p,t)]));
+         return A2($Svg$Lazy.lazy,
+         function (_p9) {
+            return A2($Svg.g,
+            _U.list([$Svg$Attributes.opacity($Lifty$Util.s_(A2($Animation.animate,
+            t,
+            A2($Animation.ease,
+            $Easing.easeInExpo,
+            A2($Animation.to,0,A2($Animation.from,1,p.x))))))]),
+            _U.list([A2($Lifty$Render.movey,
+            p.dest,
+            _U.list([A3(rPa,num_floors,p,t)]))]));
+         },
+         A2($Animation.animate,t,p.x));
       }));
    });
    var rFloorPax = F2(function (floors,t) {
@@ -14644,16 +14883,16 @@ Elm.Lifty.RenderSim.make = function (_elm) {
       _U.list([]),
       A2($Lifty$Util.imapA,
       floors,
-      function (_p9) {
-         var _p10 = _p9;
+      function (_p10) {
+         var _p11 = _p10;
          return A2($Svg.g,
          _U.list([]),
          A3($Basics.flip,
          $List.map,
-         $List.reverse(_p10._1),
+         $List.reverse(_p11._1),
          function (p) {
             return A2($Lifty$Render.movey,
-            _p10._0,
+            _p11._0,
             _U.list([A3(rPa,$Array.length(floors),p,t)]));
          }));
       }));
@@ -14708,7 +14947,7 @@ Elm.Lifty.OneSimRender.make = function (_elm) {
    var _op = {};
    var render = F6(function (go,call,startAdd,endAdd,a,s) {
       var num_lifts = $Array.length(s.lifts);
-      var w = 2 + 3 + $Lifty$Util.f_(num_lifts);
+      var w = 1 + 3 + $Lifty$Util.f_(num_lifts);
       var num_floors = $Array.length(s.floors);
       var h = 1 + $Lifty$Util.f_(num_floors);
       return A2($Html.div,
@@ -14817,8 +15056,8 @@ Elm.Lifty.OneSimView.make = function (_elm) {
          {x: A4($Lifty$Util.anim,
          s$.t,
          A2($Animation.animate,s$.t,p.x),
-         -10,
-         1000)});
+         -0.3,
+         800)});
       },
       new_leaving);
       var leaving$ = A2($List.append,new_leaving$,old_leaving);
@@ -14855,7 +15094,7 @@ Elm.Lifty.OneSimView.make = function (_elm) {
       return _U.update(s$,
       {lifts: lifts$,floors: floors$,leaving: leaving$});
    });
-   var animate = F5(function (dt,s,a,s$,a$) {
+   var animate = F4(function (s,a,s$,ma) {
       var s$$ = function () {
          var _p7 = a;
          if (_p7.ctor === "Action" && _p7._0.ctor === "Arrive") {
@@ -14864,9 +15103,10 @@ Elm.Lifty.OneSimView.make = function (_elm) {
                return s$;
             }
       }();
-      var _p8 = a$;
-      if (_p8.ctor === "Arrive") {
-            var _p9 = _p8._0;
+      var _p8 = ma;
+      if (_p8.ctor === "Just" && _p8._0.ctor === "_Tuple2" && _p8._0._1.ctor === "Arrive")
+      {
+            var _p9 = _p8._0._1._0;
             var l$ = A2($Array$Extra.getUnsafe,_p9,s$$.lifts);
             var l = A2($Array$Extra.getUnsafe,_p9,s.lifts);
             var y = A2($Animation.ease,
@@ -14875,7 +15115,7 @@ Elm.Lifty.OneSimView.make = function (_elm) {
             s$$.t,
             $Lifty$Util.f_(l.dest),
             $Lifty$Util.f_(l$.dest),
-            dt));
+            _p8._0._0));
             return _U.update(s$$,
             {lifts: A3($Array.set,_p9,_U.update(l$,{y: y}),s$$.lifts)});
          } else {
@@ -14946,7 +15186,6 @@ Elm.Lifty.OneSimUI.make = function (_elm) {
    $Lifty$OneSimView = Elm.Lifty.OneSimView.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
-   $Maybe$Extra = Elm.Maybe.Extra.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $StartApp = Elm.StartApp.make(_elm),
@@ -14966,21 +15205,10 @@ Elm.Lifty.OneSimUI.make = function (_elm) {
       function (a) {
          return function (_p2) {
             var _p3 = _p2;
-            var _p7 = _p3._0;
-            var _p6 = _p3._2;
-            return A2($Maybe$Extra._op["?"],
-            A2($Maybe.map,
-            function (_p4) {
-               var _p5 = _p4;
-               return {ctor: "_Tuple2"
-                      ,_0: A5($Lifty$OneSimView.animate,_p5._0,s,a,_p7,_p5._1)
-                      ,_1: A2($Effects.map,$Either.Right,_p6)};
-            },
-            _p3._1),
-            {ctor: "_Tuple2"
-            ,_0: _p7
-            ,_1: A2($Effects.map,$Either.Right,_p6)});
-         }(A2($Lifty$OneSim.update,a,s));
+            return {ctor: "_Tuple2"
+                   ,_0: A4($Lifty$OneSimView.animate,s,a,_p3._0,_p3._1)
+                   ,_1: A2($Effects.map,$Either.Right,_p3._2)};
+         }(A2($Lifty$OneSim.update,A2($Debug.log,"a",a),s));
       },
       a);
    });
@@ -15001,34 +15229,34 @@ Elm.Lifty.OneSimUI.make = function (_elm) {
                                     ,_0: init_state
                                     ,_1: $Effects.none}
                              ,view: A4($Lifty$OneSimRender.render,
-                             function (_p8) {
+                             function (_p4) {
                                 return A2(F2(function (x,y) {
-                                   return function (_p9) {
-                                      return x(y(_p9));
+                                   return function (_p5) {
+                                      return x(y(_p5));
                                    };
                                 }),
                                 $Either.Right,
                                 A2(F2(function (x,y) {
-                                   return function (_p10) {
-                                      return x(y(_p10));
+                                   return function (_p6) {
+                                      return x(y(_p6));
                                    };
                                 }),
                                 $Lifty$OneSim.Action,
-                                $Lifty$OneController.Go(_p8)));
+                                $Lifty$OneController.Go(_p4)));
                              },
-                             function (_p11) {
-                                return $Either.Right($Lifty$OneSim.Action($Lifty$OneController.Call(_p11)));
+                             function (_p7) {
+                                return $Either.Right($Lifty$OneSim.Action($Lifty$OneController.Call(_p7)));
                              },
-                             function (_p12) {
-                                return $Either.Left($Lifty$OneSimView.StartAdd(_p12));
+                             function (_p8) {
+                                return $Either.Left($Lifty$OneSimView.StartAdd(_p8));
                              },
-                             function (_p13) {
-                                return $Either.Left($Lifty$OneSimView.FinishAdd(_p13));
+                             function (_p9) {
+                                return $Either.Left($Lifty$OneSimView.FinishAdd(_p9));
                              })
                              ,update: update
                              ,inputs: _U.list([A2($Signal.map,
-                             function (_p14) {
-                                return $Either.Left($Lifty$OneSimView.Tick(_p14));
+                             function (_p10) {
+                                return $Either.Left($Lifty$OneSimView.Tick(_p10));
                              },
                              A3($Signal.foldp,
                              F2(function (x,y) {    return x + y;}),

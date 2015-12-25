@@ -14794,8 +14794,8 @@ Elm.Lifty.OneSimView.make = function (_elm) {
          {x: A4($Lifty$Util.anim,
          s$.t,
          A2($Animation.animate,s$.t,p.x),
-         -10,
-         1000)});
+         -0.3,
+         800)});
       },
       new_leaving);
       var leaving$ = A2($List.append,new_leaving$,old_leaving);
@@ -14832,7 +14832,7 @@ Elm.Lifty.OneSimView.make = function (_elm) {
       return _U.update(s$,
       {lifts: lifts$,floors: floors$,leaving: leaving$});
    });
-   var animate = F5(function (dt,s,a,s$,a$) {
+   var animate = F4(function (s,a,s$,ma) {
       var s$$ = function () {
          var _p7 = a;
          if (_p7.ctor === "Action" && _p7._0.ctor === "Arrive") {
@@ -14841,9 +14841,10 @@ Elm.Lifty.OneSimView.make = function (_elm) {
                return s$;
             }
       }();
-      var _p8 = a$;
-      if (_p8.ctor === "Arrive") {
-            var _p9 = _p8._0;
+      var _p8 = ma;
+      if (_p8.ctor === "Just" && _p8._0.ctor === "_Tuple2" && _p8._0._1.ctor === "Arrive")
+      {
+            var _p9 = _p8._0._1._0;
             var l$ = A2($Array$Extra.getUnsafe,_p9,s$$.lifts);
             var l = A2($Array$Extra.getUnsafe,_p9,s.lifts);
             var y = A2($Animation.ease,
@@ -14852,7 +14853,7 @@ Elm.Lifty.OneSimView.make = function (_elm) {
             s$$.t,
             $Lifty$Util.f_(l.dest),
             $Lifty$Util.f_(l$.dest),
-            dt));
+            _p8._0._0));
             return _U.update(s$$,
             {lifts: A3($Array.set,_p9,_U.update(l$,{y: y}),s$$.lifts)});
          } else {
@@ -14915,6 +14916,7 @@ Elm.Lifty.RenderSim.make = function (_elm) {
    $Array = Elm.Array.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
+   $Easing = Elm.Easing.make(_elm),
    $Lifty$Render = Elm.Lifty.Render.make(_elm),
    $Lifty$Util = Elm.Lifty.Util.make(_elm),
    $List = Elm.List.make(_elm),
@@ -15051,9 +15053,19 @@ Elm.Lifty.RenderSim.make = function (_elm) {
       $List.map,
       leaving,
       function (p) {
-         return A2($Lifty$Render.movey,
-         p.dest,
-         _U.list([A3(rPa,num_floors,p,t)]));
+         return A2($Svg$Lazy.lazy,
+         function (_p9) {
+            return A2($Svg.g,
+            _U.list([$Svg$Attributes.opacity($Lifty$Util.s_(A2($Animation.animate,
+            t,
+            A2($Animation.ease,
+            $Easing.easeInExpo,
+            A2($Animation.to,0,A2($Animation.from,1,p.x))))))]),
+            _U.list([A2($Lifty$Render.movey,
+            p.dest,
+            _U.list([A3(rPa,num_floors,p,t)]))]));
+         },
+         A2($Animation.animate,t,p.x));
       }));
    });
    var rFloorPax = F2(function (floors,t) {
@@ -15061,16 +15073,16 @@ Elm.Lifty.RenderSim.make = function (_elm) {
       _U.list([]),
       A2($Lifty$Util.imapA,
       floors,
-      function (_p9) {
-         var _p10 = _p9;
+      function (_p10) {
+         var _p11 = _p10;
          return A2($Svg.g,
          _U.list([]),
          A3($Basics.flip,
          $List.map,
-         $List.reverse(_p10._1),
+         $List.reverse(_p11._1),
          function (p) {
             return A2($Lifty$Render.movey,
-            _p10._0,
+            _p11._0,
             _U.list([A3(rPa,$Array.length(floors),p,t)]));
          }));
       }));
@@ -15592,7 +15604,7 @@ Elm.Lifty.TwoSimRender.make = function (_elm) {
    a,
    s) {
       var num_lifts = $Array.length(s.lifts);
-      var w = 2 + 3 + $Lifty$Util.f_(num_lifts);
+      var w = 1 + 3 + $Lifty$Util.f_(num_lifts);
       var num_floors = $Array.length(s.floors);
       var h = 1 + $Lifty$Util.f_(num_floors);
       return A2($Html.div,
@@ -15713,7 +15725,7 @@ Elm.Lifty.TwoSimView.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Time = Elm.Time.make(_elm);
    var _op = {};
-   var animate = F5(function (dt,a,s,a$,s$) {
+   var animate = F4(function (s,a,s$,ma) {
       var s$$ = function () {
          var _p0 = a;
          _v0_2: do {
@@ -15727,7 +15739,7 @@ Elm.Lifty.TwoSimView.make = function (_elm) {
                        s$.t,
                        A2($Animation.animate,s$.t,l$.y),
                        $Lifty$Util.f_(_p0._0._1),
-                       dt));
+                       1000));
                        return _U.update(s$,
                        {lifts: A3($Array.set,_p1,_U.update(l$,{y: y}),s$.lifts)});
                      case "Arrive": return A4($Lifty$OneSimView.animate_arrived,
@@ -15742,17 +15754,18 @@ Elm.Lifty.TwoSimView.make = function (_elm) {
          } while (false);
          return s$;
       }();
-      var _p2 = a$;
-      if (_p2.ctor === "Arrive") {
-            var _p3 = _p2._0;
+      var _p2 = ma;
+      if (_p2.ctor === "Just" && _p2._0.ctor === "_Tuple2" && _p2._0._1.ctor === "Arrive")
+      {
+            var _p3 = _p2._0._1._0;
             var l$ = A2($Array$Extra.getUnsafe,_p3,s$$.lifts);
             var y = A2($Animation.ease,
             $Basics.identity,
             A4($Lifty$Util.anim,
             s$$.t,
             A2($Animation.animate,s$.t,l$.y),
-            $Lifty$Util.f_(_p2._1),
-            dt));
+            $Lifty$Util.f_(_p2._0._1._1),
+            _p2._0._0));
             return _U.update(s$$,
             {lifts: A3($Array.set,_p3,_U.update(l$,{y: y}),s$$.lifts)});
          } else {
@@ -15822,7 +15835,6 @@ Elm.Lifty.TwoSimUI.make = function (_elm) {
    $Lifty$TwoSimView = Elm.Lifty.TwoSimView.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
-   $Maybe$Extra = Elm.Maybe.Extra.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Set = Elm.Set.make(_elm),
    $Signal = Elm.Signal.make(_elm),
@@ -15843,20 +15855,9 @@ Elm.Lifty.TwoSimUI.make = function (_elm) {
       function (a) {
          return function (_p2) {
             var _p3 = _p2;
-            var _p7 = _p3._0;
-            var _p6 = _p3._2;
-            return A2($Maybe$Extra._op["?"],
-            A2($Maybe.map,
-            function (_p4) {
-               var _p5 = _p4;
-               return {ctor: "_Tuple2"
-                      ,_0: A5($Lifty$TwoSimView.animate,_p5._0,a,s,_p5._1,_p7)
-                      ,_1: A2($Effects.map,$Either.Right,_p6)};
-            },
-            _p3._1),
-            {ctor: "_Tuple2"
-            ,_0: _p7
-            ,_1: A2($Effects.map,$Either.Right,_p6)});
+            return {ctor: "_Tuple2"
+                   ,_0: A4($Lifty$TwoSimView.animate,s,a,_p3._0,_p3._1)
+                   ,_1: A2($Effects.map,$Either.Right,_p3._2)};
          }(A2($Lifty$TwoSim.update,A2($Debug.log,"a",a),s));
       },
       a);
@@ -15882,37 +15883,37 @@ Elm.Lifty.TwoSimUI.make = function (_elm) {
                                     ,_0: init_state
                                     ,_1: $Effects.none}
                              ,view: A5($Lifty$TwoSimRender.render,
-                             function (_p8) {
+                             function (_p4) {
                                 return A2(F2(function (x,y) {
-                                   return function (_p9) {
-                                      return x(y(_p9));
+                                   return function (_p5) {
+                                      return x(y(_p5));
                                    };
                                 }),
                                 $Either.Right,
                                 A2(F2(function (x,y) {
-                                   return function (_p10) {
-                                      return x(y(_p10));
+                                   return function (_p6) {
+                                      return x(y(_p6));
                                    };
                                 }),
                                 $Lifty$TwoSim.Action,
-                                $Lifty$TwoController.Go(_p8)));
+                                $Lifty$TwoController.Go(_p4)));
                              },
-                             function (_p11) {
-                                return $Either.Right($Lifty$TwoSim.Action($Lifty$TwoController.CallUp(_p11)));
+                             function (_p7) {
+                                return $Either.Right($Lifty$TwoSim.Action($Lifty$TwoController.CallUp(_p7)));
                              },
-                             function (_p12) {
-                                return $Either.Right($Lifty$TwoSim.Action($Lifty$TwoController.CallDown(_p12)));
+                             function (_p8) {
+                                return $Either.Right($Lifty$TwoSim.Action($Lifty$TwoController.CallDown(_p8)));
                              },
-                             function (_p13) {
-                                return $Either.Left($Lifty$TwoSimView.StartAdd(_p13));
+                             function (_p9) {
+                                return $Either.Left($Lifty$TwoSimView.StartAdd(_p9));
                              },
-                             function (_p14) {
-                                return $Either.Left($Lifty$TwoSimView.FinishAdd(_p14));
+                             function (_p10) {
+                                return $Either.Left($Lifty$TwoSimView.FinishAdd(_p10));
                              })
                              ,update: update
                              ,inputs: _U.list([A2($Signal.map,
-                             function (_p15) {
-                                return $Either.Left($Lifty$TwoSimView.Tick(_p15));
+                             function (_p11) {
+                                return $Either.Left($Lifty$TwoSimView.Tick(_p11));
                              },
                              A3($Signal.foldp,
                              F2(function (x,y) {    return x + y;}),
