@@ -13898,12 +13898,16 @@ Elm.Lifty.Util.make = function (_elm) {
    $Maybe$Extra = Elm.Maybe.Extra.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
-   $Svg = Elm.Svg.make(_elm),
-   $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
    $Task = Elm.Task.make(_elm),
    $Task$Extra = Elm.Task.Extra.make(_elm),
    $Time = Elm.Time.make(_elm);
    var _op = {};
+   var mkM2 = F4(function (address,action,param1,param2) {
+      return A2($Signal.message,address,A2(action,param1,param2));
+   });
+   var mkM = F3(function (address,action,param) {
+      return A2($Signal.message,address,action(param));
+   });
    var delay = F2(function (t,action) {
       return $Effects.task(A2($Task$Extra.delay,
       t,
@@ -13926,6 +13930,9 @@ Elm.Lifty.Util.make = function (_elm) {
       to,
       A2($Animation.from,from,$Animation.animation(start))));
    });
+   var imapL = F2(function (l,f) {
+      return A2($List.indexedMap,$Basics.curry(f),l);
+   });
    var izipA = function (l) {    return $Array.toIndexedList(l);};
    var imapA = F2(function (l,f) {
       return A2($List.map,f,izipA(l));
@@ -13933,28 +13940,17 @@ Elm.Lifty.Util.make = function (_elm) {
    var izipL = function (l) {
       return $Array.toIndexedList($Array.fromList(l));
    };
-   var imapL = F2(function (l,f) {
-      return A2($List.map,f,izipL(l));
-   });
-   var f_ = $Basics.toFloat;
-   var s_ = function (f) {
-      return function (_p2) {
-         return f($Basics.toString(_p2));
-      };
+   var zeroTo = function (n) {
+      return A2($List.indexedMap,
+      F2(function (a,b) {    return a;}),
+      A2($List.repeat,n,{ctor: "_Tuple0"}));
    };
-   var rect_ = F5(function (x$,y$,w$,h$,a$) {
-      return A2($Svg.rect,
-      A2($List.append,
-      _U.list([A2(s_,$Svg$Attributes.x,x$)
-              ,A2(s_,$Svg$Attributes.y,y$)
-              ,A2(s_,$Svg$Attributes.width,w$)
-              ,A2(s_,$Svg$Attributes.height,h$)]),
-      a$),
-      _U.list([]));
-   });
+   var f_ = $Basics.toFloat;
+   var s_ = $Basics.toString;
    return _elm.Lifty.Util.values = {_op: _op
                                    ,s_: s_
                                    ,f_: f_
+                                   ,zeroTo: zeroTo
                                    ,izipL: izipL
                                    ,izipA: izipA
                                    ,imapL: imapL
@@ -13962,7 +13958,8 @@ Elm.Lifty.Util.make = function (_elm) {
                                    ,anim: anim
                                    ,delay: delay
                                    ,schedule: schedule
-                                   ,rect_: rect_};
+                                   ,mkM: mkM
+                                   ,mkM2: mkM2};
 };Elm.Lifty = Elm.Lifty || {};
 Elm.Lifty.OneController = Elm.Lifty.OneController || {};
 Elm.Lifty.OneController.make = function (_elm) {
@@ -14066,13 +14063,12 @@ Elm.Lifty.OneController.make = function (_elm) {
                                             ,move: move
                                             ,update: update};
 };Elm.Lifty = Elm.Lifty || {};
-Elm.Lifty.OneRender = Elm.Lifty.OneRender || {};
-Elm.Lifty.OneRender.make = function (_elm) {
+Elm.Lifty.Render = Elm.Lifty.Render || {};
+Elm.Lifty.Render.make = function (_elm) {
    "use strict";
    _elm.Lifty = _elm.Lifty || {};
-   _elm.Lifty.OneRender = _elm.Lifty.OneRender || {};
-   if (_elm.Lifty.OneRender.values)
-   return _elm.Lifty.OneRender.values;
+   _elm.Lifty.Render = _elm.Lifty.Render || {};
+   if (_elm.Lifty.Render.values) return _elm.Lifty.Render.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Animation = Elm.Animation.make(_elm),
    $Array = Elm.Array.make(_elm),
@@ -14087,173 +14083,251 @@ Elm.Lifty.OneRender.make = function (_elm) {
    $String = Elm.String.make(_elm),
    $Svg = Elm.Svg.make(_elm),
    $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
-   $Svg$Events = Elm.Svg.Events.make(_elm);
+   $Svg$Events = Elm.Svg.Events.make(_elm),
+   $Time = Elm.Time.make(_elm);
    var _op = {};
+   var style_ = A3($Html.node,
+   "style",
+   _U.list([]),
+   _U.list([$Html.text("\nhtml { background-color: #222 }\nsvg { user-select: none; }\nsvg text { fill: white; }\n.addbtn          {cursor:pointer}\n.addbtn:hover    {fill: #ddd}\n.callbtn         {fill: #084; cursor:pointer}\n.callbtn.pressed {fill: #0f8}\n.callbtn:hover   {fill: #0f8}\n.liftbtn         {fill: transparent; cursor: pointer}\n.liftbtn.dest    {fill: #084}\n.liftbtn:hover   {fill: #0f8}\n")]));
    var vbox = F4(function (x,y,w,h) {
       return $Svg$Attributes.viewBox(A2($String.join,
       " ",
-      A2($List.map,$Basics.toString,_U.list([x,y,w,h]))));
+      _U.list([$Lifty$Util.s_(x)
+              ,$Lifty$Util.s_(y)
+              ,$Lifty$Util.s_(w)
+              ,$Lifty$Util.s_(h)])));
    });
-   var vBg = A2($Svg.rect,
-   _U.list([$Svg$Attributes.x("-2")
-           ,$Svg$Attributes.y("-0.5")
-           ,$Svg$Attributes.width("100%")
-           ,$Svg$Attributes.height("100%")
-           ,$Svg$Attributes.fill("#555")]),
-   _U.list([]));
-   var vLift = F4(function (a,m,lift_id,lift) {
-      return A2($Svg.g,
-      _U.list([]),
-      _U.list([A5($Lifty$Util.rect_,
-              $Lifty$Util.f_(lift_id) + 0.1,
-              A2($Animation.animate,m.t,lift.y) + 0.2,
-              0.8,
-              0.8,
-              _U.list([$Svg$Attributes.fill(lift.busy ? "#ddd" : "#888")]))
-              ,A5($Lifty$Util.rect_,
-              $Lifty$Util.f_(lift_id) + 0.1,
-              A2($Animation.animate,m.t,lift.y) + 1,
-              0.8,
-              4.0e-2,
-              _U.list([$Svg$Attributes.fill(lift.busy ? "#fff" : "#ddd")]))
-              ,A5($Lifty$Util.rect_,
-              $Lifty$Util.f_(lift_id) + 0.1,
-              A2($Animation.animate,m.t,lift.y) + 0.2,
-              0.8,
-              4.0e-2,
-              _U.list([$Svg$Attributes.fill(lift.busy ? "#fff" : "#ddd")]))]));
+   var text_ = F4(function (str,x$,y$,attrs) {
+      return A2($Svg.text$,
+      A2($Basics._op["++"],
+      _U.list([$Svg$Attributes.x($Lifty$Util.s_(x$))
+              ,$Svg$Attributes.y($Lifty$Util.s_(y$))]),
+      attrs),
+      _U.list([$Svg.text(str)]));
    });
-   var vLiftBtn = F5(function (a,m,lift,id,floor_id) {
-      return A5($Lifty$Util.rect_,
-      $Lifty$Util.f_(id) + 0.1,
-      $Lifty$Util.f_(floor_id) + 0.2,
+   var circle_ = F4(function (cx$,cy$,r$,attrs) {
+      return A2($Svg.circle,
+      A2($Basics._op["++"],
+      _U.list([$Svg$Attributes.cx($Lifty$Util.s_(cx$))
+              ,$Svg$Attributes.cy($Lifty$Util.s_(cy$))
+              ,$Svg$Attributes.r($Lifty$Util.s_(r$))]),
+      attrs),
+      _U.list([]));
+   });
+   var rect_ = F5(function (x$,y$,w$,h$,attrs) {
+      return A2($Svg.rect,
+      A2($Basics._op["++"],
+      _U.list([$Svg$Attributes.x($Lifty$Util.s_(x$))
+              ,$Svg$Attributes.y($Lifty$Util.s_(y$))
+              ,$Svg$Attributes.width($Lifty$Util.s_(w$))
+              ,$Svg$Attributes.height($Lifty$Util.s_(h$))]),
+      attrs),
+      _U.list([]));
+   });
+   var rLift = function (busy) {
+      return _U.list([A5(rect_,
+                     0.1,
+                     0.2,
+                     0.8,
+                     0.8,
+                     _U.list([$Svg$Attributes.fill(busy ? "#ddd" : "#888")]))
+                     ,A5(rect_,
+                     0.1,
+                     1,
+                     0.8,
+                     4.0e-2,
+                     _U.list([$Svg$Attributes.fill(busy ? "#fff" : "#ddd")]))
+                     ,A5(rect_,
+                     0.1,
+                     0.16,
+                     0.8,
+                     4.0e-2,
+                     _U.list([$Svg$Attributes.fill(busy ? "#fff" : "#ddd")]))]);
+   };
+   var rLiftBtn = F2(function (msg,is_dest) {
+      return _U.list([A5(rect_,
+      0.1,
+      0.2,
       0.8,
       0.84,
-      _U.list([$Svg$Attributes.fill(_U.eq(floor_id,
-              lift.dest) ? "#084" : "transparent")
-              ,$Svg$Attributes.$class("liftbtn")
-              ,$Svg$Attributes.cursor("pointer")
-              ,$Svg$Events.onClick(A2($Signal.message,
-              a.address,
-              a.act(A2(a.go,id,floor_id))))]));
+      _U.list([$Svg$Events.onClick(msg)
+              ,$Svg$Attributes.$class(is_dest ? "liftbtn dest" : "liftbtn")]))]);
    });
-   var vLifts = F2(function (a,m) {
+   var movexy = F3(function (x,y,els) {
+      return A2($Svg.g,
+      _U.list([$Svg$Attributes.transform(A2($Basics._op["++"],
+      "translate(",
+      A2($Basics._op["++"],
+      $Lifty$Util.s_(x),
+      A2($Basics._op["++"],
+      ",",
+      A2($Basics._op["++"],$Lifty$Util.s_(y),")")))))]),
+      els);
+   });
+   var movex = F2(function (x,els) {
+      return A3(movexy,x,0,els);
+   });
+   var movey = F2(function (y,els) {
+      return A3(movexy,0,y,els);
+   });
+   var rLifts = F5(function (is_dest,num_floors,lifts,t,goM) {
       return A2($Svg.g,
       _U.list([]),
       A2($Lifty$Util.imapA,
-      m.lifts,
+      lifts,
       function (_p0) {
          var _p1 = _p0;
-         var _p5 = _p1._0;
-         var _p4 = _p1._1;
-         return A2($Svg.g,
-         _U.list([]),
-         _U.list([A5($Lifty$Util.rect_,
-                 $Lifty$Util.f_(_p5) + 0.1,
-                 4.0e-2,
-                 0.8,
-                 $Lifty$Util.f_($Array.length(m.floors)) - 4.0e-2,
-                 _U.list([$Svg$Attributes.fill("#000")
-                         ,$Svg$Attributes.opacity("0.7")]))
-                 ,A2($Svg.g,
+         var _p3 = _p1._0;
+         var _p2 = _p1._1;
+         return A2(movex,
+         _p3,
+         _U.list([A2($Svg.g,
                  _U.list([]),
-                 A2($Lifty$Util.imapA,
-                 m.floors,
-                 function (_p2) {
-                    var _p3 = _p2;
-                    return A5(vLiftBtn,a,m,_p4,_p5,_p3._0);
+                 A3($Basics.flip,
+                 $List.map,
+                 $Lifty$Util.zeroTo(num_floors),
+                 function (floor_id) {
+                    return A2(movey,
+                    floor_id,
+                    A2(rLiftBtn,A2(goM,_p3,floor_id),A2(is_dest,floor_id,_p2)));
                  }))
-                 ,A4(vLift,a,m,_p5,_p4)]));
+                 ,A2(movey,A2($Animation.animate,t,_p2.y),rLift(_p2.busy))]));
       }));
    });
-   var vFloors = F2(function (a,m) {
+   var rBg = F2(function (num_floors,num_lifts) {
       return A2($Svg.g,
       _U.list([]),
-      _U.list([A5($Lifty$Util.rect_,
+      _U.list([A5(rect_,
               -2,
-              $Lifty$Util.f_($Array.length(m.floors)),
+              -0.5,
+              0,
+              0,
+              _U.list([$Svg$Attributes.width("100%")
+                      ,$Svg$Attributes.height("100%")
+                      ,$Svg$Attributes.fill("#555")]))
+              ,A5(rect_,
+              -2,
+              num_floors,
               0,
               4.0e-2,
               _U.list([$Svg$Attributes.width("100%")
                       ,$Svg$Attributes.fill("white")]))
               ,A2($Svg.g,
               _U.list([]),
-              A2($Lifty$Util.imapA,
-              m.floors,
-              function (_p6) {
-                 var _p7 = _p6;
-                 var _p8 = _p7._0;
-                 return A2($Svg.g,
-                 _U.list([]),
-                 _U.list([A5($Lifty$Util.rect_,
-                         -2,
-                         $Lifty$Util.f_(_p8),
-                         0,
-                         4.0e-2,
-                         _U.list([$Svg$Attributes.width("100%")
-                                 ,$Svg$Attributes.fill("white")]))
-                         ,A2($Svg.text$,
-                         _U.list([A2($Lifty$Util.s_,$Svg$Attributes.x,-1.6)
-                                 ,A2($Lifty$Util.s_,$Svg$Attributes.y,$Lifty$Util.f_(_p8) + 0.7)
-                                 ,$Svg$Attributes.fontSize("0.5")
-                                 ,$Svg$Attributes.fill("white")]),
-                         _U.list([A2($Lifty$Util.s_,$Svg.text,_p8)]))]));
+              A3($Basics.flip,
+              $List.map,
+              $Lifty$Util.zeroTo(num_floors),
+              function (floor_id) {
+                 return A2(movey,
+                 floor_id,
+                 _U.list([A5(rect_,
+                 -2,
+                 0,
+                 0,
+                 4.0e-2,
+                 _U.list([$Svg$Attributes.width("100%")
+                         ,$Svg$Attributes.fill("white")]))]));
+              }))
+              ,A2($Svg.g,
+              _U.list([]),
+              A3($Basics.flip,
+              $List.map,
+              $Lifty$Util.zeroTo(num_lifts),
+              function (lift_id) {
+                 return A2(movex,
+                 lift_id,
+                 _U.list([A5(rect_,
+                 0.1,
+                 4.0e-2,
+                 0.8,
+                 $Lifty$Util.f_(num_floors) - 4.0e-2,
+                 _U.list([$Svg$Attributes.fill("#000")
+                         ,$Svg$Attributes.opacity("0.7")]))]));
               }))]));
    });
-   var vCallBtns = F2(function (a,m) {
+   return _elm.Lifty.Render.values = {_op: _op
+                                     ,movexy: movexy
+                                     ,movex: movex
+                                     ,movey: movey
+                                     ,rect_: rect_
+                                     ,circle_: circle_
+                                     ,text_: text_
+                                     ,vbox: vbox
+                                     ,rLift: rLift
+                                     ,rLiftBtn: rLiftBtn
+                                     ,rLifts: rLifts
+                                     ,rBg: rBg
+                                     ,style_: style_};
+};Elm.Lifty = Elm.Lifty || {};
+Elm.Lifty.OneRender = Elm.Lifty.OneRender || {};
+Elm.Lifty.OneRender.make = function (_elm) {
+   "use strict";
+   _elm.Lifty = _elm.Lifty || {};
+   _elm.Lifty.OneRender = _elm.Lifty.OneRender || {};
+   if (_elm.Lifty.OneRender.values)
+   return _elm.Lifty.OneRender.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Array = Elm.Array.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Lifty$Render = Elm.Lifty.Render.make(_elm),
+   $Lifty$Util = Elm.Lifty.Util.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Svg = Elm.Svg.make(_elm),
+   $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
+   $Svg$Events = Elm.Svg.Events.make(_elm);
+   var _op = {};
+   var rLiftsOne = $Lifty$Render.rLifts(F2(function (fi,l) {
+      return _U.eq(fi,l.dest);
+   }));
+   var rCallBtns = F2(function (num_floors,callM) {
       return A2($Svg.g,
       _U.list([]),
-      A2($Lifty$Util.imapA,
-      m.floors,
-      function (_p9) {
-         var _p10 = _p9;
-         var _p11 = _p10._0;
-         return A2($Svg.circle,
+      A3($Basics.flip,
+      $List.map,
+      $Lifty$Util.zeroTo(num_floors),
+      function (floor_id) {
+         return A2($Lifty$Render.movey,
+         floor_id,
+         _U.list([A4($Lifty$Render.circle_,
+         -0.5,
+         0.5,
+         0.2,
          _U.list([$Svg$Attributes.$class("callbtn")
-                 ,$Svg$Attributes.cx("-0.5")
-                 ,A2($Lifty$Util.s_,
-                 $Svg$Attributes.cy,
-                 $Lifty$Util.f_(_p11) + 0.5)
-                 ,$Svg$Attributes.r("0.2")
-                 ,$Svg$Attributes.cursor("pointer")
-                 ,$Svg$Events.onClick(A2($Signal.message,
-                 a.address,
-                 a.act(a.call(_p11))))]),
-         _U.list([]));
+                 ,$Svg$Events.onClick(callM(floor_id))]))]));
       }));
    });
-   var style_ = A3($Html.node,
-   "style",
-   _U.list([]),
-   _U.list([$Html.text("\nsvg { user-select: none; }\n.addbtn:hover circle {fill: #ddd}\n.callbtn         {fill: #084; cursor:pointer}\n.callbtn.pressed {fill: #0f8}\n.callbtn:hover   {fill: #0f8}\n.liftbtn:hover   {fill: #0f8}\n")]));
-   var view = F5(function (act,go,call,address,m) {
-      var h = 1 + $Lifty$Util.f_($Array.length(m.floors));
-      var w = 2 + $Lifty$Util.f_($Array.length(m.lifts));
-      var a = {act: act,go: go,call: call,address: address};
+   var render = F4(function (go,call,a,s) {
+      var num_lifts = $Array.length(s.lifts);
+      var w = 2 + $Lifty$Util.f_(num_lifts);
+      var num_floors = $Array.length(s.floors);
+      var h = 1 + $Lifty$Util.f_(num_floors);
       return A2($Html.div,
       _U.list([]),
-      _U.list([style_
+      _U.list([$Lifty$Render.style_
               ,A2($Svg.svg,
               _U.list([$Svg$Attributes.x("0")
                       ,$Svg$Attributes.y("0")
-                      ,A2($Lifty$Util.s_,$Svg$Attributes.width,40 * w)
-                      ,A2($Lifty$Util.s_,$Svg$Attributes.height,40 * h)
-                      ,A4(vbox,-2,-0.5,w,h)]),
-              _U.list([vBg
-                      ,A2(vFloors,a,m)
-                      ,A2(vCallBtns,a,m)
-                      ,A2(vLifts,a,m)]))]));
+                      ,$Svg$Attributes.width($Lifty$Util.s_(40 * w))
+                      ,$Svg$Attributes.height($Lifty$Util.s_(40 * h))
+                      ,A4($Lifty$Render.vbox,-2,-0.5,w,h)]),
+              _U.list([A2($Lifty$Render.rBg,num_floors,num_lifts)
+                      ,A2(rCallBtns,num_floors,A2($Lifty$Util.mkM,a,call))
+                      ,A4(rLiftsOne,
+                      num_floors,
+                      s.lifts,
+                      s.t,
+                      A2($Lifty$Util.mkM2,a,go))]))]));
    });
    return _elm.Lifty.OneRender.values = {_op: _op
-                                        ,style_: style_
-                                        ,vCallBtns: vCallBtns
-                                        ,vFloors: vFloors
-                                        ,vLiftBtn: vLiftBtn
-                                        ,vLift: vLift
-                                        ,vLifts: vLifts
-                                        ,vBg: vBg
-                                        ,vbox: vbox
-                                        ,view: view};
+                                        ,rCallBtns: rCallBtns
+                                        ,rLiftsOne: rLiftsOne
+                                        ,render: render};
 };Elm.Lifty = Elm.Lifty || {};
 Elm.Lifty.OneSim = Elm.Lifty.OneSim || {};
 Elm.Lifty.OneSim.make = function (_elm) {
@@ -14278,7 +14352,6 @@ Elm.Lifty.OneSim.make = function (_elm) {
    $Task = Elm.Task.make(_elm),
    $Time = Elm.Time.make(_elm);
    var _op = {};
-   var lift_cap = 2;
    var arrive = F3(function (lift_id,floor_id,s) {
       var lift = A2($Array$Extra.getUnsafe,lift_id,s.lifts);
       var _p0 = A2($List.partition,
@@ -14288,7 +14361,7 @@ Elm.Lifty.OneSim.make = function (_elm) {
       lift.pax);
       var leaving = _p0._0;
       var pax = _p0._1;
-      var spaces = lift_cap - $List.length(pax);
+      var spaces = s.lift_cap - $List.length(pax);
       var floor = A2($Array$Extra.getUnsafe,floor_id,s.floors);
       var rfloor = $List.reverse(floor);
       var _p1 = {ctor: "_Tuple2"
@@ -14306,7 +14379,6 @@ Elm.Lifty.OneSim.make = function (_elm) {
       s.lifts)
       ,leaving: A2($List.append,leaving,s.leaving)});
    });
-   var max_queue = 4;
    var Action = function (a) {    return {ctor: "Action",_0: a};};
    var schedule_ = $Lifty$Util.schedule(Action);
    var idle = F3(function (lift_id,ma,s) {
@@ -14348,19 +14420,19 @@ Elm.Lifty.OneSim.make = function (_elm) {
             var _p8 = _p7._0;
             var floor = A2($Array$Extra.getUnsafe,_p8,s.floors);
             return _U.cmp($List.length(floor),
-            max_queue) < 0 ? {ctor: "_Tuple3"
-                             ,_0: _U.update(s,
-                             {floors: A3($Array$Extra.update,
-                             _p8,
-                             function (f) {
-                                return A2($List._op["::"],_p7._2,f);
-                             },
-                             s.floors)})
-                             ,_1: $Maybe.Nothing
-                             ,_2: $Effects.task($Task.succeed(Action($Lifty$OneController.Call(_p8))))} : {ctor: "_Tuple3"
-                                                                                                          ,_0: s
-                                                                                                          ,_1: $Maybe.Nothing
-                                                                                                          ,_2: $Effects.none};
+            s.max_queue) < 0 ? {ctor: "_Tuple3"
+                               ,_0: _U.update(s,
+                               {floors: A3($Array$Extra.update,
+                               _p8,
+                               function (f) {
+                                  return A2($List._op["::"],_p7._2,f);
+                               },
+                               s.floors)})
+                               ,_1: $Maybe.Nothing
+                               ,_2: $Effects.task($Task.succeed(Action($Lifty$OneController.Call(_p8))))} : {ctor: "_Tuple3"
+                                                                                                            ,_0: s
+                                                                                                            ,_1: $Maybe.Nothing
+                                                                                                            ,_2: $Effects.none};
          } else {
             var _p13 = _p7._0;
             var _p9 = A2($Lifty$OneController.update,
@@ -14387,12 +14459,199 @@ Elm.Lifty.OneSim.make = function (_elm) {
    return _elm.Lifty.OneSim.values = {_op: _op
                                      ,AddPassenger: AddPassenger
                                      ,Action: Action
-                                     ,max_queue: max_queue
-                                     ,lift_cap: lift_cap
                                      ,schedule_: schedule_
                                      ,update: update
                                      ,arrive: arrive
                                      ,idle: idle};
+};Elm.Lifty = Elm.Lifty || {};
+Elm.Lifty.RenderSim = Elm.Lifty.RenderSim || {};
+Elm.Lifty.RenderSim.make = function (_elm) {
+   "use strict";
+   _elm.Lifty = _elm.Lifty || {};
+   _elm.Lifty.RenderSim = _elm.Lifty.RenderSim || {};
+   if (_elm.Lifty.RenderSim.values)
+   return _elm.Lifty.RenderSim.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Animation = Elm.Animation.make(_elm),
+   $Array = Elm.Array.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Lifty$Render = Elm.Lifty.Render.make(_elm),
+   $Lifty$Util = Elm.Lifty.Util.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Maybe$Extra = Elm.Maybe.Extra.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Svg = Elm.Svg.make(_elm),
+   $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
+   $Svg$Events = Elm.Svg.Events.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var rAddingPax = F2(function (num_lifts,adding) {
+      return A2($Maybe.withDefault,
+      A2($Svg.g,_U.list([]),_U.list([])),
+      A3($Basics.flip,
+      $Maybe.map,
+      adding,
+      function (floor_id) {
+         return A3($Lifty$Render.movexy,
+         num_lifts,
+         floor_id,
+         _U.list([A4($Lifty$Render.circle_,
+         2.6,
+         0.69,
+         0.3,
+         _U.list([$Svg$Attributes.fill("#08f")
+                 ,$Svg$Attributes.stroke("#444")
+                 ,$Svg$Attributes.strokeWidth("0.02")]))]));
+      }));
+   });
+   var rAddPax = F5(function (num_floors,
+   num_lifts,
+   adding,
+   startAddM,
+   endAddM) {
+      return A2($Svg.g,
+      _U.list([]),
+      A3($Basics.flip,
+      $List.map,
+      $Lifty$Util.zeroTo(num_floors),
+      function (floor_id) {
+         var msg = A2($Maybe$Extra._op["?"],
+         A2($Maybe.map,function (_p0) {    return endAddM;},adding),
+         startAddM)(floor_id);
+         return A2($Lifty$Render.movey,
+         floor_id,
+         _U.list([A4($Lifty$Render.circle_,
+                 2.6 + $Lifty$Util.f_(num_lifts),
+                 0.69,
+                 0.3,
+                 _U.list([$Svg$Attributes.fill("#888")
+                         ,$Svg$Attributes.strokeWidth("0.02")
+                         ,$Svg$Events.onClick(msg)
+                         ,$Svg$Attributes.$class("addbtn")]))
+                 ,A4($Lifty$Render.text_,
+                 "+",
+                 2.47 + $Lifty$Util.f_(num_lifts),
+                 0.82,
+                 _U.list([$Svg$Attributes.fontSize("0.4")
+                         ,$Svg$Attributes.fill("#ddd")
+                         ,$Svg$Attributes.style("pointer-events:none")]))]));
+      }));
+   });
+   var rPa = F3(function (num_floors,p,t) {
+      return A2($Lifty$Render.movex,
+      A2($Animation.animate,t,p.x),
+      _U.list([A2($Svg.g,
+      _U.list([$Svg$Attributes.transform("translate(0.12,0.2)")]),
+      _U.list([A2($Svg.g,
+      _U.list([$Svg$Attributes.transform(A2($Basics._op["++"],
+      "scale(0.16,",
+      A2($Basics._op["++"],
+      $Lifty$Util.s_(0.8 / $Lifty$Util.f_(num_floors)),
+      ")")))]),
+      _U.list([A5($Lifty$Render.rect_,
+              0,
+              0,
+              1,
+              num_floors,
+              _U.list([$Svg$Attributes.fill("#1c1c1c")]))
+              ,A2($Svg.g,
+              _U.list([]),
+              A3($Basics.flip,
+              $List.map,
+              $Lifty$Util.zeroTo(num_floors),
+              function (fi) {
+                 return A5($Lifty$Render.rect_,
+                 0,
+                 $Lifty$Util.f_(fi) - 0.1,
+                 1,
+                 0.2,
+                 _U.list([$Svg$Attributes.fill("#888")]));
+              }))
+              ,A5($Lifty$Render.rect_,
+              0,
+              p.dest,
+              1,
+              1,
+              _U.list([$Svg$Attributes.fill("#084")]))]))]))]));
+   });
+   var rLiftPax = F3(function (num_floors,lifts,t) {
+      return A2($Svg.g,
+      _U.list([]),
+      A2($Lifty$Util.imapA,
+      lifts,
+      function (_p1) {
+         var _p2 = _p1;
+         var _p5 = _p2._1;
+         return A2($Svg.g,
+         _U.list([]),
+         A2($Lifty$Util.imapL,
+         _p5.pax,
+         function (_p3) {
+            var _p4 = _p3;
+            return A2($Lifty$Render.movey,
+            A2($Animation.animate,t,_p5.y),
+            _U.list([A3(rPa,num_floors,_p4._1,t)]));
+         }));
+      }));
+   });
+   var rLeavingPax = F3(function (num_floors,leaving,t) {
+      return A2($Svg.g,
+      _U.list([]),
+      A3($Basics.flip,
+      $List.map,
+      leaving,
+      function (p) {
+         return A2($Lifty$Render.movey,
+         p.dest,
+         _U.list([A3(rPa,num_floors,p,t)]));
+      }));
+   });
+   var rFloorPax = F2(function (floors,t) {
+      return A2($Svg.g,
+      _U.list([]),
+      A2($Lifty$Util.imapA,
+      floors,
+      function (_p6) {
+         var _p7 = _p6;
+         return A2($Svg.g,
+         _U.list([]),
+         A3($Basics.flip,
+         $List.map,
+         $List.reverse(_p7._1),
+         function (p) {
+            return A2($Lifty$Render.movey,
+            _p7._0,
+            _U.list([A3(rPa,$Array.length(floors),p,t)]));
+         }));
+      }));
+   });
+   var rPax = F3(function (startAddM,endAddM,s) {
+      var num_lifts = $Array.length(s.lifts);
+      var num_floors = $Array.length(s.floors);
+      return A2($Svg.g,
+      _U.list([]),
+      _U.list([A5(rAddPax,
+              num_floors,
+              num_lifts,
+              s.adding,
+              startAddM,
+              endAddM)
+              ,A2(rAddingPax,num_lifts,s.adding)
+              ,A2(rFloorPax,s.floors,s.t)
+              ,A3(rLiftPax,num_floors,s.lifts,s.t)
+              ,A3(rLeavingPax,num_floors,s.leaving,s.t)]));
+   });
+   return _elm.Lifty.RenderSim.values = {_op: _op
+                                        ,rPa: rPa
+                                        ,rLiftPax: rLiftPax
+                                        ,rLeavingPax: rLeavingPax
+                                        ,rFloorPax: rFloorPax
+                                        ,rAddPax: rAddPax
+                                        ,rAddingPax: rAddingPax
+                                        ,rPax: rPax};
 };Elm.Lifty = Elm.Lifty || {};
 Elm.Lifty.OneSimRender = Elm.Lifty.OneSimRender || {};
 Elm.Lifty.OneSimRender.make = function (_elm) {
@@ -14402,191 +14661,51 @@ Elm.Lifty.OneSimRender.make = function (_elm) {
    if (_elm.Lifty.OneSimRender.values)
    return _elm.Lifty.OneSimRender.values;
    var _U = Elm.Native.Utils.make(_elm),
-   $Animation = Elm.Animation.make(_elm),
    $Array = Elm.Array.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Lifty$OneRender = Elm.Lifty.OneRender.make(_elm),
+   $Lifty$Render = Elm.Lifty.Render.make(_elm),
+   $Lifty$RenderSim = Elm.Lifty.RenderSim.make(_elm),
    $Lifty$Util = Elm.Lifty.Util.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Svg = Elm.Svg.make(_elm),
-   $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
-   $Svg$Events = Elm.Svg.Events.make(_elm);
+   $Svg$Attributes = Elm.Svg.Attributes.make(_elm);
    var _op = {};
-   var vAddingPax = F2(function (a,s) {
-      return A2($Svg.g,
-      _U.list([]),
-      A2($Maybe.withDefault,
-      _U.list([]),
-      A3($Basics.flip,
-      $Maybe.map,
-      s.adding,
-      function (floor_id) {
-         return _U.list([A2($Svg.circle,
-         _U.list([A2($Lifty$Util.s_,
-                 $Svg$Attributes.cx,
-                 2.6 + $Lifty$Util.f_($Array.length(s.lifts)))
-                 ,A2($Lifty$Util.s_,
-                 $Svg$Attributes.cy,
-                 0.69 + $Basics.toFloat(floor_id))
-                 ,$Svg$Attributes.r("0.3")
-                 ,$Svg$Attributes.fill("#08f")
-                 ,$Svg$Attributes.stroke("#444")
-                 ,$Svg$Attributes.strokeWidth("0.02")]),
-         _U.list([]))]);
-      })));
-   });
-   var vAddPax = F2(function (a,s) {
-      return A2($Svg.g,
-      _U.list([]),
-      A2($Lifty$Util.imapA,
-      s.floors,
-      function (_p0) {
-         var _p1 = _p0;
-         var _p3 = _p1._0;
-         var action = A2($Maybe.withDefault,
-         a.startadd(_p3),
-         A2($Maybe.map,
-         function (_p2) {
-            return a.endadd(_p3);
-         },
-         s.adding));
-         return A2($Svg.g,
-         _U.list([$Svg$Events.onClick(A2($Signal.message,
-                 a.address,
-                 action))
-                 ,$Svg$Attributes.cursor("pointer")
-                 ,$Svg$Attributes.$class("addbtn")]),
-         _U.list([A2($Svg.circle,
-                 _U.list([A2($Lifty$Util.s_,
-                         $Svg$Attributes.cx,
-                         2.6 + $Lifty$Util.f_($Array.length(s.lifts)))
-                         ,A2($Lifty$Util.s_,
-                         $Svg$Attributes.cy,
-                         0.69 + $Basics.toFloat(_p3))
-                         ,$Svg$Attributes.r("0.3")
-                         ,$Svg$Attributes.fill("#888")
-                         ,$Svg$Attributes.strokeWidth("0.02")]),
-                 _U.list([]))
-                 ,A2($Svg.text$,
-                 _U.list([A2($Lifty$Util.s_,
-                         $Svg$Attributes.x,
-                         2.47 + $Lifty$Util.f_($Array.length(s.lifts)))
-                         ,A2($Lifty$Util.s_,
-                         $Svg$Attributes.y,
-                         0.82 + $Basics.toFloat(_p3))
-                         ,$Svg$Attributes.fontSize("0.4")
-                         ,$Svg$Attributes.fill("#ddd")]),
-                 _U.list([$Svg.text("+")]))]));
-      }));
-   });
-   var vPa = F3(function (s,p,y$) {
-      return A2($Svg.g,
-      _U.list([]),
-      _U.list([A2($Svg.circle,
-              _U.list([A2($Lifty$Util.s_,
-                      $Svg$Attributes.cx,
-                      0.3 + A2($Animation.animate,s.t,p.x))
-                      ,A2($Lifty$Util.s_,$Svg$Attributes.cy,0.69 + y$)
-                      ,$Svg$Attributes.r("0.3")
-                      ,$Svg$Attributes.fill("#08f")
-                      ,$Svg$Attributes.stroke("#444")
-                      ,$Svg$Attributes.strokeWidth("0.02")]),
-              _U.list([]))
-              ,A2($Svg.text$,
-              _U.list([A2($Lifty$Util.s_,
-                      $Svg$Attributes.x,
-                      0.16 + A2($Animation.animate,s.t,p.x))
-                      ,A2($Lifty$Util.s_,$Svg$Attributes.y,0.82 + y$)
-                      ,$Svg$Attributes.fontSize("0.4")
-                      ,$Svg$Attributes.fill("#ddd")]),
-              _U.list([$Svg.text($Basics.toString(p.dest))]))]));
-   });
-   var vLiftPax = F2(function (a,s) {
-      return A2($Svg.g,
-      _U.list([]),
-      A2($Lifty$Util.imapA,
-      s.lifts,
-      function (_p4) {
-         var _p5 = _p4;
-         var _p8 = _p5._1;
-         return A2($Svg.g,
-         _U.list([]),
-         A2($Lifty$Util.imapL,
-         _p8.pax,
-         function (_p6) {
-            var _p7 = _p6;
-            return A3(vPa,s,_p7._1,A2($Animation.animate,s.t,_p8.y));
-         }));
-      }));
-   });
-   var vLeavingPax = F2(function (a,s) {
-      return A2($Svg.g,
-      _U.list([]),
-      A3($Basics.flip,
-      $List.map,
-      s.leaving,
-      function (p) {
-         return A3(vPa,s,p,$Basics.toFloat(p.dest));
-      }));
-   });
-   var vFloorPax = F2(function (a,s) {
-      return A2($Svg.g,
-      _U.list([]),
-      A2($Lifty$Util.imapA,
-      s.floors,
-      function (_p9) {
-         var _p10 = _p9;
-         return A2($Svg.g,
-         _U.list([]),
-         A3($Basics.flip,
-         $List.map,
-         $List.reverse(_p10._1),
-         function (p) {
-            return A3(vPa,s,p,$Basics.toFloat(_p10._0));
-         }));
-      }));
-   });
-   var view = F7(function (act,go,call,startadd,endadd,address,s) {
-      var h = 1 + $Basics.toFloat($Array.length(s.floors));
-      var w = 2 + 3 + $Basics.toFloat($Array.length(s.lifts));
-      var a = {act: act
-              ,go: go
-              ,call: call
-              ,startadd: startadd
-              ,endadd: endadd
-              ,address: address};
+   var render = F6(function (go,call,startAdd,endAdd,a,s) {
+      var num_lifts = $Array.length(s.lifts);
+      var w = 2 + 3 + $Lifty$Util.f_(num_lifts);
+      var num_floors = $Array.length(s.floors);
+      var h = 1 + $Lifty$Util.f_(num_floors);
       return A2($Html.div,
       _U.list([]),
-      _U.list([$Lifty$OneRender.style_
+      _U.list([$Lifty$Render.style_
               ,A2($Svg.svg,
               _U.list([$Svg$Attributes.x("0")
                       ,$Svg$Attributes.y("0")
-                      ,A2($Lifty$Util.s_,$Svg$Attributes.width,40 * w)
-                      ,A2($Lifty$Util.s_,$Svg$Attributes.height,40 * h)
-                      ,A4($Lifty$OneRender.vbox,-2,-0.5,w,h)]),
-              _U.list([$Lifty$OneRender.vBg
-                      ,A2($Lifty$OneRender.vFloors,a,s)
-                      ,A2($Lifty$OneRender.vCallBtns,a,s)
-                      ,A2($Lifty$OneRender.vLifts,a,s)
-                      ,A2(vAddPax,a,s)
-                      ,A2(vAddingPax,a,s)
-                      ,A2(vFloorPax,a,s)
-                      ,A2(vLiftPax,a,s)
-                      ,A2(vLeavingPax,a,s)]))]));
+                      ,$Svg$Attributes.width($Lifty$Util.s_(40 * w))
+                      ,$Svg$Attributes.height($Lifty$Util.s_(40 * h))
+                      ,A4($Lifty$Render.vbox,-2,-0.5,w,h)]),
+              _U.list([A2($Lifty$Render.rBg,num_floors,num_lifts)
+                      ,A2($Lifty$OneRender.rCallBtns,
+                      num_floors,
+                      A2($Lifty$Util.mkM,a,call))
+                      ,A4($Lifty$OneRender.rLiftsOne,
+                      num_floors,
+                      s.lifts,
+                      s.t,
+                      A2($Lifty$Util.mkM2,a,go))
+                      ,A3($Lifty$RenderSim.rPax,
+                      A2($Lifty$Util.mkM,a,startAdd),
+                      A2($Lifty$Util.mkM,a,endAdd),
+                      s)]))]));
    });
    return _elm.Lifty.OneSimRender.values = {_op: _op
-                                           ,vPa: vPa
-                                           ,vLiftPax: vLiftPax
-                                           ,vLeavingPax: vLeavingPax
-                                           ,vFloorPax: vFloorPax
-                                           ,vAddPax: vAddPax
-                                           ,vAddingPax: vAddingPax
-                                           ,view: view};
+                                           ,render: render};
 };Elm.Lifty = Elm.Lifty || {};
 Elm.Lifty.OneView = Elm.Lifty.OneView || {};
 Elm.Lifty.OneView.make = function (_elm) {
@@ -14682,7 +14801,7 @@ Elm.Lifty.OneSimView.make = function (_elm) {
          return _U.update(_p3,
          {x: A3($Animation.retarget,
          s$.t,
-         $Lifty$Util.f_($Array.length(s.lifts)) + $Lifty$Util.f_(_p2._0) / 3,
+         $Lifty$Util.f_($Array.length(s.lifts)) + $Lifty$Util.f_(_p2._0) / 5,
          _p3.x)});
       }));
       var floors$ = A3($Array.set,floor_id,f$,s$.floors);
@@ -14696,7 +14815,7 @@ Elm.Lifty.OneSimView.make = function (_elm) {
          {x: A4($Lifty$Util.anim,
          s.t,
          A2($Animation.animate,s.t,_p6.x),
-         $Lifty$Util.f_(lift_id) + $Lifty$Util.f_(_p5._0) / 3,
+         $Lifty$Util.f_(lift_id) + $Lifty$Util.f_(_p5._0) / 5,
          1000)});
       });
       var lifts$ = A3($Array.set,
@@ -14841,26 +14960,41 @@ Elm.Lifty.OneSimUI.make = function (_elm) {
                     2,
                     {dest: 0,busy: false,pax: _U.list([]),y: $Animation.$static(0)})
                     ,adding: $Maybe.Nothing
-                    ,leaving: _U.list([])};
+                    ,leaving: _U.list([])
+                    ,max_queue: 4
+                    ,lift_cap: 2};
    var app = $StartApp.start({init: {ctor: "_Tuple2"
                                     ,_0: init_state
                                     ,_1: $Effects.none}
-                             ,view: A5($Lifty$OneSimRender.view,
+                             ,view: A4($Lifty$OneSimRender.render,
                              function (_p8) {
-                                return $Either.Right($Lifty$OneSim.Action(_p8));
+                                return A2(F2(function (x,y) {
+                                   return function (_p9) {
+                                      return x(y(_p9));
+                                   };
+                                }),
+                                $Either.Right,
+                                A2(F2(function (x,y) {
+                                   return function (_p10) {
+                                      return x(y(_p10));
+                                   };
+                                }),
+                                $Lifty$OneSim.Action,
+                                $Lifty$OneController.Go(_p8)));
                              },
-                             $Lifty$OneController.Go,
-                             $Lifty$OneController.Call,
-                             function (_p9) {
-                                return $Either.Left($Lifty$OneSimView.StartAdd(_p9));
+                             function (_p11) {
+                                return $Either.Right($Lifty$OneSim.Action($Lifty$OneController.Call(_p11)));
                              },
-                             function (_p10) {
-                                return $Either.Left($Lifty$OneSimView.FinishAdd(_p10));
+                             function (_p12) {
+                                return $Either.Left($Lifty$OneSimView.StartAdd(_p12));
+                             },
+                             function (_p13) {
+                                return $Either.Left($Lifty$OneSimView.FinishAdd(_p13));
                              })
                              ,update: update
                              ,inputs: _U.list([A2($Signal.map,
-                             function (_p11) {
-                                return $Either.Left($Lifty$OneSimView.Tick(_p11));
+                             function (_p14) {
+                                return $Either.Left($Lifty$OneSimView.Tick(_p14));
                              },
                              A3($Signal.foldp,
                              F2(function (x,y) {    return x + y;}),
