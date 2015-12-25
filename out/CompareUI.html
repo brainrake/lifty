@@ -13183,6 +13183,523 @@ Elm.Html.make = function (_elm) {
                              ,summary: summary
                              ,menuitem: menuitem
                              ,menu: menu};
+};Elm.Html = Elm.Html || {};
+Elm.Html.Attributes = Elm.Html.Attributes || {};
+Elm.Html.Attributes.make = function (_elm) {
+   "use strict";
+   _elm.Html = _elm.Html || {};
+   _elm.Html.Attributes = _elm.Html.Attributes || {};
+   if (_elm.Html.Attributes.values)
+   return _elm.Html.Attributes.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Json$Encode = Elm.Json.Encode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm),
+   $VirtualDom = Elm.VirtualDom.make(_elm);
+   var _op = {};
+   var attribute = $VirtualDom.attribute;
+   var contextmenu = function (value) {
+      return A2(attribute,"contextmenu",value);
+   };
+   var property = $VirtualDom.property;
+   var stringProperty = F2(function (name,string) {
+      return A2(property,name,$Json$Encode.string(string));
+   });
+   var $class = function (name) {
+      return A2(stringProperty,"className",name);
+   };
+   var id = function (name) {
+      return A2(stringProperty,"id",name);
+   };
+   var title = function (name) {
+      return A2(stringProperty,"title",name);
+   };
+   var accesskey = function ($char) {
+      return A2(stringProperty,
+      "accessKey",
+      $String.fromChar($char));
+   };
+   var dir = function (value) {
+      return A2(stringProperty,"dir",value);
+   };
+   var draggable = function (value) {
+      return A2(stringProperty,"draggable",value);
+   };
+   var dropzone = function (value) {
+      return A2(stringProperty,"dropzone",value);
+   };
+   var itemprop = function (value) {
+      return A2(stringProperty,"itemprop",value);
+   };
+   var lang = function (value) {
+      return A2(stringProperty,"lang",value);
+   };
+   var tabindex = function (n) {
+      return A2(stringProperty,"tabIndex",$Basics.toString(n));
+   };
+   var charset = function (value) {
+      return A2(stringProperty,"charset",value);
+   };
+   var content = function (value) {
+      return A2(stringProperty,"content",value);
+   };
+   var httpEquiv = function (value) {
+      return A2(stringProperty,"httpEquiv",value);
+   };
+   var language = function (value) {
+      return A2(stringProperty,"language",value);
+   };
+   var src = function (value) {
+      return A2(stringProperty,"src",value);
+   };
+   var height = function (value) {
+      return A2(stringProperty,"height",$Basics.toString(value));
+   };
+   var width = function (value) {
+      return A2(stringProperty,"width",$Basics.toString(value));
+   };
+   var alt = function (value) {
+      return A2(stringProperty,"alt",value);
+   };
+   var preload = function (value) {
+      return A2(stringProperty,"preload",value);
+   };
+   var poster = function (value) {
+      return A2(stringProperty,"poster",value);
+   };
+   var kind = function (value) {
+      return A2(stringProperty,"kind",value);
+   };
+   var srclang = function (value) {
+      return A2(stringProperty,"srclang",value);
+   };
+   var sandbox = function (value) {
+      return A2(stringProperty,"sandbox",value);
+   };
+   var srcdoc = function (value) {
+      return A2(stringProperty,"srcdoc",value);
+   };
+   var type$ = function (value) {
+      return A2(stringProperty,"type",value);
+   };
+   var value = function (value) {
+      return A2(stringProperty,"value",value);
+   };
+   var placeholder = function (value) {
+      return A2(stringProperty,"placeholder",value);
+   };
+   var accept = function (value) {
+      return A2(stringProperty,"accept",value);
+   };
+   var acceptCharset = function (value) {
+      return A2(stringProperty,"acceptCharset",value);
+   };
+   var action = function (value) {
+      return A2(stringProperty,"action",value);
+   };
+   var autocomplete = function (bool) {
+      return A2(stringProperty,"autocomplete",bool ? "on" : "off");
+   };
+   var autosave = function (value) {
+      return A2(stringProperty,"autosave",value);
+   };
+   var enctype = function (value) {
+      return A2(stringProperty,"enctype",value);
+   };
+   var formaction = function (value) {
+      return A2(stringProperty,"formAction",value);
+   };
+   var list = function (value) {
+      return A2(stringProperty,"list",value);
+   };
+   var minlength = function (n) {
+      return A2(stringProperty,"minLength",$Basics.toString(n));
+   };
+   var maxlength = function (n) {
+      return A2(stringProperty,"maxLength",$Basics.toString(n));
+   };
+   var method = function (value) {
+      return A2(stringProperty,"method",value);
+   };
+   var name = function (value) {
+      return A2(stringProperty,"name",value);
+   };
+   var pattern = function (value) {
+      return A2(stringProperty,"pattern",value);
+   };
+   var size = function (n) {
+      return A2(stringProperty,"size",$Basics.toString(n));
+   };
+   var $for = function (value) {
+      return A2(stringProperty,"htmlFor",value);
+   };
+   var form = function (value) {
+      return A2(stringProperty,"form",value);
+   };
+   var max = function (value) {
+      return A2(stringProperty,"max",value);
+   };
+   var min = function (value) {
+      return A2(stringProperty,"min",value);
+   };
+   var step = function (n) {
+      return A2(stringProperty,"step",n);
+   };
+   var cols = function (n) {
+      return A2(stringProperty,"cols",$Basics.toString(n));
+   };
+   var rows = function (n) {
+      return A2(stringProperty,"rows",$Basics.toString(n));
+   };
+   var wrap = function (value) {
+      return A2(stringProperty,"wrap",value);
+   };
+   var usemap = function (value) {
+      return A2(stringProperty,"useMap",value);
+   };
+   var shape = function (value) {
+      return A2(stringProperty,"shape",value);
+   };
+   var coords = function (value) {
+      return A2(stringProperty,"coords",value);
+   };
+   var challenge = function (value) {
+      return A2(stringProperty,"challenge",value);
+   };
+   var keytype = function (value) {
+      return A2(stringProperty,"keytype",value);
+   };
+   var align = function (value) {
+      return A2(stringProperty,"align",value);
+   };
+   var cite = function (value) {
+      return A2(stringProperty,"cite",value);
+   };
+   var href = function (value) {
+      return A2(stringProperty,"href",value);
+   };
+   var target = function (value) {
+      return A2(stringProperty,"target",value);
+   };
+   var downloadAs = function (value) {
+      return A2(stringProperty,"download",value);
+   };
+   var hreflang = function (value) {
+      return A2(stringProperty,"hreflang",value);
+   };
+   var media = function (value) {
+      return A2(stringProperty,"media",value);
+   };
+   var ping = function (value) {
+      return A2(stringProperty,"ping",value);
+   };
+   var rel = function (value) {
+      return A2(stringProperty,"rel",value);
+   };
+   var datetime = function (value) {
+      return A2(stringProperty,"datetime",value);
+   };
+   var pubdate = function (value) {
+      return A2(stringProperty,"pubdate",value);
+   };
+   var start = function (n) {
+      return A2(stringProperty,"start",$Basics.toString(n));
+   };
+   var colspan = function (n) {
+      return A2(stringProperty,"colSpan",$Basics.toString(n));
+   };
+   var headers = function (value) {
+      return A2(stringProperty,"headers",value);
+   };
+   var rowspan = function (n) {
+      return A2(stringProperty,"rowSpan",$Basics.toString(n));
+   };
+   var scope = function (value) {
+      return A2(stringProperty,"scope",value);
+   };
+   var manifest = function (value) {
+      return A2(stringProperty,"manifest",value);
+   };
+   var boolProperty = F2(function (name,bool) {
+      return A2(property,name,$Json$Encode.bool(bool));
+   });
+   var hidden = function (bool) {
+      return A2(boolProperty,"hidden",bool);
+   };
+   var contenteditable = function (bool) {
+      return A2(boolProperty,"contentEditable",bool);
+   };
+   var spellcheck = function (bool) {
+      return A2(boolProperty,"spellcheck",bool);
+   };
+   var async = function (bool) {
+      return A2(boolProperty,"async",bool);
+   };
+   var defer = function (bool) {
+      return A2(boolProperty,"defer",bool);
+   };
+   var scoped = function (bool) {
+      return A2(boolProperty,"scoped",bool);
+   };
+   var autoplay = function (bool) {
+      return A2(boolProperty,"autoplay",bool);
+   };
+   var controls = function (bool) {
+      return A2(boolProperty,"controls",bool);
+   };
+   var loop = function (bool) {
+      return A2(boolProperty,"loop",bool);
+   };
+   var $default = function (bool) {
+      return A2(boolProperty,"default",bool);
+   };
+   var seamless = function (bool) {
+      return A2(boolProperty,"seamless",bool);
+   };
+   var checked = function (bool) {
+      return A2(boolProperty,"checked",bool);
+   };
+   var selected = function (bool) {
+      return A2(boolProperty,"selected",bool);
+   };
+   var autofocus = function (bool) {
+      return A2(boolProperty,"autofocus",bool);
+   };
+   var disabled = function (bool) {
+      return A2(boolProperty,"disabled",bool);
+   };
+   var multiple = function (bool) {
+      return A2(boolProperty,"multiple",bool);
+   };
+   var novalidate = function (bool) {
+      return A2(boolProperty,"noValidate",bool);
+   };
+   var readonly = function (bool) {
+      return A2(boolProperty,"readOnly",bool);
+   };
+   var required = function (bool) {
+      return A2(boolProperty,"required",bool);
+   };
+   var ismap = function (value) {
+      return A2(boolProperty,"isMap",value);
+   };
+   var download = function (bool) {
+      return A2(boolProperty,"download",bool);
+   };
+   var reversed = function (bool) {
+      return A2(boolProperty,"reversed",bool);
+   };
+   var classList = function (list) {
+      return $class(A2($String.join,
+      " ",
+      A2($List.map,$Basics.fst,A2($List.filter,$Basics.snd,list))));
+   };
+   var style = function (props) {
+      return A2(property,
+      "style",
+      $Json$Encode.object(A2($List.map,
+      function (_p0) {
+         var _p1 = _p0;
+         return {ctor: "_Tuple2"
+                ,_0: _p1._0
+                ,_1: $Json$Encode.string(_p1._1)};
+      },
+      props)));
+   };
+   var key = function (k) {    return A2(stringProperty,"key",k);};
+   return _elm.Html.Attributes.values = {_op: _op
+                                        ,key: key
+                                        ,style: style
+                                        ,$class: $class
+                                        ,classList: classList
+                                        ,id: id
+                                        ,title: title
+                                        ,hidden: hidden
+                                        ,type$: type$
+                                        ,value: value
+                                        ,checked: checked
+                                        ,placeholder: placeholder
+                                        ,selected: selected
+                                        ,accept: accept
+                                        ,acceptCharset: acceptCharset
+                                        ,action: action
+                                        ,autocomplete: autocomplete
+                                        ,autofocus: autofocus
+                                        ,autosave: autosave
+                                        ,disabled: disabled
+                                        ,enctype: enctype
+                                        ,formaction: formaction
+                                        ,list: list
+                                        ,maxlength: maxlength
+                                        ,minlength: minlength
+                                        ,method: method
+                                        ,multiple: multiple
+                                        ,name: name
+                                        ,novalidate: novalidate
+                                        ,pattern: pattern
+                                        ,readonly: readonly
+                                        ,required: required
+                                        ,size: size
+                                        ,$for: $for
+                                        ,form: form
+                                        ,max: max
+                                        ,min: min
+                                        ,step: step
+                                        ,cols: cols
+                                        ,rows: rows
+                                        ,wrap: wrap
+                                        ,href: href
+                                        ,target: target
+                                        ,download: download
+                                        ,downloadAs: downloadAs
+                                        ,hreflang: hreflang
+                                        ,media: media
+                                        ,ping: ping
+                                        ,rel: rel
+                                        ,ismap: ismap
+                                        ,usemap: usemap
+                                        ,shape: shape
+                                        ,coords: coords
+                                        ,src: src
+                                        ,height: height
+                                        ,width: width
+                                        ,alt: alt
+                                        ,autoplay: autoplay
+                                        ,controls: controls
+                                        ,loop: loop
+                                        ,preload: preload
+                                        ,poster: poster
+                                        ,$default: $default
+                                        ,kind: kind
+                                        ,srclang: srclang
+                                        ,sandbox: sandbox
+                                        ,seamless: seamless
+                                        ,srcdoc: srcdoc
+                                        ,reversed: reversed
+                                        ,start: start
+                                        ,align: align
+                                        ,colspan: colspan
+                                        ,rowspan: rowspan
+                                        ,headers: headers
+                                        ,scope: scope
+                                        ,async: async
+                                        ,charset: charset
+                                        ,content: content
+                                        ,defer: defer
+                                        ,httpEquiv: httpEquiv
+                                        ,language: language
+                                        ,scoped: scoped
+                                        ,accesskey: accesskey
+                                        ,contenteditable: contenteditable
+                                        ,contextmenu: contextmenu
+                                        ,dir: dir
+                                        ,draggable: draggable
+                                        ,dropzone: dropzone
+                                        ,itemprop: itemprop
+                                        ,lang: lang
+                                        ,spellcheck: spellcheck
+                                        ,tabindex: tabindex
+                                        ,challenge: challenge
+                                        ,keytype: keytype
+                                        ,cite: cite
+                                        ,datetime: datetime
+                                        ,pubdate: pubdate
+                                        ,manifest: manifest
+                                        ,property: property
+                                        ,attribute: attribute};
+};Elm.Html = Elm.Html || {};
+Elm.Html.Events = Elm.Html.Events || {};
+Elm.Html.Events.make = function (_elm) {
+   "use strict";
+   _elm.Html = _elm.Html || {};
+   _elm.Html.Events = _elm.Html.Events || {};
+   if (_elm.Html.Events.values) return _elm.Html.Events.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $VirtualDom = Elm.VirtualDom.make(_elm);
+   var _op = {};
+   var keyCode = A2($Json$Decode._op[":="],
+   "keyCode",
+   $Json$Decode.$int);
+   var targetChecked = A2($Json$Decode.at,
+   _U.list(["target","checked"]),
+   $Json$Decode.bool);
+   var targetValue = A2($Json$Decode.at,
+   _U.list(["target","value"]),
+   $Json$Decode.string);
+   var defaultOptions = $VirtualDom.defaultOptions;
+   var Options = F2(function (a,b) {
+      return {stopPropagation: a,preventDefault: b};
+   });
+   var onWithOptions = $VirtualDom.onWithOptions;
+   var on = $VirtualDom.on;
+   var messageOn = F3(function (name,addr,msg) {
+      return A3(on,
+      name,
+      $Json$Decode.value,
+      function (_p0) {
+         return A2($Signal.message,addr,msg);
+      });
+   });
+   var onClick = messageOn("click");
+   var onDoubleClick = messageOn("dblclick");
+   var onMouseMove = messageOn("mousemove");
+   var onMouseDown = messageOn("mousedown");
+   var onMouseUp = messageOn("mouseup");
+   var onMouseEnter = messageOn("mouseenter");
+   var onMouseLeave = messageOn("mouseleave");
+   var onMouseOver = messageOn("mouseover");
+   var onMouseOut = messageOn("mouseout");
+   var onBlur = messageOn("blur");
+   var onFocus = messageOn("focus");
+   var onSubmit = messageOn("submit");
+   var onKey = F3(function (name,addr,handler) {
+      return A3(on,
+      name,
+      keyCode,
+      function (code) {
+         return A2($Signal.message,addr,handler(code));
+      });
+   });
+   var onKeyUp = onKey("keyup");
+   var onKeyDown = onKey("keydown");
+   var onKeyPress = onKey("keypress");
+   return _elm.Html.Events.values = {_op: _op
+                                    ,onBlur: onBlur
+                                    ,onFocus: onFocus
+                                    ,onSubmit: onSubmit
+                                    ,onKeyUp: onKeyUp
+                                    ,onKeyDown: onKeyDown
+                                    ,onKeyPress: onKeyPress
+                                    ,onClick: onClick
+                                    ,onDoubleClick: onDoubleClick
+                                    ,onMouseMove: onMouseMove
+                                    ,onMouseDown: onMouseDown
+                                    ,onMouseUp: onMouseUp
+                                    ,onMouseEnter: onMouseEnter
+                                    ,onMouseLeave: onMouseLeave
+                                    ,onMouseOver: onMouseOver
+                                    ,onMouseOut: onMouseOut
+                                    ,on: on
+                                    ,onWithOptions: onWithOptions
+                                    ,defaultOptions: defaultOptions
+                                    ,targetValue: targetValue
+                                    ,targetChecked: targetChecked
+                                    ,keyCode: keyCode
+                                    ,Options: Options};
 };Elm.Svg = Elm.Svg || {};
 Elm.Svg.make = function (_elm) {
    "use strict";
@@ -13978,6 +14495,30 @@ Elm.Svg.Events.make = function (_elm) {
                                    ,onMouseOut: onMouseOut
                                    ,onMouseOver: onMouseOver
                                    ,onMouseUp: onMouseUp};
+};Elm.Svg = Elm.Svg || {};
+Elm.Svg.Lazy = Elm.Svg.Lazy || {};
+Elm.Svg.Lazy.make = function (_elm) {
+   "use strict";
+   _elm.Svg = _elm.Svg || {};
+   _elm.Svg.Lazy = _elm.Svg.Lazy || {};
+   if (_elm.Svg.Lazy.values) return _elm.Svg.Lazy.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Svg = Elm.Svg.make(_elm),
+   $VirtualDom = Elm.VirtualDom.make(_elm);
+   var _op = {};
+   var lazy3 = $VirtualDom.lazy3;
+   var lazy2 = $VirtualDom.lazy2;
+   var lazy = $VirtualDom.lazy;
+   return _elm.Svg.Lazy.values = {_op: _op
+                                 ,lazy: lazy
+                                 ,lazy2: lazy2
+                                 ,lazy3: lazy3};
 };Elm.StartApp = Elm.StartApp || {};
 Elm.StartApp.make = function (_elm) {
    "use strict";
@@ -14114,6 +14655,73 @@ Elm.Either.make = function (_elm) {
                                ,elim: elim
                                ,isLeft: isLeft
                                ,isRight: isRight};
+};Elm.Native.AnimationFrame = {};
+Elm.Native.AnimationFrame.make = function(localRuntime) {
+
+  localRuntime.Native = localRuntime.Native || {};
+  localRuntime.Native.AnimationFrame = localRuntime.Native.AnimationFrame || {};
+  if (localRuntime.Native.AnimationFrame.values) return localRuntime.Native.AnimationFrame.values;
+
+  var Signal = Elm.Signal.make(localRuntime);
+  var NS = Elm.Native.Signal.make(localRuntime);
+
+  // TODO Should be localRuntime.requestAnimationFrame, and should be shimmed if we care
+  // about IE9. Do we care about IE9?
+  var requestAnimationFrame = window.requestAnimationFrame || function () {};
+  var cancelAnimationFrame = window.cancelAnimationFrame || function () {};
+
+  function frameWhen(isOn) {
+    var prev = 0, wasOn = true;
+    var ticker = NS.input('elm-animation-frame', 0);
+    function tick(curr) {
+      var diff = (curr > prev) ? curr - prev : 0;
+      prev = curr;
+      localRuntime.notify(ticker.id, diff);
+    }
+    // When we transition from off to on, reset prev so that the first tick will be 0.
+    function zeroThenTick(curr) {
+      prev = curr;
+      tick(curr);
+    }
+    var rafID = 0;
+    function f(isOn, t) {
+      if (isOn) {
+        rafID = requestAnimationFrame(wasOn ? tick : zeroThenTick);
+      } else if (wasOn) {
+        cancelAnimationFrame(rafID);
+      }
+      wasOn = isOn;
+      return t;
+    }
+    return A3(Signal.map2, F2(f), NS.dropRepeats(isOn), ticker);
+  }
+
+  return localRuntime.Native.AnimationFrame.values = {
+    frameWhen : frameWhen
+  };
+
+};
+Elm.AnimationFrame = Elm.AnimationFrame || {};
+Elm.AnimationFrame.make = function (_elm) {
+   "use strict";
+   _elm.AnimationFrame = _elm.AnimationFrame || {};
+   if (_elm.AnimationFrame.values)
+   return _elm.AnimationFrame.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Native$AnimationFrame = Elm.Native.AnimationFrame.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var _op = {};
+   var frameWhen = $Native$AnimationFrame.frameWhen;
+   var frame = frameWhen($Signal.constant(true));
+   return _elm.AnimationFrame.values = {_op: _op
+                                       ,frameWhen: frameWhen
+                                       ,frame: frame};
 };Elm.Animation = Elm.Animation || {};
 Elm.Animation.make = function (_elm) {
    "use strict";
@@ -14491,7 +15099,7 @@ Elm.Lifty.Render.make = function (_elm) {
    var style_ = A3($Html.node,
    "style",
    _U.list([]),
-   _U.list([$Html.text("\nhtml { background-color: #222 }\nsvg { user-select: none; }\nsvg text { fill: white; }\n.addbtn          {cursor:pointer}\n.addbtn:hover    {fill: #ddd}\n.callbtn         {fill: #084; cursor:pointer}\n.callbtn.pressed {fill: #0f8}\n.callbtn:hover   {fill: #0f8}\n.liftbtn         {fill: transparent; cursor: pointer}\n.liftbtn.dest    {fill: #084}\n.liftbtn:hover   {fill: #0f8}\n")]));
+   _U.list([$Html.text("\nhtml { background-color: #222; color: #fff; font-size: 15px;\n       font-family: \"Lato\",\"Helvetica Neue\",Helvetica,Arial,sans-serif; }\nsvg { user-select: none; }\nsvg text { fill: white; }\n.addbtn          {cursor:pointer}\n.addbtn:hover    {fill: #ddd}\n.callbtn         {fill: #084; cursor:pointer}\n.callbtn.pressed {fill: #0f8}\n.callbtn:hover   {fill: #0f8}\n.liftbtn         {fill: transparent; cursor: pointer}\n.liftbtn.dest    {fill: #084}\n.liftbtn:hover   {fill: #0f8}\n")]));
    var vbox = F4(function (x,y,w,h) {
       return $Svg$Attributes.viewBox(A2($String.join,
       " ",
@@ -14601,7 +15209,7 @@ Elm.Lifty.Render.make = function (_elm) {
       return A2($Svg.g,
       _U.list([]),
       _U.list([A5(rect_,
-              -2,
+              -1,
               -0.5,
               0,
               0,
@@ -14609,7 +15217,7 @@ Elm.Lifty.Render.make = function (_elm) {
                       ,$Svg$Attributes.height("100%")
                       ,$Svg$Attributes.fill("#555")]))
               ,A5(rect_,
-              -2,
+              -1,
               num_floors,
               0,
               4.0e-2,
@@ -14624,7 +15232,7 @@ Elm.Lifty.Render.make = function (_elm) {
                  return A2(movey,
                  floor_id,
                  _U.list([A5(rect_,
-                 -2,
+                 -1,
                  0,
                  0,
                  4.0e-2,
@@ -14684,6 +15292,7 @@ Elm.Lifty.RenderSim.make = function (_elm) {
    $Svg = Elm.Svg.make(_elm),
    $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
    $Svg$Events = Elm.Svg.Events.make(_elm),
+   $Svg$Lazy = Elm.Svg.Lazy.make(_elm),
    $Time = Elm.Time.make(_elm);
    var _op = {};
    var rAddingPax = F2(function (num_lifts,adding) {
@@ -14696,13 +15305,12 @@ Elm.Lifty.RenderSim.make = function (_elm) {
          return A3($Lifty$Render.movexy,
          num_lifts,
          floor_id,
-         _U.list([A4($Lifty$Render.circle_,
-         2.6,
-         0.69,
-         0.3,
-         _U.list([$Svg$Attributes.fill("#08f")
-                 ,$Svg$Attributes.stroke("#444")
-                 ,$Svg$Attributes.strokeWidth("0.02")]))]));
+         _U.list([A5($Lifty$Render.rect_,
+         2.4,
+         0.2,
+         0.4,
+         0.8,
+         _U.list([$Svg$Attributes.fill("#084")]))]));
       }));
    });
    var rAddPax = F5(function (num_floors,
@@ -14719,20 +15327,22 @@ Elm.Lifty.RenderSim.make = function (_elm) {
          var msg = A2($Maybe$Extra._op["?"],
          A2($Maybe.map,function (_p0) {    return endAddM;},adding),
          startAddM)(floor_id);
-         return A2($Lifty$Render.movey,
+         return A3($Lifty$Render.movexy,
+         num_lifts,
          floor_id,
-         _U.list([A4($Lifty$Render.circle_,
-                 2.6 + $Lifty$Util.f_(num_lifts),
-                 0.69,
-                 0.3,
+         _U.list([A5($Lifty$Render.rect_,
+                 2.4,
+                 0.2,
+                 0.4,
+                 0.8,
                  _U.list([$Svg$Attributes.fill("#888")
                          ,$Svg$Attributes.strokeWidth("0.02")
                          ,$Svg$Events.onClick(msg)
                          ,$Svg$Attributes.$class("addbtn")]))
                  ,A4($Lifty$Render.text_,
                  "+",
-                 2.47 + $Lifty$Util.f_(num_lifts),
-                 0.82,
+                 2.47,
+                 0.72,
                  _U.list([$Svg$Attributes.fontSize("0.4")
                          ,$Svg$Attributes.fill("#ddd")
                          ,$Svg$Attributes.style("pointer-events:none")]))]));
@@ -14741,57 +15351,63 @@ Elm.Lifty.RenderSim.make = function (_elm) {
    var rPa = F3(function (num_floors,p,t) {
       return A2($Lifty$Render.movex,
       A2($Animation.animate,t,p.x),
-      _U.list([A2($Svg.g,
-      _U.list([$Svg$Attributes.transform("translate(0.12,0.2)")]),
-      _U.list([A2($Svg.g,
-      _U.list([$Svg$Attributes.transform(A2($Basics._op["++"],
-      "scale(0.16,",
-      A2($Basics._op["++"],
-      $Lifty$Util.s_(0.8 / $Lifty$Util.f_(num_floors)),
-      ")")))]),
-      _U.list([A5($Lifty$Render.rect_,
-              0,
-              0,
-              1,
-              num_floors,
-              _U.list([$Svg$Attributes.fill("#1c1c1c")]))
-              ,A2($Svg.g,
-              _U.list([]),
-              A3($Basics.flip,
-              $List.map,
-              $Lifty$Util.zeroTo(num_floors),
-              function (fi) {
-                 return A5($Lifty$Render.rect_,
+      _U.list([A2($Svg$Lazy.lazy,
+      function (_p1) {
+         var _p2 = _p1;
+         var _p3 = _p2._0;
+         return A2($Svg.g,
+         _U.list([$Svg$Attributes.transform("translate(0.12,0.2)")]),
+         _U.list([A2($Svg.g,
+         _U.list([$Svg$Attributes.transform(A2($Basics._op["++"],
+         "scale(0.16,",
+         A2($Basics._op["++"],
+         $Lifty$Util.s_(0.8 / $Lifty$Util.f_(_p3)),
+         ")")))]),
+         _U.list([A5($Lifty$Render.rect_,
                  0,
-                 $Lifty$Util.f_(fi) - 0.1,
+                 0,
                  1,
-                 0.2,
-                 _U.list([$Svg$Attributes.fill("#888")]));
-              }))
-              ,A5($Lifty$Render.rect_,
-              0,
-              p.dest,
-              1,
-              1,
-              _U.list([$Svg$Attributes.fill("#084")]))]))]))]));
+                 _p3,
+                 _U.list([$Svg$Attributes.fill("#1c1c1c")]))
+                 ,A2($Svg.g,
+                 _U.list([]),
+                 A3($Basics.flip,
+                 $List.map,
+                 $Lifty$Util.zeroTo(_p3),
+                 function (fi) {
+                    return A5($Lifty$Render.rect_,
+                    0,
+                    $Lifty$Util.f_(fi) - 0.1,
+                    1,
+                    0.2,
+                    _U.list([$Svg$Attributes.fill("#888")]));
+                 }))
+                 ,A5($Lifty$Render.rect_,
+                 0,
+                 _p2._1,
+                 1,
+                 1,
+                 _U.list([$Svg$Attributes.fill("#084")]))]))]));
+      },
+      {ctor: "_Tuple2",_0: num_floors,_1: p.dest})]));
    });
    var rLiftPax = F3(function (num_floors,lifts,t) {
       return A2($Svg.g,
       _U.list([]),
       A2($Lifty$Util.imapA,
       lifts,
-      function (_p1) {
-         var _p2 = _p1;
-         var _p5 = _p2._1;
+      function (_p4) {
+         var _p5 = _p4;
+         var _p8 = _p5._1;
          return A2($Svg.g,
          _U.list([]),
          A2($Lifty$Util.imapL,
-         _p5.pax,
-         function (_p3) {
-            var _p4 = _p3;
+         _p8.pax,
+         function (_p6) {
+            var _p7 = _p6;
             return A2($Lifty$Render.movey,
-            A2($Animation.animate,t,_p5.y),
-            _U.list([A3(rPa,num_floors,_p4._1,t)]));
+            A2($Animation.animate,t,_p8.y),
+            _U.list([A3(rPa,num_floors,_p7._1,t)]));
          }));
       }));
    });
@@ -14812,16 +15428,16 @@ Elm.Lifty.RenderSim.make = function (_elm) {
       _U.list([]),
       A2($Lifty$Util.imapA,
       floors,
-      function (_p6) {
-         var _p7 = _p6;
+      function (_p9) {
+         var _p10 = _p9;
          return A2($Svg.g,
          _U.list([]),
          A3($Basics.flip,
          $List.map,
-         $List.reverse(_p7._1),
+         $List.reverse(_p10._1),
          function (p) {
             return A2($Lifty$Render.movey,
-            _p7._0,
+            _p10._0,
             _U.list([A3(rPa,$Array.length(floors),p,t)]));
          }));
       }));
@@ -14906,7 +15522,7 @@ Elm.Lifty.OneRender.make = function (_elm) {
                       ,$Svg$Attributes.y("0")
                       ,$Svg$Attributes.width($Lifty$Util.s_(40 * w))
                       ,$Svg$Attributes.height($Lifty$Util.s_(40 * h))
-                      ,A4($Lifty$Render.vbox,-2,-0.5,w,h)]),
+                      ,A4($Lifty$Render.vbox,-1,-0.5,w,h)]),
               _U.list([A2($Lifty$Render.rBg,num_floors,num_lifts)
                       ,A2(rCallBtns,num_floors,A2($Lifty$Util.mkM,a,call))
                       ,A4(rLiftsOne,
@@ -14993,7 +15609,7 @@ Elm.Lifty.TwoRender.make = function (_elm) {
                       ,$Svg$Attributes.y("0")
                       ,$Svg$Attributes.width($Lifty$Util.s_(40 * w))
                       ,$Svg$Attributes.height($Lifty$Util.s_(40 * h))
-                      ,A4($Lifty$Render.vbox,-2,-0.5,w,h)]),
+                      ,A4($Lifty$Render.vbox,-1,-0.5,w,h)]),
               _U.list([A2($Lifty$Render.rBg,num_floors,num_lifts)
                       ,A5(rCallBtns,
                       num_floors,
@@ -15048,7 +15664,7 @@ Elm.Lifty.OneSimRender.make = function (_elm) {
                       ,$Svg$Attributes.y("0")
                       ,$Svg$Attributes.width($Lifty$Util.s_(40 * w))
                       ,$Svg$Attributes.height($Lifty$Util.s_(40 * h))
-                      ,A4($Lifty$Render.vbox,-2,-0.5,w,h)]),
+                      ,A4($Lifty$Render.vbox,-1,-0.5,w,h)]),
               _U.list([A2($Lifty$Render.rBg,num_floors,num_lifts)
                       ,A2($Lifty$OneRender.rCallBtns,
                       num_floors,
@@ -15108,7 +15724,7 @@ Elm.Lifty.TwoSimRender.make = function (_elm) {
                       ,$Svg$Attributes.y("0")
                       ,$Svg$Attributes.width($Lifty$Util.s_(40 * w))
                       ,$Svg$Attributes.height($Lifty$Util.s_(40 * h))
-                      ,A4($Lifty$Render.vbox,-2,-0.5,w,h)]),
+                      ,A4($Lifty$Render.vbox,-1,-0.5,w,h)]),
               _U.list([A2($Lifty$Render.rBg,num_floors,num_lifts)
                       ,A5($Lifty$TwoRender.rCallBtns,
                       num_floors,
@@ -15141,6 +15757,10 @@ Elm.Lifty.CompareRender.make = function (_elm) {
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $Json$Encode = Elm.Json.Encode.make(_elm),
    $Lifty$OneRender = Elm.Lifty.OneRender.make(_elm),
    $Lifty$Render = Elm.Lifty.Render.make(_elm),
    $Lifty$RenderSim = Elm.Lifty.RenderSim.make(_elm),
@@ -15151,89 +15771,149 @@ Elm.Lifty.CompareRender.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Svg = Elm.Svg.make(_elm),
-   $Svg$Attributes = Elm.Svg.Attributes.make(_elm);
+   $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
+   $Svg$Lazy = Elm.Svg.Lazy.make(_elm);
    var _op = {};
-   var view = F5(function (nop,startAdd,endAdd,a,s) {
+   var lAddPax = function (params) {
+      var f = function (_p0) {
+         var _p1 = _p0;
+         var _p2 = _p1._5;
+         return A5($Lifty$RenderSim.rAddPax,
+         A2($Basics.max,_p1._0,_p1._1),
+         6 + _p1._2 + _p1._3,
+         _p1._4,
+         A2($Lifty$Util.mkM,_p2,_p1._6),
+         A2($Lifty$Util.mkM,_p2,_p1._7));
+      };
+      return A2($Svg$Lazy.lazy,f,params);
+   };
+   var rUI = F2(function (toggleRandomM,fillM) {
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.input,
+              _U.list([$Html$Attributes.id("addrandom")
+                      ,$Html$Attributes.type$("checkbox")
+                      ,$Html$Attributes.checked(true)
+                      ,A3($Html$Events.on,
+                      "change",
+                      $Html$Events.targetChecked,
+                      toggleRandomM)]),
+              _U.list([]))
+              ,A2($Html.label,
+              _U.list([$Html$Attributes.$for("addrandom")]),
+              _U.list([$Html.text("Add random passengers")]))
+              ,A2($Html.span,
+              _U.list([A2($Html$Attributes.property,
+              "innerHTML",
+              $Json$Encode.string(" &nbsp; &nbsp; "))]),
+              _U.list([]))
+              ,A2($Html.button,
+              _U.list([A3($Html$Events.on,"click",$Json$Decode.value,fillM)]),
+              _U.list([$Html.text("Fill")]))]));
+   });
+   var view = F7(function (startAdd,
+   endAdd,
+   toggleRandom,
+   fill,
+   nop,
+   a,
+   s) {
       var nop2 = A2($Lifty$Util.mkM2,
       a,
-      F2(function (_p1,_p0) {    return nop;}));
+      F2(function (_p4,_p3) {    return nop;}));
       var nop1 = A2($Lifty$Util.mkM,
       a,
-      function (_p2) {
+      function (_p5) {
          return nop;
       });
       var num_lifts2 = $Array.length(s.s2.lifts);
       var num_lifts1 = $Array.length(s.s1.lifts);
-      var w = $Lifty$Util.f_(4 + 7 + num_lifts1 + num_lifts2);
+      var w = $Lifty$Util.f_(2 + 8 + num_lifts1 + num_lifts2);
       var num_floors2 = $Array.length(s.s2.floors);
       var num_floors1 = $Array.length(s.s1.floors);
       var h = $Lifty$Util.f_(1 + A2($Basics.max,
       num_floors1,
       num_floors2));
+      var my_svg = function (_p6) {
+         return A2($Svg.svg,
+         _U.list([$Svg$Attributes.x("0")
+                 ,$Svg$Attributes.y("0")
+                 ,$Svg$Attributes.width($Lifty$Util.s_(40 * w))
+                 ,$Svg$Attributes.height($Lifty$Util.s_(40 * h))
+                 ,A4($Lifty$Render.vbox,-1,-0.5,w,h)]),
+         _U.list([A2($Svg.g,
+                 _U.list([$Svg$Attributes.style("pointer-events:none")]),
+                 _U.list([A3($Svg$Lazy.lazy2,
+                         $Lifty$Render.rBg,
+                         num_floors1,
+                         num_lifts1)
+                         ,A3($Svg$Lazy.lazy2,$Lifty$OneRender.rCallBtns,num_floors1,nop1)
+                         ,A4($Lifty$OneRender.rLiftsOne,
+                         num_floors1,
+                         s.s1.lifts,
+                         s.s1.t,
+                         nop2)
+                         ,A2($Lifty$RenderSim.rFloorPax,s.s1.floors,s.s1.t)
+                         ,A3($Lifty$RenderSim.rLiftPax,num_floors1,s.s1.lifts,s.s1.t)
+                         ,A3($Lifty$RenderSim.rLeavingPax,
+                         num_floors1,
+                         s.s1.leaving,
+                         s.s1.t)]))
+                 ,A2($Svg.g,
+                 _U.list([$Svg$Attributes.style("pointer-events:none")
+                         ,$Svg$Attributes.transform(A2($Basics._op["++"],
+                         "translate (",
+                         A2($Basics._op["++"],
+                         $Basics.toString(5 + $Array.length(s.s1.lifts)),
+                         ", 0)")))]),
+                 _U.list([A3($Svg$Lazy.lazy2,
+                         $Lifty$Render.rBg,
+                         num_floors2,
+                         num_lifts2)
+                         ,A5($Lifty$TwoRender.rCallBtns,
+                         num_floors2,
+                         s.s2.calls_up,
+                         s.s2.calls_down,
+                         nop1,
+                         nop1)
+                         ,A4($Lifty$TwoRender.rLiftsTwo,
+                         num_floors2,
+                         s.s2.lifts,
+                         s.s2.t,
+                         nop2)
+                         ,A2($Lifty$RenderSim.rFloorPax,s.s2.floors,s.s2.t)
+                         ,A3($Lifty$RenderSim.rLiftPax,num_floors2,s.s2.lifts,s.s2.t)
+                         ,A3($Lifty$RenderSim.rLeavingPax,
+                         num_floors2,
+                         s.s2.leaving,
+                         s.s2.t)]))
+                 ,A2($Svg.g,
+                 _U.list([]),
+                 _U.list([lAddPax({ctor: "_Tuple8"
+                                  ,_0: num_floors1
+                                  ,_1: num_floors2
+                                  ,_2: num_lifts1
+                                  ,_3: num_lifts2
+                                  ,_4: s.adding
+                                  ,_5: a
+                                  ,_6: startAdd
+                                  ,_7: endAdd})
+                         ,A2($Lifty$RenderSim.rAddingPax,
+                         6 + num_lifts1 + num_lifts2,
+                         s.adding)]))]));
+      };
       return A2($Html.div,
       _U.list([]),
       _U.list([$Lifty$Render.style_
-              ,A2($Svg.svg,
-              _U.list([$Svg$Attributes.x("0")
-                      ,$Svg$Attributes.y("0")
-                      ,$Svg$Attributes.width($Lifty$Util.s_(40 * w))
-                      ,$Svg$Attributes.height($Lifty$Util.s_(40 * h))
-                      ,A4($Lifty$Render.vbox,-2,-0.5,w,h)]),
-              _U.list([A2($Svg.g,
-              _U.list([]),
-              _U.list([A2($Svg.g,
-                      _U.list([$Svg$Attributes.style("pointer-events:none")]),
-                      _U.list([A2($Lifty$Render.rBg,num_floors1,num_lifts1)
-                              ,A2($Lifty$OneRender.rCallBtns,num_floors1,nop1)
-                              ,A4($Lifty$OneRender.rLiftsOne,
-                              num_floors1,
-                              s.s1.lifts,
-                              s.s1.t,
-                              nop2)
-                              ,A2($Lifty$RenderSim.rFloorPax,s.s1.floors,s.s1.t)
-                              ,A3($Lifty$RenderSim.rLiftPax,num_floors1,s.s1.lifts,s.s1.t)
-                              ,A3($Lifty$RenderSim.rLeavingPax,
-                              num_floors1,
-                              s.s1.leaving,
-                              s.s1.t)]))
-                      ,A2($Svg.g,
-                      _U.list([$Svg$Attributes.transform(A2($Basics._op["++"],
-                              "translate (",
-                              A2($Basics._op["++"],
-                              $Basics.toString(5 + $Array.length(s.s1.lifts)),
-                              ", 0)")))
-                              ,$Svg$Attributes.style("pointer-events:none")]),
-                      _U.list([A2($Lifty$Render.rBg,num_floors2,num_lifts2)
-                              ,A5($Lifty$TwoRender.rCallBtns,
-                              num_floors2,
-                              s.s2.calls_up,
-                              s.s2.calls_down,
-                              nop1,
-                              nop1)
-                              ,A4($Lifty$TwoRender.rLiftsTwo,
-                              num_floors2,
-                              s.s2.lifts,
-                              s.s2.t,
-                              nop2)
-                              ,A2($Lifty$RenderSim.rFloorPax,s.s2.floors,s.s2.t)
-                              ,A3($Lifty$RenderSim.rLiftPax,num_floors2,s.s2.lifts,s.s2.t)
-                              ,A3($Lifty$RenderSim.rLeavingPax,
-                              num_floors2,
-                              s.s2.leaving,
-                              s.s2.t)]))
-                      ,A2($Svg.g,
-                      _U.list([]),
-                      _U.list([A5($Lifty$RenderSim.rAddPax,
-                              A2($Basics.max,num_floors1,num_floors2),
-                              6 + num_lifts1 + num_lifts2,
-                              s.adding,
-                              A2($Lifty$Util.mkM,a,startAdd),
-                              A2($Lifty$Util.mkM,a,endAdd))
-                              ,A2($Lifty$RenderSim.rAddingPax,
-                              6 + num_lifts1 + num_lifts2,
-                              s.adding)]))]))]))]));
+              ,A2($Svg$Lazy.lazy,my_svg,s.s1.t)
+              ,A2(rUI,
+              A2($Lifty$Util.mkM,a,toggleRandom),
+              A2($Lifty$Util.mkM,a,function (_p7) {    return fill;}))]));
    });
-   return _elm.Lifty.CompareRender.values = {_op: _op,view: view};
+   return _elm.Lifty.CompareRender.values = {_op: _op
+                                            ,rUI: rUI
+                                            ,lAddPax: lAddPax
+                                            ,view: view};
 };Elm.Lifty = Elm.Lifty || {};
 Elm.Lifty.OneController = Elm.Lifty.OneController || {};
 Elm.Lifty.OneController.make = function (_elm) {
@@ -15443,9 +16123,7 @@ Elm.Lifty.OneSim.make = function (_elm) {
                                                                                                             ,_2: $Effects.none};
          } else {
             var _p13 = _p7._0;
-            var _p9 = A2($Lifty$OneController.update,
-            A2($Debug.log,"Action",_p13),
-            s);
+            var _p9 = A2($Lifty$OneController.update,_p13,s);
             var _p12 = _p9._0;
             var _p11 = _p9._1;
             var _p10 = _p13;
@@ -15994,9 +16672,7 @@ Elm.Lifty.TwoSim.make = function (_elm) {
                                                                                                                       ,_2: $Effects.none};
          } else {
             var _p13 = _p5._0;
-            var _p7 = A2($Lifty$TwoController.update,
-            A2($Debug.log,"Action",_p13),
-            s);
+            var _p7 = A2($Lifty$TwoController.update,_p13,s);
             var _p12 = _p7._0;
             var _p11 = _p7._1;
             var _p8 = _p13;
@@ -16219,6 +16895,7 @@ Elm.Lifty.CompareUI.make = function (_elm) {
    return _elm.Lifty.CompareUI.values;
    var _U = Elm.Native.Utils.make(_elm),
    $Animation = Elm.Animation.make(_elm),
+   $AnimationFrame = Elm.AnimationFrame.make(_elm),
    $Array = Elm.Array.make(_elm),
    $Array$Extra = Elm.Array.Extra.make(_elm),
    $Basics = Elm.Basics.make(_elm),
@@ -16242,39 +16919,76 @@ Elm.Lifty.CompareUI.make = function (_elm) {
    $Task = Elm.Task.make(_elm),
    $Time = Elm.Time.make(_elm);
    var _op = {};
-   var init_state2 = {t: 0
-                     ,floors: A2($Array.repeat,10,_U.list([]))
+   var lift_cap = 4;
+   var max_queue = 16;
+   var num_lifts = 4;
+   var num_floors = 10;
+   var init_state1 = {t: 0
+                     ,floors: A2($Array.repeat,num_floors,_U.list([]))
+                     ,adding: $Maybe.Nothing
+                     ,leaving: _U.list([])
+                     ,max_queue: max_queue
+                     ,lift_cap: lift_cap
                      ,lifts: A2($Array.repeat,
-                     4,
-                     {dests: $Set.empty
-                     ,next: 0
-                     ,up: false
+                     num_lifts,
+                     {dest: num_floors - 1
                      ,busy: false
                      ,pax: _U.list([])
-                     ,y: $Animation.$static(0)})
+                     ,y: $Animation.$static(num_floors - 1)})};
+   var init_state2 = {t: 0
+                     ,floors: A2($Array.repeat,num_floors,_U.list([]))
                      ,calls_up: $Set.empty
                      ,calls_down: $Set.empty
                      ,adding: $Maybe.Nothing
                      ,leaving: _U.list([])
-                     ,max_queue: 10
-                     ,lift_cap: 4};
-   var init_state1 = {t: 0
-                     ,floors: A2($Array.repeat,10,_U.list([]))
+                     ,max_queue: max_queue
+                     ,lift_cap: lift_cap
                      ,lifts: A2($Array.repeat,
-                     4,
-                     {dest: 0,busy: false,pax: _U.list([]),y: $Animation.$static(0)})
-                     ,adding: $Maybe.Nothing
-                     ,leaving: _U.list([])
-                     ,max_queue: 10
-                     ,lift_cap: 4};
+                     num_lifts,
+                     {dests: $Set.empty
+                     ,next: num_floors - 1
+                     ,up: false
+                     ,busy: false
+                     ,pax: _U.list([])
+                     ,y: $Animation.$static(num_floors - 1)})};
    var init_state = {s1: init_state1
                     ,s2: init_state2
                     ,adding: $Maybe.Nothing
-                    ,src_seed: $Random.initialSeed(0)
-                    ,dest_seed: $Random.initialSeed(1)
+                    ,seed: $Random.initialSeed(0)
                     ,random_enabled: true};
+   var gen_dest = F2(function (src,seed) {
+      gen_dest: while (true) {
+         var _p0 = A2($Random.generate,
+         A2($Random.$int,0,num_floors - 1),
+         seed);
+         var dest = _p0._0;
+         var seed$ = _p0._1;
+         if (_U.eq(src,dest)) {
+               var _v0 = src,_v1 = seed$;
+               src = _v0;
+               seed = _v1;
+               continue gen_dest;
+            } else return {ctor: "_Tuple2",_0: dest,_1: seed$};
+      }
+   });
+   var gen_srcdest = function (seed) {
+      var _p1 = A2($Random.generate,
+      A2($Random.$int,0,num_floors - 1),
+      seed);
+      var src = _p1._0;
+      var seed$ = _p1._1;
+      var _p2 = A2(gen_dest,src,seed$);
+      var dest = _p2._0;
+      var seed$$ = _p2._1;
+      return {ctor: "_Tuple2"
+             ,_0: {ctor: "_Tuple2",_0: src,_1: dest}
+             ,_1: seed$$};
+   };
    var Nop = {ctor: "Nop"};
-   var ToggleRandom = {ctor: "ToggleRandom"};
+   var Fill = {ctor: "Fill"};
+   var ToggleRandom = function (a) {
+      return {ctor: "ToggleRandom",_0: a};
+   };
    var AddRandom = function (a) {
       return {ctor: "AddRandom",_0: a};
    };
@@ -16283,40 +16997,40 @@ Elm.Lifty.CompareUI.make = function (_elm) {
       return {ctor: "Action2",_0: a};
    };
    var update_sim2 = F2(function (a,s) {
-      return function (_p0) {
-         var _p1 = _p0;
-         var _p5 = _p1._0;
-         var _p4 = _p1._2;
+      return function (_p3) {
+         var _p4 = _p3;
+         var _p8 = _p4._0;
+         var _p7 = _p4._2;
          return A2($Maybe$Extra._op["?"],
          A2($Maybe.map,
-         function (_p2) {
-            var _p3 = _p2;
+         function (_p5) {
+            var _p6 = _p5;
             return {ctor: "_Tuple2"
-                   ,_0: A5($Lifty$TwoSimView.animate,_p3._0,a,s,_p3._1,_p5)
-                   ,_1: A2($Effects.map,Action2,_p4)};
+                   ,_0: A5($Lifty$TwoSimView.animate,_p6._0,a,s,_p6._1,_p8)
+                   ,_1: A2($Effects.map,Action2,_p7)};
          },
-         _p1._1),
-         {ctor: "_Tuple2",_0: _p5,_1: A2($Effects.map,Action2,_p4)});
+         _p4._1),
+         {ctor: "_Tuple2",_0: _p8,_1: A2($Effects.map,Action2,_p7)});
       }(A2($Lifty$TwoSim.update,a,s));
    });
    var Action1 = function (a) {
       return {ctor: "Action1",_0: a};
    };
    var update_sim1 = F2(function (a,s) {
-      return function (_p6) {
-         var _p7 = _p6;
-         var _p11 = _p7._0;
-         var _p10 = _p7._2;
+      return function (_p9) {
+         var _p10 = _p9;
+         var _p14 = _p10._0;
+         var _p13 = _p10._2;
          return A2($Maybe$Extra._op["?"],
          A2($Maybe.map,
-         function (_p8) {
-            var _p9 = _p8;
+         function (_p11) {
+            var _p12 = _p11;
             return {ctor: "_Tuple2"
-                   ,_0: A5($Lifty$OneSimView.animate,_p9._0,s,a,_p11,_p9._1)
-                   ,_1: A2($Effects.map,Action1,_p10)};
+                   ,_0: A5($Lifty$OneSimView.animate,_p12._0,s,a,_p14,_p12._1)
+                   ,_1: A2($Effects.map,Action1,_p13)};
          },
-         _p7._1),
-         {ctor: "_Tuple2",_0: _p11,_1: A2($Effects.map,Action1,_p10)});
+         _p10._1),
+         {ctor: "_Tuple2",_0: _p14,_1: A2($Effects.map,Action1,_p13)});
       }(A2($Lifty$OneSim.update,a,s));
    });
    var AddPassenger = F2(function (a,b) {
@@ -16324,85 +17038,85 @@ Elm.Lifty.CompareUI.make = function (_elm) {
    });
    var update = F2(function (a,s) {
       update: while (true) {
-         var _p12 = a;
-         switch (_p12.ctor)
+         var _p15 = a;
+         switch (_p15.ctor)
          {case "StartAdd": return {ctor: "_Tuple2"
-                                  ,_0: _U.update(s,{adding: $Maybe.Just(_p12._0)})
+                                  ,_0: _U.update(s,{adding: $Maybe.Just(_p15._0)})
                                   ,_1: $Effects.none};
             case "EndAdd": return A2($Maybe$Extra._op["?"],
               A2($Maybe.map,
               function (src) {
                  return A2(update,
-                 A2(AddPassenger,src,_p12._0),
+                 A2(AddPassenger,src,_p15._0),
                  _U.update(s,{adding: $Maybe.Nothing}));
               },
               s.adding),
               {ctor: "_Tuple2"
               ,_0: _U.update(s,{adding: $Maybe.Nothing})
               ,_1: $Effects.none});
-            case "AddPassenger": var _p16 = _p12._0;
-              var _p15 = _p12._1;
-              var floor2 = A2($Array$Extra.getUnsafe,_p16,s.s2.floors);
+            case "AddPassenger": var _p19 = _p15._0;
+              var _p18 = _p15._1;
+              var floor2 = A2($Array$Extra.getUnsafe,_p19,s.s2.floors);
               var x2 = A4($Lifty$Util.anim,
               s.s2.t,
-              2.3 + $Lifty$Util.f_($Array.length(s.s2.lifts)),
+              3.3 + $Lifty$Util.f_($Array.length(s.s2.lifts)),
               0 + $Lifty$Util.f_($Array.length(s.s2.lifts)) + $Lifty$Util.f_($List.length(floor2)) / 5,
               500);
-              var p2 = {x: x2,dest: _p15};
-              var _p13 = A2($Lifty$TwoSim.update,
-              A3($Lifty$TwoSim.AddPassenger,_p16,_p15,p2),
+              var p2 = {x: x2,dest: _p18};
+              var _p16 = A2($Lifty$TwoSim.update,
+              A3($Lifty$TwoSim.AddPassenger,_p19,_p18,p2),
               s.s2);
-              var s2$ = _p13._0;
-              var ma2 = _p13._1;
-              var e2 = _p13._2;
-              var floor1 = A2($Array$Extra.getUnsafe,_p16,s.s1.floors);
+              var s2$ = _p16._0;
+              var ma2 = _p16._1;
+              var e2 = _p16._2;
+              var floor1 = A2($Array$Extra.getUnsafe,_p19,s.s1.floors);
               var x1 = A4($Lifty$Util.anim,
               s.s1.t,
-              2.3 + $Lifty$Util.f_($Array.length(s.s1.lifts)),
+              3.3 + $Lifty$Util.f_($Array.length(s.s1.lifts)),
               0 + $Lifty$Util.f_($Array.length(s.s1.lifts)) + $Lifty$Util.f_($List.length(floor1)) / 5,
               500);
-              var p1 = {x: x1,dest: _p15};
-              var _p14 = A2($Lifty$OneSim.update,
-              A3($Lifty$OneSim.AddPassenger,_p16,_p15,p1),
+              var p1 = {x: x1,dest: _p18};
+              var _p17 = A2($Lifty$OneSim.update,
+              A3($Lifty$OneSim.AddPassenger,_p19,_p18,p1),
               s.s1);
-              var s1$ = _p14._0;
-              var ma1 = _p14._1;
-              var e1 = _p14._2;
+              var s1$ = _p17._0;
+              var ma1 = _p17._1;
+              var e1 = _p17._2;
               var s$ = _U.update(s,{s1: s1$,s2: s2$});
               return {ctor: "_Tuple2"
                      ,_0: s$
                      ,_1: $Effects.batch(_U.list([A2($Effects.map,Action1,e1)
                                                  ,A2($Effects.map,Action2,e2)]))};
-            case "Action1": return function (_p17) {
-                 var _p18 = _p17;
+            case "Action1": return function (_p20) {
+                 var _p21 = _p20;
                  return {ctor: "_Tuple2"
-                        ,_0: _U.update(s,{s1: _p18._0})
-                        ,_1: _p18._1};
-              }(A2(update_sim1,_p12._0,s.s1));
-            case "Action2": return function (_p19) {
-                 var _p20 = _p19;
+                        ,_0: _U.update(s,{s1: _p21._0})
+                        ,_1: _p21._1};
+              }(A2(update_sim1,_p15._0,s.s1));
+            case "Action2": return function (_p22) {
+                 var _p23 = _p22;
                  return {ctor: "_Tuple2"
-                        ,_0: _U.update(s,{s2: _p20._0})
-                        ,_1: _p20._1};
-              }(A2(update_sim2,_p12._0,s.s2));
-            case "Tick": var _p23 = _p12._0;
+                        ,_0: _U.update(s,{s2: _p23._0})
+                        ,_1: _p23._1};
+              }(A2(update_sim2,_p15._0,s.s2));
+            case "Tick": var _p26 = _p15._0;
               var clearLeaving = function (ls) {
                  return A2($List.filter,
                  function (l) {
-                    return A2($Animation.isDone,_p23 - 100,l.x);
+                    return A2($Animation.isDone,_p26 - 100,l.x);
                  },
                  ls);
               };
-              var _p21 = A2($Lifty$TwoSimView.update,
-              $Lifty$TwoSimView.Tick(_p23),
+              var _p24 = A2($Lifty$TwoSimView.update,
+              $Lifty$TwoSimView.Tick(_p26),
               s.s2);
-              var s2$ = _p21._0;
-              var e2 = _p21._1;
-              var _p22 = A2($Lifty$OneSimView.update,
-              $Lifty$OneSimView.Tick(_p23),
+              var s2$ = _p24._0;
+              var e2 = _p24._1;
+              var _p25 = A2($Lifty$OneSimView.update,
+              $Lifty$OneSimView.Tick(_p26),
               s.s1);
-              var s1$ = _p22._0;
-              var e1 = _p22._1;
+              var s1$ = _p25._0;
+              var e1 = _p25._1;
               var s$ = _U.update(s,
               {s1: _U.update(s1$,{leaving: clearLeaving(s1$.leaving)})
               ,s2: _U.update(s2$,{leaving: clearLeaving(s2$.leaving)})});
@@ -16410,32 +17124,88 @@ Elm.Lifty.CompareUI.make = function (_elm) {
                      ,_0: s$
                      ,_1: $Effects.batch(_U.list([A2($Effects.map,Action1,e1)
                                                  ,A2($Effects.map,Action2,e2)]))};
-            case "AddRandom": var _p24 = A2($Debug.log,"Pax",_p12._0);
-              if ($Maybe$Extra.isJust(s.adding) || $Basics.not(s.random_enabled))
+            case "AddRandom":
+            if ($Maybe$Extra.isJust(s.adding) || $Basics.not(s.random_enabled))
               return {ctor: "_Tuple2",_0: s,_1: $Effects.none}; else {
-                    var _p25 = A2($Random.generate,
-                    A2($Random.$int,0,9),
-                    s.dest_seed);
-                    var dest = _p25._0;
-                    var dest_seed = _p25._1;
-                    var _p26 = A2($Random.generate,A2($Random.$int,0,9),s.src_seed);
-                    var src = _p26._0;
-                    var src_seed = _p26._1;
-                    var _p27 = A2($Debug.log,
-                    "Paxx",
-                    {ctor: "_Tuple2",_0: src,_1: dest});
-                    var s$ = _U.update(s,{src_seed: src_seed,dest_seed: dest_seed});
-                    if (!_U.eq(src,dest)) {
-                          var _v7 = A2(AddPassenger,src,dest),_v8 = s$;
-                          a = _v7;
-                          s = _v8;
-                          continue update;
-                       } else return {ctor: "_Tuple2",_0: s$,_1: $Effects.none};
+                    var _p27 = gen_srcdest(s.seed);
+                    var src = _p27._0._0;
+                    var dest = _p27._0._1;
+                    var seed$ = _p27._1;
+                    var _v9 = A2(AddPassenger,src,dest),
+                    _v10 = _U.update(s,{seed: seed$});
+                    a = _v9;
+                    s = _v10;
+                    continue update;
                  }
-            case "ToggleRandom": return {ctor: "_Tuple2"
-                                        ,_0: _U.update(s,
-                                        {random_enabled: $Basics.not(s.random_enabled)})
-                                        ,_1: $Effects.none};
+            case "ToggleRandom": var _p29 = _p15._0;
+              var _p28 = A2($Debug.log,"ToggleRandom",_p29);
+              return {ctor: "_Tuple2"
+                     ,_0: _U.update(s,{random_enabled: _p29})
+                     ,_1: $Effects.none};
+            case "Fill": var upd = F2(function (a,_p30) {
+                 var _p31 = _p30;
+                 var _p32 = A2(update,a,_p31._0);
+                 var s$ = _p32._0;
+                 var e$ = _p32._1;
+                 return {ctor: "_Tuple2"
+                        ,_0: s$
+                        ,_1: $Effects.batch(_U.list([_p31._1,e$]))};
+              });
+              var gen_floor = F3(function (floor_id,p_id,_p33) {
+                 var _p34 = _p33;
+                 var _p38 = _p34._1;
+                 var _p37 = _p34._0;
+                 if (_U.cmp(p_id,0) < 0) return {ctor: "_Tuple2"
+                                                ,_0: _p37
+                                                ,_1: _p38}; else {
+                       var _p35 = A2(gen_dest,floor_id,_p38);
+                       var dest = _p35._0;
+                       var seed$ = _p35._1;
+                       var act = A2(AddPassenger,floor_id,dest);
+                       var _p36 = A3(gen_floor,
+                       floor_id,
+                       p_id - 1,
+                       {ctor: "_Tuple2",_0: _p37,_1: seed$});
+                       var acts$ = _p36._0;
+                       var seed$$ = _p36._1;
+                       return {ctor: "_Tuple2"
+                              ,_0: A2($List._op["::"],act,acts$)
+                              ,_1: seed$$};
+                    }
+              });
+              var gen_all = F2(function (floor_id,_p39) {
+                 gen_all: while (true) {
+                    var _p40 = _p39;
+                    var _p43 = _p40._1;
+                    var _p42 = _p40._0;
+                    if (_U.cmp(floor_id,0) < 0) return {ctor: "_Tuple2"
+                                                       ,_0: _p42
+                                                       ,_1: _p43}; else {
+                          var _p41 = A3(gen_floor,
+                          floor_id,
+                          max_queue - 1,
+                          {ctor: "_Tuple2",_0: _p42,_1: _p43});
+                          var acts$ = _p41._0;
+                          var seed$ = _p41._1;
+                          var _v14 = floor_id - 1,
+                          _v15 = {ctor: "_Tuple2",_0: acts$,_1: seed$};
+                          floor_id = _v14;
+                          _p39 = _v15;
+                          continue gen_all;
+                       }
+                 }
+              });
+              var _p44 = A2(gen_all,
+              num_floors - 1,
+              {ctor: "_Tuple2",_0: _U.list([]),_1: s.seed});
+              var acts = _p44._0;
+              var seed$ = _p44._1;
+              return A3($List.foldl,
+              upd,
+              {ctor: "_Tuple2"
+              ,_0: _U.update(s,{seed: seed$})
+              ,_1: $Effects.none},
+              acts);
             default: return {ctor: "_Tuple2",_0: s,_1: $Effects.none};}
       }
    });
@@ -16446,14 +17216,19 @@ Elm.Lifty.CompareUI.make = function (_elm) {
    var app = $StartApp.start({init: {ctor: "_Tuple2"
                                     ,_0: init_state
                                     ,_1: $Effects.none}
-                             ,view: A3($Lifty$CompareRender.view,Nop,StartAdd,EndAdd)
+                             ,view: A5($Lifty$CompareRender.view,
+                             StartAdd,
+                             EndAdd,
+                             ToggleRandom,
+                             Fill,
+                             Nop)
                              ,update: update
                              ,inputs: _U.list([A2($Signal.map,
                                               Tick,
                                               A3($Signal.foldp,
                                               F2(function (x,y) {    return x + y;}),
                                               0,
-                                              $Time.fps(30)))
+                                              $AnimationFrame.frame))
                                               ,A2($Signal.map,
                                               AddRandom,
                                               A3($Signal.foldp,
@@ -16472,12 +17247,19 @@ Elm.Lifty.CompareUI.make = function (_elm) {
                                         ,Tick: Tick
                                         ,AddRandom: AddRandom
                                         ,ToggleRandom: ToggleRandom
+                                        ,Fill: Fill
                                         ,Nop: Nop
+                                        ,num_floors: num_floors
+                                        ,num_lifts: num_lifts
+                                        ,max_queue: max_queue
+                                        ,lift_cap: lift_cap
                                         ,init_state1: init_state1
                                         ,init_state2: init_state2
                                         ,init_state: init_state
                                         ,update_sim1: update_sim1
                                         ,update_sim2: update_sim2
+                                        ,gen_dest: gen_dest
+                                        ,gen_srcdest: gen_srcdest
                                         ,update: update
                                         ,app: app
                                         ,main: main};

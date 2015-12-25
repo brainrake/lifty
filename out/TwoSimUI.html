@@ -13702,6 +13702,30 @@ Elm.Svg.Events.make = function (_elm) {
                                    ,onMouseOut: onMouseOut
                                    ,onMouseOver: onMouseOver
                                    ,onMouseUp: onMouseUp};
+};Elm.Svg = Elm.Svg || {};
+Elm.Svg.Lazy = Elm.Svg.Lazy || {};
+Elm.Svg.Lazy.make = function (_elm) {
+   "use strict";
+   _elm.Svg = _elm.Svg || {};
+   _elm.Svg.Lazy = _elm.Svg.Lazy || {};
+   if (_elm.Svg.Lazy.values) return _elm.Svg.Lazy.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Svg = Elm.Svg.make(_elm),
+   $VirtualDom = Elm.VirtualDom.make(_elm);
+   var _op = {};
+   var lazy3 = $VirtualDom.lazy3;
+   var lazy2 = $VirtualDom.lazy2;
+   var lazy = $VirtualDom.lazy;
+   return _elm.Svg.Lazy.values = {_op: _op
+                                 ,lazy: lazy
+                                 ,lazy2: lazy2
+                                 ,lazy3: lazy3};
 };Elm.StartApp = Elm.StartApp || {};
 Elm.StartApp.make = function (_elm) {
    "use strict";
@@ -14317,7 +14341,7 @@ Elm.Lifty.Render.make = function (_elm) {
    var style_ = A3($Html.node,
    "style",
    _U.list([]),
-   _U.list([$Html.text("\nhtml { background-color: #222 }\nsvg { user-select: none; }\nsvg text { fill: white; }\n.addbtn          {cursor:pointer}\n.addbtn:hover    {fill: #ddd}\n.callbtn         {fill: #084; cursor:pointer}\n.callbtn.pressed {fill: #0f8}\n.callbtn:hover   {fill: #0f8}\n.liftbtn         {fill: transparent; cursor: pointer}\n.liftbtn.dest    {fill: #084}\n.liftbtn:hover   {fill: #0f8}\n")]));
+   _U.list([$Html.text("\nhtml { background-color: #222; color: #fff; font-size: 15px;\n       font-family: \"Lato\",\"Helvetica Neue\",Helvetica,Arial,sans-serif; }\nsvg { user-select: none; }\nsvg text { fill: white; }\n.addbtn          {cursor:pointer}\n.addbtn:hover    {fill: #ddd}\n.callbtn         {fill: #084; cursor:pointer}\n.callbtn.pressed {fill: #0f8}\n.callbtn:hover   {fill: #0f8}\n.liftbtn         {fill: transparent; cursor: pointer}\n.liftbtn.dest    {fill: #084}\n.liftbtn:hover   {fill: #0f8}\n")]));
    var vbox = F4(function (x,y,w,h) {
       return $Svg$Attributes.viewBox(A2($String.join,
       " ",
@@ -14427,7 +14451,7 @@ Elm.Lifty.Render.make = function (_elm) {
       return A2($Svg.g,
       _U.list([]),
       _U.list([A5(rect_,
-              -2,
+              -1,
               -0.5,
               0,
               0,
@@ -14435,7 +14459,7 @@ Elm.Lifty.Render.make = function (_elm) {
                       ,$Svg$Attributes.height("100%")
                       ,$Svg$Attributes.fill("#555")]))
               ,A5(rect_,
-              -2,
+              -1,
               num_floors,
               0,
               4.0e-2,
@@ -14450,7 +14474,7 @@ Elm.Lifty.Render.make = function (_elm) {
                  return A2(movey,
                  floor_id,
                  _U.list([A5(rect_,
-                 -2,
+                 -1,
                  0,
                  0,
                  4.0e-2,
@@ -14543,7 +14567,7 @@ Elm.Lifty.OneRender.make = function (_elm) {
                       ,$Svg$Attributes.y("0")
                       ,$Svg$Attributes.width($Lifty$Util.s_(40 * w))
                       ,$Svg$Attributes.height($Lifty$Util.s_(40 * h))
-                      ,A4($Lifty$Render.vbox,-2,-0.5,w,h)]),
+                      ,A4($Lifty$Render.vbox,-1,-0.5,w,h)]),
               _U.list([A2($Lifty$Render.rBg,num_floors,num_lifts)
                       ,A2(rCallBtns,num_floors,A2($Lifty$Util.mkM,a,call))
                       ,A4(rLiftsOne,
@@ -14663,9 +14687,7 @@ Elm.Lifty.OneSim.make = function (_elm) {
                                                                                                             ,_2: $Effects.none};
          } else {
             var _p13 = _p7._0;
-            var _p9 = A2($Lifty$OneController.update,
-            A2($Debug.log,"Action",_p13),
-            s);
+            var _p9 = A2($Lifty$OneController.update,_p13,s);
             var _p12 = _p9._0;
             var _p11 = _p9._1;
             var _p10 = _p13;
@@ -14903,6 +14925,7 @@ Elm.Lifty.RenderSim.make = function (_elm) {
    $Svg = Elm.Svg.make(_elm),
    $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
    $Svg$Events = Elm.Svg.Events.make(_elm),
+   $Svg$Lazy = Elm.Svg.Lazy.make(_elm),
    $Time = Elm.Time.make(_elm);
    var _op = {};
    var rAddingPax = F2(function (num_lifts,adding) {
@@ -14915,13 +14938,12 @@ Elm.Lifty.RenderSim.make = function (_elm) {
          return A3($Lifty$Render.movexy,
          num_lifts,
          floor_id,
-         _U.list([A4($Lifty$Render.circle_,
-         2.6,
-         0.69,
-         0.3,
-         _U.list([$Svg$Attributes.fill("#08f")
-                 ,$Svg$Attributes.stroke("#444")
-                 ,$Svg$Attributes.strokeWidth("0.02")]))]));
+         _U.list([A5($Lifty$Render.rect_,
+         2.4,
+         0.2,
+         0.4,
+         0.8,
+         _U.list([$Svg$Attributes.fill("#084")]))]));
       }));
    });
    var rAddPax = F5(function (num_floors,
@@ -14938,20 +14960,22 @@ Elm.Lifty.RenderSim.make = function (_elm) {
          var msg = A2($Maybe$Extra._op["?"],
          A2($Maybe.map,function (_p0) {    return endAddM;},adding),
          startAddM)(floor_id);
-         return A2($Lifty$Render.movey,
+         return A3($Lifty$Render.movexy,
+         num_lifts,
          floor_id,
-         _U.list([A4($Lifty$Render.circle_,
-                 2.6 + $Lifty$Util.f_(num_lifts),
-                 0.69,
-                 0.3,
+         _U.list([A5($Lifty$Render.rect_,
+                 2.4,
+                 0.2,
+                 0.4,
+                 0.8,
                  _U.list([$Svg$Attributes.fill("#888")
                          ,$Svg$Attributes.strokeWidth("0.02")
                          ,$Svg$Events.onClick(msg)
                          ,$Svg$Attributes.$class("addbtn")]))
                  ,A4($Lifty$Render.text_,
                  "+",
-                 2.47 + $Lifty$Util.f_(num_lifts),
-                 0.82,
+                 2.47,
+                 0.72,
                  _U.list([$Svg$Attributes.fontSize("0.4")
                          ,$Svg$Attributes.fill("#ddd")
                          ,$Svg$Attributes.style("pointer-events:none")]))]));
@@ -14960,57 +14984,63 @@ Elm.Lifty.RenderSim.make = function (_elm) {
    var rPa = F3(function (num_floors,p,t) {
       return A2($Lifty$Render.movex,
       A2($Animation.animate,t,p.x),
-      _U.list([A2($Svg.g,
-      _U.list([$Svg$Attributes.transform("translate(0.12,0.2)")]),
-      _U.list([A2($Svg.g,
-      _U.list([$Svg$Attributes.transform(A2($Basics._op["++"],
-      "scale(0.16,",
-      A2($Basics._op["++"],
-      $Lifty$Util.s_(0.8 / $Lifty$Util.f_(num_floors)),
-      ")")))]),
-      _U.list([A5($Lifty$Render.rect_,
-              0,
-              0,
-              1,
-              num_floors,
-              _U.list([$Svg$Attributes.fill("#1c1c1c")]))
-              ,A2($Svg.g,
-              _U.list([]),
-              A3($Basics.flip,
-              $List.map,
-              $Lifty$Util.zeroTo(num_floors),
-              function (fi) {
-                 return A5($Lifty$Render.rect_,
+      _U.list([A2($Svg$Lazy.lazy,
+      function (_p1) {
+         var _p2 = _p1;
+         var _p3 = _p2._0;
+         return A2($Svg.g,
+         _U.list([$Svg$Attributes.transform("translate(0.12,0.2)")]),
+         _U.list([A2($Svg.g,
+         _U.list([$Svg$Attributes.transform(A2($Basics._op["++"],
+         "scale(0.16,",
+         A2($Basics._op["++"],
+         $Lifty$Util.s_(0.8 / $Lifty$Util.f_(_p3)),
+         ")")))]),
+         _U.list([A5($Lifty$Render.rect_,
                  0,
-                 $Lifty$Util.f_(fi) - 0.1,
+                 0,
                  1,
-                 0.2,
-                 _U.list([$Svg$Attributes.fill("#888")]));
-              }))
-              ,A5($Lifty$Render.rect_,
-              0,
-              p.dest,
-              1,
-              1,
-              _U.list([$Svg$Attributes.fill("#084")]))]))]))]));
+                 _p3,
+                 _U.list([$Svg$Attributes.fill("#1c1c1c")]))
+                 ,A2($Svg.g,
+                 _U.list([]),
+                 A3($Basics.flip,
+                 $List.map,
+                 $Lifty$Util.zeroTo(_p3),
+                 function (fi) {
+                    return A5($Lifty$Render.rect_,
+                    0,
+                    $Lifty$Util.f_(fi) - 0.1,
+                    1,
+                    0.2,
+                    _U.list([$Svg$Attributes.fill("#888")]));
+                 }))
+                 ,A5($Lifty$Render.rect_,
+                 0,
+                 _p2._1,
+                 1,
+                 1,
+                 _U.list([$Svg$Attributes.fill("#084")]))]))]));
+      },
+      {ctor: "_Tuple2",_0: num_floors,_1: p.dest})]));
    });
    var rLiftPax = F3(function (num_floors,lifts,t) {
       return A2($Svg.g,
       _U.list([]),
       A2($Lifty$Util.imapA,
       lifts,
-      function (_p1) {
-         var _p2 = _p1;
-         var _p5 = _p2._1;
+      function (_p4) {
+         var _p5 = _p4;
+         var _p8 = _p5._1;
          return A2($Svg.g,
          _U.list([]),
          A2($Lifty$Util.imapL,
-         _p5.pax,
-         function (_p3) {
-            var _p4 = _p3;
+         _p8.pax,
+         function (_p6) {
+            var _p7 = _p6;
             return A2($Lifty$Render.movey,
-            A2($Animation.animate,t,_p5.y),
-            _U.list([A3(rPa,num_floors,_p4._1,t)]));
+            A2($Animation.animate,t,_p8.y),
+            _U.list([A3(rPa,num_floors,_p7._1,t)]));
          }));
       }));
    });
@@ -15031,16 +15061,16 @@ Elm.Lifty.RenderSim.make = function (_elm) {
       _U.list([]),
       A2($Lifty$Util.imapA,
       floors,
-      function (_p6) {
-         var _p7 = _p6;
+      function (_p9) {
+         var _p10 = _p9;
          return A2($Svg.g,
          _U.list([]),
          A3($Basics.flip,
          $List.map,
-         $List.reverse(_p7._1),
+         $List.reverse(_p10._1),
          function (p) {
             return A2($Lifty$Render.movey,
-            _p7._0,
+            _p10._0,
             _U.list([A3(rPa,$Array.length(floors),p,t)]));
          }));
       }));
@@ -15366,7 +15396,7 @@ Elm.Lifty.TwoRender.make = function (_elm) {
                       ,$Svg$Attributes.y("0")
                       ,$Svg$Attributes.width($Lifty$Util.s_(40 * w))
                       ,$Svg$Attributes.height($Lifty$Util.s_(40 * h))
-                      ,A4($Lifty$Render.vbox,-2,-0.5,w,h)]),
+                      ,A4($Lifty$Render.vbox,-1,-0.5,w,h)]),
               _U.list([A2($Lifty$Render.rBg,num_floors,num_lifts)
                       ,A5(rCallBtns,
                       num_floors,
@@ -15495,9 +15525,7 @@ Elm.Lifty.TwoSim.make = function (_elm) {
                                                                                                                       ,_2: $Effects.none};
          } else {
             var _p13 = _p5._0;
-            var _p7 = A2($Lifty$TwoController.update,
-            A2($Debug.log,"Action",_p13),
-            s);
+            var _p7 = A2($Lifty$TwoController.update,_p13,s);
             var _p12 = _p7._0;
             var _p11 = _p7._1;
             var _p8 = _p13;
@@ -15575,7 +15603,7 @@ Elm.Lifty.TwoSimRender.make = function (_elm) {
                       ,$Svg$Attributes.y("0")
                       ,$Svg$Attributes.width($Lifty$Util.s_(40 * w))
                       ,$Svg$Attributes.height($Lifty$Util.s_(40 * h))
-                      ,A4($Lifty$Render.vbox,-2,-0.5,w,h)]),
+                      ,A4($Lifty$Render.vbox,-1,-0.5,w,h)]),
               _U.list([A2($Lifty$Render.rBg,num_floors,num_lifts)
                       ,A5($Lifty$TwoRender.rCallBtns,
                       num_floors,
@@ -15833,22 +15861,23 @@ Elm.Lifty.TwoSimUI.make = function (_elm) {
       },
       a);
    });
+   var num_floors = 5;
    var init_state = {t: 0
-                    ,floors: A2($Array.repeat,5,_U.list([]))
-                    ,lifts: A2($Array.repeat,
-                    2,
-                    {dests: $Set.empty
-                    ,next: 0
-                    ,up: false
-                    ,busy: false
-                    ,pax: _U.list([])
-                    ,y: $Animation.$static(0)})
+                    ,floors: A2($Array.repeat,num_floors,_U.list([]))
                     ,calls_up: $Set.empty
                     ,calls_down: $Set.empty
                     ,adding: $Maybe.Nothing
                     ,leaving: _U.list([])
                     ,max_queue: 10
-                    ,lift_cap: 4};
+                    ,lift_cap: 4
+                    ,lifts: A2($Array.repeat,
+                    2,
+                    {dests: $Set.empty
+                    ,next: num_floors - 1
+                    ,up: false
+                    ,busy: false
+                    ,pax: _U.list([])
+                    ,y: $Animation.$static(num_floors - 1)})};
    var app = $StartApp.start({init: {ctor: "_Tuple2"
                                     ,_0: init_state
                                     ,_1: $Effects.none}
@@ -15893,6 +15922,7 @@ Elm.Lifty.TwoSimUI.make = function (_elm) {
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",
    app.tasks);
    return _elm.Lifty.TwoSimUI.values = {_op: _op
+                                       ,num_floors: num_floors
                                        ,init_state: init_state
                                        ,update: update
                                        ,app: app

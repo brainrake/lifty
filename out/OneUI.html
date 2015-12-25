@@ -13776,7 +13776,7 @@ Elm.Lifty.Render.make = function (_elm) {
    var style_ = A3($Html.node,
    "style",
    _U.list([]),
-   _U.list([$Html.text("\nhtml { background-color: #222 }\nsvg { user-select: none; }\nsvg text { fill: white; }\n.addbtn          {cursor:pointer}\n.addbtn:hover    {fill: #ddd}\n.callbtn         {fill: #084; cursor:pointer}\n.callbtn.pressed {fill: #0f8}\n.callbtn:hover   {fill: #0f8}\n.liftbtn         {fill: transparent; cursor: pointer}\n.liftbtn.dest    {fill: #084}\n.liftbtn:hover   {fill: #0f8}\n")]));
+   _U.list([$Html.text("\nhtml { background-color: #222; color: #fff; font-size: 15px;\n       font-family: \"Lato\",\"Helvetica Neue\",Helvetica,Arial,sans-serif; }\nsvg { user-select: none; }\nsvg text { fill: white; }\n.addbtn          {cursor:pointer}\n.addbtn:hover    {fill: #ddd}\n.callbtn         {fill: #084; cursor:pointer}\n.callbtn.pressed {fill: #0f8}\n.callbtn:hover   {fill: #0f8}\n.liftbtn         {fill: transparent; cursor: pointer}\n.liftbtn.dest    {fill: #084}\n.liftbtn:hover   {fill: #0f8}\n")]));
    var vbox = F4(function (x,y,w,h) {
       return $Svg$Attributes.viewBox(A2($String.join,
       " ",
@@ -13886,7 +13886,7 @@ Elm.Lifty.Render.make = function (_elm) {
       return A2($Svg.g,
       _U.list([]),
       _U.list([A5(rect_,
-              -2,
+              -1,
               -0.5,
               0,
               0,
@@ -13894,7 +13894,7 @@ Elm.Lifty.Render.make = function (_elm) {
                       ,$Svg$Attributes.height("100%")
                       ,$Svg$Attributes.fill("#555")]))
               ,A5(rect_,
-              -2,
+              -1,
               num_floors,
               0,
               4.0e-2,
@@ -13909,7 +13909,7 @@ Elm.Lifty.Render.make = function (_elm) {
                  return A2(movey,
                  floor_id,
                  _U.list([A5(rect_,
-                 -2,
+                 -1,
                  0,
                  0,
                  4.0e-2,
@@ -14002,7 +14002,7 @@ Elm.Lifty.OneRender.make = function (_elm) {
                       ,$Svg$Attributes.y("0")
                       ,$Svg$Attributes.width($Lifty$Util.s_(40 * w))
                       ,$Svg$Attributes.height($Lifty$Util.s_(40 * h))
-                      ,A4($Lifty$Render.vbox,-2,-0.5,w,h)]),
+                      ,A4($Lifty$Render.vbox,-1,-0.5,w,h)]),
               _U.list([A2($Lifty$Render.rBg,num_floors,num_lifts)
                       ,A2(rCallBtns,num_floors,A2($Lifty$Util.mkM,a,call))
                       ,A4(rLiftsOne,
@@ -14113,11 +14113,14 @@ Elm.Lifty.OneUI.make = function (_elm) {
       },
       a);
    });
+   var num_floors = 5;
    var init_state = {t: 0.0
-                    ,floors: A2($Array.repeat,5,{ctor: "_Tuple0"})
+                    ,floors: A2($Array.repeat,num_floors,{ctor: "_Tuple0"})
                     ,lifts: A2($Array.repeat,
                     2,
-                    {dest: 0,busy: false,y: $Animation.$static(0)})};
+                    {dest: num_floors - 1
+                    ,busy: false
+                    ,y: $Animation.$static(num_floors - 1)})};
    var app = $StartApp.start({init: {ctor: "_Tuple2"
                                     ,_0: init_state
                                     ,_1: $Effects.none}
@@ -14145,6 +14148,7 @@ Elm.Lifty.OneUI.make = function (_elm) {
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",
    app.tasks);
    return _elm.Lifty.OneUI.values = {_op: _op
+                                    ,num_floors: num_floors
                                     ,init_state: init_state
                                     ,update: update
                                     ,app: app
