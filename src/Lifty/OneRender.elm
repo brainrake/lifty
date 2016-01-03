@@ -3,6 +3,7 @@ module Lifty.OneRender where
 import List           as L
 import Array          as A  exposing (Array)
 import Signal         as S  exposing (Message)
+import Time                 exposing (Time)
 import Svg                  exposing (Svg, g)
 import Svg.Attributes       exposing (class)
 import Svg.Events           exposing (onClick)
@@ -22,6 +23,7 @@ rCallBtns num_floors callM =
     movey floor_id [ circle_ -0.5 0.5 0.2 [ class "callbtn"
                                           , onClick <| callM floor_id ] ]
 
+rLiftsOne : Int -> Array (Lift l) -> Time -> (Int -> Int -> Message) -> Svg
 rLiftsOne = rLifts (\fi l -> fi == l.dest)
 
 render go call a s = let

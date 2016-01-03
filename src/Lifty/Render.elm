@@ -8,7 +8,7 @@ import Signal               exposing (Message)
 import Time                 exposing (Time)
 import Animation            exposing (Animation, animate)
 import Svg                  exposing (Svg, Attribute, svg, rect, g)
-import Svg.Attributes as SA exposing (x, y, width, height, class, fill, opacity)
+import Svg.Attributes as SA exposing (x, y, width, height, class, fill, opacity, transform)
 import Svg.Events           exposing (onClick)
 import Html                 exposing (Html)
 
@@ -22,13 +22,13 @@ type alias Lift l = { l | busy : Bool, y : Animation }
 
 rLift : Bool -> List Svg
 rLift busy =
-  [ rect_ 0.1 0.2  0.8 0.8  [fill (if busy then "#ddd" else "#888")]
-  , rect_ 0.1 1    0.8 0.04 [fill (if busy then "#fff" else "#ddd")]
-  , rect_ 0.1 0.16 0.8 0.04 [fill (if busy then "#fff" else "#ddd")] ]
+  [ rect_ 0.1 0     0.8 0.8  [fill (if busy then "#ddd" else "#888")]
+  , rect_ 0.1 -0.04 0.8 0.04 [fill (if busy then "#fff" else "#ddd")]
+  , rect_ 0.1 0.8   0.8 0.04 [fill (if busy then "#fff" else "#ddd")] ]
 
 rLiftBtn : Message -> Bool -> List Svg
 rLiftBtn msg is_dest =
-  [ rect_ 0.1 0.2 0.8 0.84
+  [ rect_ 0.1 0 0.8 0.84
           [onClick msg, class (if is_dest then "liftbtn dest" else "liftbtn")] ]
 
 rLifts : (Int -> Lift l -> Bool) -> Int -> Array (Lift l) -> Time -> (Int -> Int -> Message) -> Svg
@@ -43,7 +43,7 @@ rBg num_floors num_lifts = g []
   [ rect_ -1 -0.5 0 0 [width "100%", height "100%", fill "#555"]
   , rect_ (-1) num_floors 0 0.04 [width "100%", fill "white"]
   , g [] <| flip L.map (zeroTo num_floors) <| \(floor_id) ->
-      movey floor_id [ rect_ -1 0 0 0.04 [width "100%", fill "white"]
+      movey floor_id [ rect_ -1 -0.04 0 0.04 [width "100%", fill "white"]
                      ]--, text_ (s_ floor_id) -1.6 0.7 [fontSize "0.5"] ]
   , g [] <| flip L.map (zeroTo num_lifts) <| \(lift_id) ->
       movex lift_id [ rect_ 0.1 0.04  0.8 ((f_ num_floors) - 0.04)
@@ -69,5 +69,5 @@ rFrame : Int -> Int -> List Svg -> Html
 rFrame w h els =
   Html.div [] [style_, svg
     [ x "0", y "0", width (s_ (40 * w)) , height (s_ (40 * h))
-    , vbox -1 -0.5 w h ]
-    els ]
+    , vbox -1 (0.5 - h) w h ]
+    [ g [transform "scale(1, -1)"] els ] ]
