@@ -1,17 +1,16 @@
 module Lifty.OneRender where
 
-import String               exposing (join)
 import List           as L
 import Array          as A  exposing (Array)
 import Signal         as S  exposing (Message)
-import Time                 exposing (Time)
-import Svg                  exposing (Svg, svg, g)
-import Svg.Attributes       exposing (x, y, width, height, class)
+import Svg                  exposing (Svg, g)
+import Svg.Attributes       exposing (class)
 import Svg.Events           exposing (onClick)
 import Html
 
 import Lifty.Util           exposing (s_, f_, zeroTo, mkM, mkM2)
-import Lifty.Render         exposing (movexy, movex, movey, rect_, circle_, vbox, rLift, rLiftBtn, rLifts, rBg, style_)
+import Lifty.RenderUtil     exposing (movey, circle_)
+import Lifty.Render         exposing (rFrame, rLift, rLiftBtn, rLifts, rBg, style_)
 
 
 type alias Lift l = Lifty.Render.Lift { l | dest : Int }
@@ -28,12 +27,7 @@ rLiftsOne = rLifts (\fi l -> fi == l.dest)
 render go call a s = let
   num_floors = A.length s.floors
   num_lifts = A.length s.lifts
-  w = 2 + f_ num_lifts
-  h = 1 + f_ num_floors
-  in Html.div [] [style_, svg
-    [ x "0", y "0", width (s_ (40 * w)) , height (s_ (40 * h))
-    , vbox -1 -0.5 w h ]
+  in rFrame (2 + num_lifts) (1 + num_floors)
     [ rBg num_floors num_lifts
     , rCallBtns num_floors (mkM a call)
-    , rLiftsOne num_floors s.lifts s.t (mkM2 a go)
-    ] ]
+    , rLiftsOne num_floors s.lifts s.t (mkM2 a go) ]

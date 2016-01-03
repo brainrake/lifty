@@ -14,7 +14,8 @@ import Svg.Events            exposing (onClick)
 import Svg.Lazy       as SL
 
 import Lifty.Util            exposing (s_, f_, zeroTo, imapA, imapL, mkM, mkM2)
-import Lifty.Render          exposing (Passenger, movexy, movex, movey, rect_, circle_, text_, rBg, style_, vbox)
+import Lifty.RenderUtil      exposing (movexy, movex, movey, rect_, circle_, text_)
+import Lifty.Render          exposing (Passenger, rBg)
 
 
 type alias Lift l p = { l | pax : List (Passenger p), y : Animation }

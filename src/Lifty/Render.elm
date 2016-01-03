@@ -1,6 +1,5 @@
 module Lifty.Render where
 
-import String               exposing (join)
 import Maybe          as M
 import Maybe.Extra    as M  exposing ((?))
 import List           as L
@@ -8,42 +7,18 @@ import Array          as A  exposing (Array)
 import Signal               exposing (Message)
 import Time                 exposing (Time)
 import Animation            exposing (Animation, animate)
-import Svg                  exposing (Svg, Attribute, rect, g, circle, text', text)
-import Svg.Attributes as SA exposing (x, y, width, height, cx, cy, r, class, transform, fill, stroke, strokeWidth, fontSize, viewBox, opacity)
+import Svg                  exposing (Svg, Attribute, svg, rect, g)
+import Svg.Attributes as SA exposing (x, y, width, height, class, fill, opacity)
 import Svg.Events           exposing (onClick)
 import Html                 exposing (Html)
 
 import Lifty.Util exposing (f_, s_, zeroTo, imapA)
-
+import Lifty.RenderUtil exposing (movex, movey, rect_, vbox)
 
 type alias Passenger p = { p | dest : Int, x : Animation}
 
 type alias Lift l = { l | busy : Bool, y : Animation }
 
-
-movexy : number1 -> number2 -> List Svg -> Svg
-movexy x y els=
-  g [ transform ("translate(" ++ (s_ x) ++ "," ++ (s_ y) ++ ")") ] els
-
-movex : number -> List Svg -> Svg
-movex x els = movexy x 0 els
-
-movey : number -> List Svg -> Svg
-movey y els = movexy 0 y els
-
-rect_ : number1 -> number2 -> number3 -> number4 -> List Attribute -> Svg
-rect_ x' y' w' h' attrs =
-  rect ([x (s_ x'), y (s_ y'), width (s_ w'), height (s_ h')] ++ attrs) []
-
-circle_ : number1 -> number2 -> number3 -> List Attribute -> Svg
-circle_ cx' cy' r' attrs =
-  circle ([cx (s_ cx'), cy (s_ cy'), r (s_ r')] ++ attrs) []
-
-text_ : String -> number1 -> number2 -> List Attribute -> Svg
-text_ str x' y' attrs = text' ([x (s_ x'), y (s_ y')] ++ attrs) [text str]
-
-vbox : number1 -> number2 -> number3 -> number4 -> Attribute
-vbox x y w h = viewBox <| join " " <| [s_ x, s_ y, s_ w, s_ h]
 
 rLift : Bool -> List Svg
 rLift busy =
@@ -89,3 +64,10 @@ svg text { fill: white; }
 .liftbtn.dest    {fill: #084}
 .liftbtn:hover   {fill: #0f8}
 """]
+
+rFrame : Int -> Int -> List Svg -> Html
+rFrame w h els =
+  Html.div [] [style_, svg
+    [ x "0", y "0", width (s_ (40 * w)) , height (s_ (40 * h))
+    , vbox -1 -0.5 w h ]
+    els ]

@@ -21,7 +21,8 @@ import Svg.Events            exposing (onClick)
 import Svg.Lazy        as SL
 
 import Lifty.Util                exposing (s_, f_, imapA, imapL, mkM, mkM2)
-import Lifty.Render       as R   exposing (rect_, rBg, vbox, style_)
+import Lifty.RenderUtil          exposing (rect_, vbox)
+import Lifty.Render       as R   exposing (rBg, style_)
 import Lifty.RenderSim    as RS
 import Lifty.OneRender    as R1
 import Lifty.TwoRender    as R2

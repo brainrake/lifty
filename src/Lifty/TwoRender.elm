@@ -14,7 +14,8 @@ import Svg.Attributes       exposing (x, y, width, height, class, opacity)
 import Svg.Events           exposing (onClick)
 
 import Lifty.Util           exposing (f_, s_, zeroTo, imapA, mkM, mkM2)
-import Lifty.Render         exposing (rect_, circle_, movey, rBg, rLifts, vbox, style_)
+import Lifty.RenderUtil     exposing (circle_, movey)
+import Lifty.Render         exposing (rBg, rLifts, rFrame)
 
 rCallBtns : Int -> Set Int -> Set Int -> (Int -> Message) -> (Int -> Message) -> Svg
 rCallBtns num_floors calls_up calls_down callUpM callDownM =
@@ -34,12 +35,7 @@ rLiftsTwo = rLifts (\fi l -> Set.member fi l.dests)
 render go callUp callDown a s = let
   num_floors = A.length s.floors
   num_lifts = A.length s.lifts
-  w = 2 + f_ (A.length s.lifts)
-  h = 1 + f_ num_floors
-  in Html.div [] [style_, svg
-    [ x "0", y "0", width (s_ (40 * w)), height (s_ (40 * h))
-    , vbox -1 -0.5 w h ]
+  in rFrame (2 + num_lifts) (1 + num_floors)
     [ rBg num_floors num_lifts
     , rCallBtns num_floors s.calls_up s.calls_down (mkM a callUp) (mkM a callDown)
-    , rLiftsTwo num_floors s.lifts s.t (mkM2 a go)
-    ] ]
+    , rLiftsTwo num_floors s.lifts s.t (mkM2 a go) ]
