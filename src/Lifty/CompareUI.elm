@@ -13,8 +13,8 @@ import Random
 import Either              exposing (Either(..), elim)
 import Effects      as E   exposing (Effects, Never)
 import Animation    as Ani exposing (Animation, static, retarget)
-import StartApp
 import AnimationFrame
+import StartApp
 
 import Lifty.Util    exposing (f_, delay, anim)
 import Lifty.OneController as C1   exposing (LiftId, FloorId)
@@ -53,10 +53,10 @@ init_state1 =
   , leaving = []
   , max_queue = max_queue
   , lift_cap = lift_cap
-  , lifts = A.repeat num_lifts { dest = num_floors - 1
+  , lifts = A.repeat num_lifts { dest = 0
                                , busy = False
                                , pax = []
-                               , y = static (num_floors - 1) } }
+                               , y = static 0 } }
 
 init_state2 =
   { t = 0
@@ -68,11 +68,11 @@ init_state2 =
   , max_queue = max_queue
   , lift_cap = lift_cap
   , lifts = A.repeat num_lifts { dests = Set.empty
-                               , next = num_floors - 1
-                               , up = False
+                               , next = 0
+                               , up = True
                                , busy = False
                                , pax = []
-                               , y = static (num_floors - 1) } }
+                               , y = static 0 } }
 
 init_state = { s1 = init_state1
              , s2 = init_state2
@@ -128,7 +128,6 @@ update a s = case a of
     ((src, dest), seed') = gen_srcdest s.seed
     in update (AddPassenger src dest) { s | seed = seed' }
   ToggleRandom enabled ->
-    let _ = Debug.log "ToggleRandom" enabled in
     ({ s | random_enabled = enabled }, E.none)
   Fill -> let
     gen_floor floor_id p_id (acts, seed) =

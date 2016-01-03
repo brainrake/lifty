@@ -12,6 +12,7 @@ import Task.Extra
 import Time                exposing (Time)
 import Effects      as E   exposing (Effects, Never)
 import Animation    as Ani exposing (Animation, static)
+import AnimationFrame
 import StartApp
 
 import Lifty.Util    exposing (delay)
@@ -27,14 +28,14 @@ num_floors = 5
 
 init_state : V.State (C.State {} {} ()) (C.Lift {}) ()
 init_state = { t = 0
-             , calls_up = Set.fromList []
-             , calls_down = Set.fromList []
+             , calls_up = Set.empty
+             , calls_down = Set.empty
              , floors = A.repeat num_floors ()
-             , lifts = A.repeat 2 { dests = Set.fromList []
-                                  , next = (num_floors - 1)
+             , lifts = A.repeat 2 { dests = Set.empty
+                                  , next = 0
                                   , busy = False
                                   , up = True
-                                  , y = static (num_floors - 1) } }
+                                  , y = static 0 } }
 
 
 update : Action -> V.State s l a -> (V.State s l a, Effects Action)
@@ -51,7 +52,7 @@ app = StartApp.start
                     (Right << C.CallUp)
                     (Right << C.CallDown)
   , update = update
-  , inputs = [Time.fps 30 |> S.foldp (+) 0 |> S.map Left] }
+  , inputs = [AnimationFrame.frame |> S.foldp (+) 0 |> S.map Left] }
 
 main = app.html
 

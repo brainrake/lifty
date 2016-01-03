@@ -10,6 +10,7 @@ import Time                exposing (Time)
 import Either              exposing (Either(..), elim)
 import Effects      as E   exposing (Effects, Never)
 import Animation    as Ani exposing (Animation, static, retarget)
+import AnimationFrame
 import StartApp
 
 import Lifty.Util    exposing (delay)
@@ -33,11 +34,11 @@ init_state =
   , max_queue = 10
   , lift_cap = 4
   , lifts = A.repeat 2 { dests = Set.empty
-                       , next = num_floors - 1
+                       , next = 0
                        , up = False
                        , busy = False
                        , pax = []
-                       , y = static (num_floors - 1) } }
+                       , y = static 0 } }
 
 --update : Action p -> V.State s l p -> (V.State s l p, Effects (Action p))
 update a s = a |> elim
@@ -53,7 +54,7 @@ app = StartApp.start
                     (Left << V.StartAdd)
                     (Left << V.FinishAdd)
   , update = update
-  , inputs = [Time.fps 30 |> S.foldp (+) 0 |> S.map (Left << V.Tick)] }
+  , inputs = [AnimationFrame.frame |> S.foldp (+) 0 |> S.map (Left << V.Tick)] }
 
 main = app.html
 

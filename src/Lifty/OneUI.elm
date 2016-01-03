@@ -9,6 +9,7 @@ import Signal        as S
 import Either               exposing (Either(..), elim)
 import Effects       as E   exposing (Effects, Never)
 import Animation            exposing (static)
+import AnimationFrame
 import StartApp
 
 import Lifty.Util exposing (delay)
@@ -26,9 +27,9 @@ num_floors = 5
 init_state : State
 init_state = { t = 0.0
              , floors = A.repeat num_floors ()
-             , lifts = A.repeat 2 { dest = num_floors - 1
+             , lifts = A.repeat 2 { dest = 0
                                   , busy = False
-                                  , y = static (num_floors - 1) } }
+                                  , y = static 0 } }
 
 update : Action -> State -> (State, Effects Action)
 update a s = a |> elim
@@ -42,7 +43,7 @@ app = StartApp.start
   { init = (init_state, E.none)
   , view = R.render ((<<) Right << C.Go) (Right << C.Call)
   , update = update
-  , inputs = [Time.fps 30 |> S.foldp (+) 0 |> S.map Left] }
+  , inputs = [AnimationFrame.frame |> S.foldp (+) 0 |> S.map Left] }
 
 main = app.html
 
