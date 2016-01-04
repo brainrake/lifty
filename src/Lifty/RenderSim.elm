@@ -25,12 +25,11 @@ rPa : Int -> Passenger p -> Time -> Svg
 rPa num_floors p t =
   movex (animate t p.x) [
     (num_floors, p.dest) |> SL.lazy (\(num_floors, dest) ->
-      g [transform "translate(0.12,0)"]
-        [ g [transform ("scale(0.16,"++ (s_ (0.8 / f_ num_floors)) ++")")]
-            [ rect_ 0 0 1 num_floors [ fill "#1c1c1c" ]
-            , g [] <| flip L.map (zeroTo num_floors) <| \fi ->
-                rect_ 0 (f_ fi - 0.1) 1 0.2 [ fill "#888"]
-            , rect_ 0 dest 1 1 [ fill "#084" ] ] ])]
+        g [transform ("scale(0.16,"++ (s_ (0.8 / f_ num_floors)) ++")")]
+          [ rect_ 0 0 1 num_floors [ fill "#1c1c1c" ]
+          , g [] <| flip L.map (zeroTo num_floors) <| \fi ->
+              rect_ 0 (f_ fi - 0.1) 1 0.2 [ fill "#888"]
+          , rect_ 0 dest 1 1 [ fill "#084" ] ])]
 
 rLiftPax : Int -> Array (Lift l p) -> Time -> Svg
 rLiftPax num_floors lifts t =

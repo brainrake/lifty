@@ -31,8 +31,8 @@ init_state =
   , calls_down = Set.empty
   , adding = Nothing
   , leaving = []
-  , max_queue = 10
-  , lift_cap = 4
+  , max_queue = 4
+  , lift_cap = 2
   , lifts = A.repeat 2 { dests = Set.empty
                        , next = 0
                        , up = False

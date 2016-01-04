@@ -67,7 +67,6 @@ arrive lift_id floor_id s = let
   rfloor = L.reverse floor
   pred = \p -> lift.up == (p.dest > floor_id)
   (entering, rfloor') = partitionUpto spaces pred rfloor
-  --(entering, rfloor') = ( L.take spaces rfloor, L.drop spaces rfloor)
   pax' = L.append pax entering
   floor' = L.reverse rfloor'
   s' = { s | floors = A.set floor_id floor' s.floors
