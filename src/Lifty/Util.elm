@@ -38,6 +38,16 @@ imapL l f = L.indexedMap (curry f) l
 imapA : Array a -> ((Int, a) -> b) -> List b
 imapA l f = L.map f (izipA l)
 
+-- Split the list into the first `n` items where the predicate holds, and the rest
+partitionUpto : Int -> (a -> Bool) -> List a -> (List a, List a)
+partitionUpto n pred xs = let
+  aux n xs (trues, falses) = case xs of
+    [] -> (trues, falses)
+    x :: xs' -> if n > 0 then if pred x then aux (n-1) xs' (x :: trues, falses)
+                                        else aux (n-1) xs' (trues, x :: falses)
+                         else aux n xs' (trues, x :: falses)
+  in aux n xs ([], [])
+
 -- Shorthand for defining an animation with common parameters
 anim start from to duration =
   Ani.animation start |> Ani.from from |> Ani.to to |> Ani.duration duration

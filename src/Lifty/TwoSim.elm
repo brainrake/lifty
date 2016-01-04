@@ -15,7 +15,7 @@ import Time                exposing (Time)
 import Effects      as E   exposing (Effects)
 import Animation    as Ani exposing (Animation, static, retarget)
 
-import Lifty.Util    exposing (f_, izipL, izipA, imapL, imapA, schedule)
+import Lifty.Util    exposing (f_, izipL, izipA, imapL, imapA, partitionUpto, schedule)
 import Lifty.OneController      exposing (FloorId, LiftId)
 import Lifty.TwoController as C
 
@@ -65,7 +65,9 @@ arrive lift_id floor_id s = let
   (leaving, pax) = lift.pax |> L.partition (\p -> p.dest == floor_id)
   spaces = s.lift_cap - L.length pax
   rfloor = L.reverse floor
-  (entering, rfloor') = ( L.take spaces rfloor, L.drop spaces rfloor)
+  pred = \p -> lift.up == (p.dest > floor_id)
+  (entering, rfloor') = partitionUpto spaces pred rfloor
+  --(entering, rfloor') = ( L.take spaces rfloor, L.drop spaces rfloor)
   pax' = L.append pax entering
   floor' = L.reverse rfloor'
   s' = { s | floors = A.set floor_id floor' s.floors
