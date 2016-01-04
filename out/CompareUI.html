@@ -16965,11 +16965,12 @@ Elm.Lifty.TwoSimView.make = function (_elm) {
            {ctor: "_Tuple2",_0: s,_1: $Effects.none},
            A2($Maybe.map,
            function (src) {
+              var num_lifts = $Lifty$Util.f_($Array.length(s.lifts));
               var floor = A2($Array$Extra.getUnsafe,src,s.floors);
               var x = A4($Lifty$Util.anim,
               s.t,
-              2.3 + $Lifty$Util.f_($Array.length(s.lifts)),
-              2 + $Lifty$Util.f_($List.length(floor)) / 3,
+              2.3 + num_lifts,
+              num_lifts + $Lifty$Util.f_($List.length(floor)) / 4,
               500);
               return function (_p5) {
                  var _p6 = _p5;
