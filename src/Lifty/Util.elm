@@ -44,7 +44,7 @@ partitionUpto n pred xs = let
   aux n xs (trues, falses) = case xs of
     [] -> (trues, falses)
     x :: xs' -> if n > 0 then if pred x then aux (n-1) xs' (trues ++ [x], falses)
-                                        else aux (n-1) xs' (trues, falses ++ [x])
+                                        else aux n xs' (trues, falses ++ [x])
                          else aux n xs' (trues, falses ++ [x])
   in aux n xs ([], [])
 
