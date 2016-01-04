@@ -34,7 +34,7 @@ init_state = { t = 0
              , lifts = A.repeat 2 { dests = Set.empty
                                   , next = 0
                                   , busy = False
-                                  , up = True
+                                  , up = False
                                   , y = static 0 } }
 
 

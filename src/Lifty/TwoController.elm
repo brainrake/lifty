@@ -98,7 +98,8 @@ call floor_id up s = let
 
 arrive lift_id l floor_id s = let
   l' = { l | dests = remove floor_id l.dests }
-  up = if M.isJust <| next_dest_dir floor_id l.up l s then l.up else not l.up
+  up =if floor_id == end l.up s then not l.up else
+      if M.isJust <| next_dest_dir floor_id l.up l s then l.up else not l.up
   l'' = { l' | up = up }
   s' = { s | lifts = A.set lift_id l'' s.lifts
            , calls_up = if l''.up then remove floor_id s.calls_up else s.calls_up

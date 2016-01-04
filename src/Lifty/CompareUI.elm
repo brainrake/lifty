@@ -69,7 +69,7 @@ init_state2 =
   , lift_cap = lift_cap
   , lifts = A.repeat num_lifts { dests = Set.empty
                                , next = 0
-                               , up = True
+                               , up = False
                                , busy = False
                                , pax = []
                                , y = static 0 } }

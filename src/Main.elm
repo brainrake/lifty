@@ -216,13 +216,12 @@ We'd like to evaluate these options side by side, and see how they measure up wh
 
 """, include 800 480 "out/CompareUI.html", md """
 
-It looks like the two button controller is somewhat slower in this configuration, because it stops all the time when full.
+It looks like the two button controller is indeed somewhat faster.
 
 
 #### What's missing
 
 * live code editing and time-travel debugging, pending updates and fixes in `elm-reactor`
-* improved visuals
 * more simulation parameter controls (speed, number of floors/lifts)
 
 #### Challenge Ideas

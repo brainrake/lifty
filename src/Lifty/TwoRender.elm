@@ -5,13 +5,15 @@ import List           as L
 import Array          as A
 import Set                  exposing (Set)
 import Signal         as S  exposing (Message)
-import Svg                  exposing (Svg, g)
-import Svg.Attributes       exposing (class, opacity)
+import Svg                  exposing (Svg, g, polygon)
+import Svg.Attributes       exposing (class, opacity, points, fill)
 import Svg.Events           exposing (onClick)
+import Animation            exposing (animate)
 
-import Lifty.Util           exposing (zeroTo, mkM, mkM2)
-import Lifty.RenderUtil     exposing (circle_, movey)
-import Lifty.Render         exposing (rBg, rLifts, rFrame)
+import Lifty.Util           exposing (zeroTo, mkM, mkM2, imapA)
+import Lifty.RenderUtil     exposing (circle_, movexy, movex, movey)
+import Lifty.Render         exposing (rBg, rLift, rLiftBtn, rFrame)
+
 
 rCallBtns : Int -> Set Int -> Set Int -> (Int -> Message) -> (Int -> Message) -> Svg
 rCallBtns num_floors calls_up calls_down callUpM callDownM =
@@ -28,7 +30,15 @@ rCallBtns num_floors calls_up calls_down callUpM callDownM =
           , opacity (if floor_id == 0 then "0" else "1")
           , onClick (callDownM floor_id) ] ]
 
-rLiftsTwo = rLifts (\fi l -> Set.member fi l.dests)
+rLiftsTwo num_floors lifts t goM =
+  g [] <| imapA lifts <| \(lift_id, lift) -> movex lift_id
+    [ g [] <| flip L.map (zeroTo num_floors) <| \(floor_id) -> movey floor_id <|
+         rLiftBtn (goM lift_id floor_id) (Set.member floor_id lift.dests)
+    , movey (animate t lift.y) <|
+      [ g [] (rLift lift.busy)
+      , polygon [ fill "#084", points
+          (if lift.up then "0.3,0.84  0.7,0.84  0.5,1.04"
+                      else "0.3,-0.04 0.7,-0.04 0.5,-0.24")] [] ] ]
 
 render go callUp callDown a s = let
   num_floors = A.length s.floors

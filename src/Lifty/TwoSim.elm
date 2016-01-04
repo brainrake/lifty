@@ -51,11 +51,11 @@ update action s = case action of
                            in (s'', ma', schedule_ ma'))
        ) ? (s, Nothing, E.none)
   Action a -> case C.update a s of (s', ma) -> case a of
-    C.Arrive lift_id floor_id -> let
-     (s'', eff) = arrive lift_id floor_id s'
+    C.Arrive lift_id floor_id ->
+     let (s'', eff) = arrive lift_id floor_id s'
      in (s'', ma, E.batch [schedule_ ma, eff])
-    C.Idle lift_id -> let
-     (s'', eff) = idle s'
+    C.Idle lift_id ->
+     let (s'', eff) = idle s'
      in (s'', ma, E.batch [schedule_ ma, eff])
     _ -> (s', ma, schedule_ ma)
 
@@ -78,11 +78,12 @@ arrive lift_id floor_id s = let
 
 idle s = let
   effss = imapA s.floors <| \(floor_id, floor) ->
-    L.concat (floor |> L.map (\p ->
-      let call = if p.dest > floor_id then C.CallUp else C.CallDown
-          liftsat = Set.fromList (A.toList (s.lifts |> A.map .next))
-          callstate = if p.dest > floor_id then s.calls_up else s.calls_down
-          called = Set.member floor_id callstate
-          liftat = Set.member floor_id liftsat
-      in if called || liftat then [] else [schedule_ (Just (0, (call floor_id)))]))
+    L.concat (floor |> L.map (\p -> let
+      call = if p.dest > floor_id then C.CallUp else C.CallDown
+      nexts = Set.fromList (A.toList (s.lifts |> A.map .next))
+      calls = if p.dest > floor_id then s.calls_up else s.calls_down
+      called = Set.member floor_id calls
+      is_here = Set.member floor_id nexts
+      in if called || is_here then []
+         else [schedule_ (Just (0, (call floor_id)))] ))
   in (s, E.batch (L.concat effss))
