@@ -14964,11 +14964,12 @@ Elm.Lifty.OneSimView.make = function (_elm) {
       function (_p4) {
          var _p5 = _p4;
          var _p6 = _p5._1;
+         var to = $Lifty$Util.f_(lift_id) + 5.0e-2 + 0.76 * $Lifty$Util.f_(_p5._0) / $Lifty$Util.f_(s.lift_cap) + 0.76 / (2 * $Lifty$Util.f_(s.lift_cap));
          return _U.update(_p6,
          {x: A4($Lifty$Util.anim,
          s.t,
          A2($Animation.animate,s.t,_p6.x),
-         $Lifty$Util.f_(lift_id) + $Lifty$Util.f_(_p5._0) / 5,
+         to,
          1000)});
       });
       var lifts$ = A3($Array.set,
@@ -15017,11 +15018,12 @@ Elm.Lifty.OneSimView.make = function (_elm) {
            {ctor: "_Tuple2",_0: s,_1: $Effects.none},
            A2($Maybe.map,
            function (src) {
+              var num_lifts = $Lifty$Util.f_($Array.length(s.lifts));
               var floor = A2($Array$Extra.getUnsafe,src,s.floors);
               var x = A4($Lifty$Util.anim,
               s.t,
-              2.3 + $Lifty$Util.f_($Array.length(s.lifts)),
-              $Lifty$Util.f_($Array.length(s.lifts)) + $Lifty$Util.f_($List.length(floor)) / 3,
+              2.3 + num_lifts,
+              num_lifts + $Lifty$Util.f_($List.length(floor)) / 4,
               500);
               return function (_p11) {
                  var _p12 = _p11;
@@ -15138,8 +15140,6 @@ Elm.Lifty.RenderSim.make = function (_elm) {
          var _p2 = _p1;
          var _p3 = _p2._0;
          return A2($Svg.g,
-         _U.list([$Svg$Attributes.transform("translate(0.12,0)")]),
-         _U.list([A2($Svg.g,
          _U.list([$Svg$Attributes.transform(A2($Basics._op["++"],
          "scale(0.16,",
          A2($Basics._op["++"],
@@ -15169,7 +15169,7 @@ Elm.Lifty.RenderSim.make = function (_elm) {
                  _p2._1,
                  1,
                  1,
-                 _U.list([$Svg$Attributes.fill("#084")]))]))]));
+                 _U.list([$Svg$Attributes.fill("#084")]))]));
       },
       {ctor: "_Tuple2",_0: num_floors,_1: p.dest})]));
    });
@@ -16005,8 +16005,8 @@ Elm.Lifty.TwoSimUI.make = function (_elm) {
                     ,calls_down: $Set.empty
                     ,adding: $Maybe.Nothing
                     ,leaving: _U.list([])
-                    ,max_queue: 10
-                    ,lift_cap: 4
+                    ,max_queue: 4
+                    ,lift_cap: 2
                     ,lifts: A2($Array.repeat,
                     2,
                     {dests: $Set.empty
