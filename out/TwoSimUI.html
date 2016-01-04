@@ -14249,6 +14249,53 @@ Elm.Lifty.Util.make = function (_elm) {
       to,
       A2($Animation.from,from,$Animation.animation(start))));
    });
+   var partitionUpto = F3(function (n,pred,xs) {
+      var aux = F3(function (n,xs,_p2) {
+         aux: while (true) {
+            var _p3 = _p2;
+            var _p8 = _p3._0;
+            var _p7 = _p3._1;
+            var _p4 = xs;
+            if (_p4.ctor === "[]") {
+                  return {ctor: "_Tuple2",_0: _p8,_1: _p7};
+               } else {
+                  var _p6 = _p4._1;
+                  var _p5 = _p4._0;
+                  if (_U.cmp(n,0) > 0) if (pred(_p5)) {
+                           var _v3 = n - 1,
+                           _v4 = _p6,
+                           _v5 = {ctor: "_Tuple2",_0: A2($List._op["::"],_p5,_p8),_1: _p7};
+                           n = _v3;
+                           xs = _v4;
+                           _p2 = _v5;
+                           continue aux;
+                        } else {
+                           var _v6 = n - 1,
+                           _v7 = _p6,
+                           _v8 = {ctor: "_Tuple2",_0: _p8,_1: A2($List._op["::"],_p5,_p7)};
+                           n = _v6;
+                           xs = _v7;
+                           _p2 = _v8;
+                           continue aux;
+                        } else {
+                        var _v9 = n,
+                        _v10 = _p6,
+                        _v11 = {ctor: "_Tuple2"
+                               ,_0: _p8
+                               ,_1: A2($List._op["::"],_p5,_p7)};
+                        n = _v9;
+                        xs = _v10;
+                        _p2 = _v11;
+                        continue aux;
+                     }
+               }
+         }
+      });
+      return A3(aux,
+      n,
+      xs,
+      {ctor: "_Tuple2",_0: _U.list([]),_1: _U.list([])});
+   });
    var imapL = F2(function (l,f) {
       return A2($List.indexedMap,$Basics.curry(f),l);
    });
@@ -14274,6 +14321,7 @@ Elm.Lifty.Util.make = function (_elm) {
                                    ,izipA: izipA
                                    ,imapL: imapL
                                    ,imapA: imapA
+                                   ,partitionUpto: partitionUpto
                                    ,anim: anim
                                    ,delay: delay
                                    ,schedule: schedule
@@ -15549,11 +15597,12 @@ Elm.Lifty.TwoSim.make = function (_elm) {
       var leaving = _p0._0;
       var pax = _p0._1;
       var spaces = s.lift_cap - $List.length(pax);
+      var pred = function (p) {
+         return _U.eq(lift.up,_U.cmp(p.dest,floor_id) > 0);
+      };
       var floor = A2($Array$Extra.getUnsafe,floor_id,s.floors);
       var rfloor = $List.reverse(floor);
-      var _p1 = {ctor: "_Tuple2"
-                ,_0: A2($List.take,spaces,rfloor)
-                ,_1: A2($List.drop,spaces,rfloor)};
+      var _p1 = A3($Lifty$Util.partitionUpto,spaces,pred,rfloor);
       var entering = _p1._0;
       var rfloor$ = _p1._1;
       var pax$ = A2($List.append,pax,entering);
