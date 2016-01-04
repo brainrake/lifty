@@ -14264,7 +14264,9 @@ Elm.Lifty.Util.make = function (_elm) {
                   if (_U.cmp(n,0) > 0) if (pred(_p5)) {
                            var _v3 = n - 1,
                            _v4 = _p6,
-                           _v5 = {ctor: "_Tuple2",_0: A2($List._op["::"],_p5,_p8),_1: _p7};
+                           _v5 = {ctor: "_Tuple2"
+                                 ,_0: A2($Basics._op["++"],_p8,_U.list([_p5]))
+                                 ,_1: _p7};
                            n = _v3;
                            xs = _v4;
                            _p2 = _v5;
@@ -14272,7 +14274,9 @@ Elm.Lifty.Util.make = function (_elm) {
                         } else {
                            var _v6 = n - 1,
                            _v7 = _p6,
-                           _v8 = {ctor: "_Tuple2",_0: _p8,_1: A2($List._op["::"],_p5,_p7)};
+                           _v8 = {ctor: "_Tuple2"
+                                 ,_0: _p8
+                                 ,_1: A2($Basics._op["++"],_p7,_U.list([_p5]))};
                            n = _v6;
                            xs = _v7;
                            _p2 = _v8;
@@ -14282,7 +14286,7 @@ Elm.Lifty.Util.make = function (_elm) {
                         _v10 = _p6,
                         _v11 = {ctor: "_Tuple2"
                                ,_0: _p8
-                               ,_1: A2($List._op["::"],_p5,_p7)};
+                               ,_1: A2($Basics._op["++"],_p7,_U.list([_p5]))};
                         n = _v9;
                         xs = _v10;
                         _p2 = _v11;

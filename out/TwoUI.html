@@ -13927,7 +13927,9 @@ Elm.Lifty.Util.make = function (_elm) {
                   if (_U.cmp(n,0) > 0) if (pred(_p5)) {
                            var _v3 = n - 1,
                            _v4 = _p6,
-                           _v5 = {ctor: "_Tuple2",_0: A2($List._op["::"],_p5,_p8),_1: _p7};
+                           _v5 = {ctor: "_Tuple2"
+                                 ,_0: A2($Basics._op["++"],_p8,_U.list([_p5]))
+                                 ,_1: _p7};
                            n = _v3;
                            xs = _v4;
                            _p2 = _v5;
@@ -13935,7 +13937,9 @@ Elm.Lifty.Util.make = function (_elm) {
                         } else {
                            var _v6 = n - 1,
                            _v7 = _p6,
-                           _v8 = {ctor: "_Tuple2",_0: _p8,_1: A2($List._op["::"],_p5,_p7)};
+                           _v8 = {ctor: "_Tuple2"
+                                 ,_0: _p8
+                                 ,_1: A2($Basics._op["++"],_p7,_U.list([_p5]))};
                            n = _v6;
                            xs = _v7;
                            _p2 = _v8;
@@ -13945,7 +13949,7 @@ Elm.Lifty.Util.make = function (_elm) {
                         _v10 = _p6,
                         _v11 = {ctor: "_Tuple2"
                                ,_0: _p8
-                               ,_1: A2($List._op["::"],_p5,_p7)};
+                               ,_1: A2($Basics._op["++"],_p7,_U.list([_p5]))};
                         n = _v9;
                         xs = _v10;
                         _p2 = _v11;
@@ -14399,7 +14403,10 @@ Elm.Lifty.TwoController.make = function (_elm) {
    var move_delay = 1 * $Time.second;
    var Idle = function (a) {    return {ctor: "Idle",_0: a};};
    var arrive = F4(function (lift_id,l,floor_id,s) {
-      var up = $Maybe$Extra.isJust(A4(next_dest_dir,
+      var up = _U.eq(floor_id,
+      A2(end,
+      l.up,
+      s)) ? $Basics.not(l.up) : $Maybe$Extra.isJust(A4(next_dest_dir,
       floor_id,
       l.up,
       l,
@@ -14556,6 +14563,7 @@ Elm.Lifty.TwoRender.make = function (_elm) {
    if (_elm.Lifty.TwoRender.values)
    return _elm.Lifty.TwoRender.values;
    var _U = Elm.Native.Utils.make(_elm),
+   $Animation = Elm.Animation.make(_elm),
    $Array = Elm.Array.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
@@ -14571,9 +14579,38 @@ Elm.Lifty.TwoRender.make = function (_elm) {
    $Svg$Attributes = Elm.Svg.Attributes.make(_elm),
    $Svg$Events = Elm.Svg.Events.make(_elm);
    var _op = {};
-   var rLiftsTwo = $Lifty$Render.rLifts(F2(function (fi,l) {
-      return A2($Set.member,fi,l.dests);
-   }));
+   var rLiftsTwo = F4(function (num_floors,lifts,t,goM) {
+      return A2($Svg.g,
+      _U.list([]),
+      A2($Lifty$Util.imapA,
+      lifts,
+      function (_p0) {
+         var _p1 = _p0;
+         var _p3 = _p1._0;
+         var _p2 = _p1._1;
+         return A2($Lifty$RenderUtil.movex,
+         _p3,
+         _U.list([A2($Svg.g,
+                 _U.list([]),
+                 A3($Basics.flip,
+                 $List.map,
+                 $Lifty$Util.zeroTo(num_floors),
+                 function (floor_id) {
+                    return A2($Lifty$RenderUtil.movey,
+                    floor_id,
+                    A2($Lifty$Render.rLiftBtn,
+                    A2(goM,_p3,floor_id),
+                    A2($Set.member,floor_id,_p2.dests)));
+                 }))
+                 ,A2($Lifty$RenderUtil.movey,
+                 A2($Animation.animate,t,_p2.y),
+                 _U.list([A2($Svg.g,_U.list([]),$Lifty$Render.rLift(_p2.busy))
+                         ,A2($Svg.polygon,
+                         _U.list([$Svg$Attributes.fill("#084")
+                                 ,$Svg$Attributes.points(_p2.up ? "0.3,0.84  0.7,0.84  0.5,1.04" : "0.3,-0.04 0.7,-0.04 0.5,-0.24")]),
+                         _U.list([]))]))]));
+      }));
+   });
    var rCallBtns = F5(function (num_floors,
    calls_up,
    calls_down,
@@ -14760,7 +14797,7 @@ Elm.Lifty.TwoUI.make = function (_elm) {
                     {dests: $Set.empty
                     ,next: 0
                     ,busy: false
-                    ,up: true
+                    ,up: false
                     ,y: $Animation.$static(0)})};
    var app = $StartApp.start({init: {ctor: "_Tuple2"
                                     ,_0: init_state
