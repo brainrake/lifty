@@ -59,11 +59,13 @@ next_dest next up l s =
   (next_dest_dir next up l s) `M.or` (next_dest_dir (end up s) (not up) l s)
 
 start lift_id l dest s =
-  if l.busy then (s, Nothing) else
-  if l.next == dest then (s, Just (0, Arrive lift_id dest)) else let
-    l' = { l | busy = True, up = dest > l.next }
-    s' = { s | lifts = A.set lift_id l' s.lifts }
-    in (s', Just (0, Approach lift_id (next_in_dir l.next (dest > l.next))))
+  if l.busy then (s, Nothing) else let
+  l' = { l | busy = True, up = (if dest == l.next then l.up else dest > l.next )}
+  s' = { s | lifts = A.set lift_id l' s.lifts }
+  a = if l.next == dest
+      then Arrive lift_id dest
+      else Approach lift_id (next_in_dir l.next (dest > l.next))
+  in (s', Just (0, a))
 
 update : Action -> State s l f -> (State s l f, Maybe (Time.Time, Action))
 update action s = case action of

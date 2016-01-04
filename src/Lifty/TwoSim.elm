@@ -43,11 +43,13 @@ update : Action p -> State s l p
 update action s = case action of
   AddPassenger src dest p -> let
     floor = A.getUnsafe src s.floors
-    in if L.length floor < s.max_queue
-       then ( { s | floors = A.update src (\f -> p :: f) s.floors }
-            , Nothing, E.task <| Task.succeed <| Action <|
-                (if dest > src then C.CallUp src else C.CallDown src))
-       else (s, Nothing, E.none)
+    (s', ma) = if L.length floor < s.max_queue
+               then ( { s | floors = A.update src (\f -> p :: f) s.floors }
+                    , Just (if dest > src then C.CallUp src else C.CallDown src))
+               else (s, Nothing)
+    in (ma |> M.map (\a -> let (s'', ma') = C.update a s'
+                           in (s'', ma', schedule_ ma'))
+       ) ? (s, Nothing, E.none)
   Action a -> case C.update a s of (s', ma) -> case a of
     C.Arrive lift_id floor_id -> let
      (s'', eff) = arrive lift_id floor_id s'
