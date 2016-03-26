@@ -9,7 +9,7 @@ import Array       as A exposing (Array)
 import Array.Extra as A
 import Time             exposing (Time, second)
 
-import Lifty.Util          exposing (f_, izipA)
+import Lifty.Util          exposing (f_, izipA, partitionUpto)
 import Lifty.OneController exposing (FloorId, LiftId)
 
 
@@ -20,13 +20,13 @@ type alias Passenger p = { p | src : FloorId
 type alias Lift l p = { l | busy : Bool
                           , up : Bool
                           , next: FloorId
-                          , pax : List (Passenger p)
-                          , cap : Int }
+                          , pax : List (Passenger p) }
 
 type alias State s l f p = { s | lifts : Array (Lift l (Passenger p))
                                , floors : Array f
                                , pax : List (Passenger p)
-                               , leaving : List (Passenger p)}
+                               , leaving : List (Passenger p)
+                               , lift_cap : Int }
 
 type Action p = AddPassenger (Passenger p)
               | Approach LiftId FloorId
@@ -69,8 +69,8 @@ merge_llp lift_id l llp pax pred = case llp of
     (pax'', llp'') = merge_llp lift_id l llp' pax' pred
     in (pax'', (lp' ::llp''))
 
-merge_lift lift_id l pax = let
-  llp = A.toList <| A.initialize l.cap (\i ->
+merge_lift lift_id l pax cap = let
+  llp = A.toList <| A.initialize cap (\i ->
     (A.get i (A.fromList l.pax) |> M.map (\p -> [p])) ? [])
   (pax', llp') = merge_llp lift_id l llp pax (\p ->
     (p.mlift |> M.map (\i -> i == lift_id)) ? False)
@@ -78,14 +78,16 @@ merge_lift lift_id l pax = let
     M.isNothing p.mlift)
   in log "merge_lift" (pax'', llp'')
 
-merge_lifts lifts pax = case lifts of
+merge_lifts lifts pax cap = case lifts of
   [] -> (pax, [])
   (lift_id, l) :: lifts' -> let
-    (pax', llp) = merge_lift lift_id l pax
-    (pax'', llps) = merge_lifts lifts' pax'
+    (pax', llp) = merge_lift lift_id l pax cap
+    (pax'', llps) = merge_lifts lifts' pax' cap
     in (pax'', (llp :: llps))
 
-merge s ps = { s | pax = log "merge" <| fst <| merge_lifts (izipA s.lifts) (L.append ps s.pax)}
+merge s ps =
+  let pax = fst <| merge_lifts (izipA s.lifts) (L.append ps s.pax) s.lift_cap
+  in { s | pax = log "merge" <| pax }
 
 next_stop lift_id l s = let
   ldests = l.pax |> L.map (\p -> p.dest)
@@ -137,7 +139,7 @@ arrive lift_id l floor_id s = let
   l' = { l | up = if floor_id == end l.up s then not l.up else l.up }
   s' = merge { s | lifts = A.set lift_id l' s.lifts } []
   (leaving, lpax) = l'.pax |> L.partition (\p -> p.dest == floor_id)
-  (entering, pax') = s'.pax |> L.reverse |> L.partition (\p -> let
+  (entering, pax') = s'.pax |> L.reverse |> partitionUpto s.lift_cap (\p -> let
     lift_match = ((p.mlift |> M.map (\lift_id'-> lift_id == lift_id')) ? False)
     in p.src == floor_id && lift_match)
   l'' = { l' | pax = L.append lpax (L.reverse entering) }

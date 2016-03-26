@@ -67,7 +67,6 @@ animate s a s' ma =
 animate_arrived lift_id floor_id s s' = let
   l = A.getUnsafe lift_id s'.lifts
   pax' = imapL l.pax (\(i, p) ->
-    --{ p | x = retarget s'.t (f_ lift_id + (f_ i) / 3) p.x })
     let to = f_ lift_id + 0.05 + 0.76 * f_ i / f_ s.lift_cap
                                + 0.76 / (2 * f_ s.lift_cap)
     in { p | x = anim (s.t) (Ani.animate (s.t) (p.x)) to 1000 })
